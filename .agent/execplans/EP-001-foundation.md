@@ -140,6 +140,7 @@ Re-running the plan is safe: bootstrap files overwritten verbatim; tests are det
 - 2026-06-27 - M6: `scripts/verify.sh` passes lint, format, typecheck, unit, integration skip, and E2E, then fails at Docker build because the Docker daemon pipe `npipe:////./pipe/docker_engine` is permission-denied/not ready in this Windows environment. Docker Desktop and `com.docker.service` were started, but `docker version` still reports permission denied connecting to the engine.
 - 2026-06-27 - M6: Playwright initially hung after E2E on Windows when using Playwright `webServer` via `pnpm dev`; replacing it with `apps/web/scripts/run-e2e.mjs` made E2E pass and exit cleanly.
 - 2026-06-27 - M6: Narrower Docker diagnostic found Codex commands run as `DESKTOP-0RCPJ1P\codexsandboxoffline`, while `net localgroup docker-users` lists only `domin`; with repo-local `DOCKER_CONFIG`, `docker version` still exits 1 with permission denied to `npipe:////./pipe/docker_engine`. This points to Windows session/group access rather than repository build configuration.
+- 2026-06-27 - M6: A direct repair attempt to add `codexsandboxoffline` to local `docker-users` was rejected by the escalation policy because it is a persistent OS privilege change outside the repo without explicit approval. Current safe path is owner-approved Docker access repair or a fresh Codex session running under a Docker-authorized identity.
 (empty — append entries here as they occur)
 
 ## 14. Decision Log
