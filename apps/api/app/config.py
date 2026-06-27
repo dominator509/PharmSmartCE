@@ -6,6 +6,7 @@ class Settings(BaseSettings):
 
     app_env: str = "local"
     log_level: str = "info"
+    citation_min_overlap_ratio: float = 0.4
 
 
 def get_settings() -> Settings:

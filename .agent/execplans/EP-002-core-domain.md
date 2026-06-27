@@ -1,4 +1,4 @@
-# EP-002 — Core Domain + LLM/RAG Plumbing
+﻿# EP-002 â€” Core Domain + LLM/RAG Plumbing
 
 **Phase:** P1
 
@@ -80,7 +80,7 @@ Builds on EP-001 skeleton. Implements `SPEC-001`. All code is pure Python with n
 - **Files to change:** `apps/api/app/services/generation/__init__.py`, `apps/api/app/services/generation/grounded_llm.py`
 - **Exact edits expected:** System prompt is a module-level constant. Build prompt: SYSTEM + chunk wrapped in `<<<context_start id="{doc_id}:{page}:{span}">>> {text} <<<context_end>>>` + instructions to refuse outside context. Call `LLMPort.generate(...)`. Parse output; if `<<<INSUFFICIENT_CONTEXT>>>` raise `InsufficientContextError`. Build and return a `Question` with citation fields from the chunk.
 - **Validation command:** `uv run --directory apps/api pytest tests/unit/services/test_grounded_llm.py -q`
-- **Expected result:** All tests pass — including refusal and citation-population.
+- **Expected result:** All tests pass â€” including refusal and citation-population.
 - **Recovery:** If parsing fragile, make FakeLLM output match expected parser; do not loosen parser.
 
 ### M5: Implement CitationValidator
@@ -96,7 +96,7 @@ Builds on EP-001 skeleton. Implements `SPEC-001`. All code is pure Python with n
 - **Files to change:** `apps/api/app/services/generation/rag_retriever.py`
 - **Exact edits expected:** Constructor takes a callable `chunk_source` returning list[Chunk]. `retrieve(course, n, seed)`: seed-shuffle (random.Random(seed)) the chunk list, return first n distinct chunks. No embedding I/O yet (deferred to EP-003 via EmbeddingPort).
 - **Validation command:** `uv run --directory apps/api pytest tests/unit/services/test_rag_retriever.py -q`
-- **Expected result:** Determinism test passes (same seed → same chunks).
+- **Expected result:** Determinism test passes (same seed â†’ same chunks).
 - **Recovery:** If determinism fails, ensure `random.Random(seed)` not `random.shuffle` (global RNG).
 
 ### M7: Run full unit suite
@@ -104,41 +104,44 @@ Builds on EP-001 skeleton. Implements `SPEC-001`. All code is pure Python with n
 - **Files to change:** (none)
 - **Exact edits expected:** No edits; gate.
 - **Validation command:** `uv run --directory apps/api pytest tests/unit -q --cov=app --cov-report=term`
-- **Expected result:** All unit tests pass; coverage on `app/domain` and `app/services/generation` ≥ 95%.
+- **Expected result:** All unit tests pass; coverage on `app/domain` and `app/services/generation` â‰¥ 95%.
 - **Recovery:** If a sub-test fails, switch to debug-validation-failure procedure.
 
 ## 9. Concrete Steps
 Execute milestones in order. After each: run validation, verify expected,
-tick `Progress`, append one-line note. Apply bounded-retry (AGENTS §7) on
+tick `Progress`, append one-line note. Apply bounded-retry (AGENTS Â§7) on
 any failure. Continue autonomously. Stop only under STOP conditions.
 
 ## 10. Validation and Acceptance
 - All milestone validations pass.
 - `scripts/verify.sh` exit 0.
 - Acceptance criteria:
-  - [ ] `Question` rejects empty citation in test
-  - [ ] `GroundedLLM` returns `InsufficientContextError` when chunk delimiters absent
-  - [ ] `CitationValidator.validate` rejects overlap below `CITATION_MIN_OVERLAP_RATIO`
-  - [ ] `RAGRetriever.retrieve` is deterministic for a fixed seed
-  - [ ] Unit coverage on the affected modules ≥ 95%
+  - [x] `Question` rejects empty citation in test
+  - [x] `GroundedLLM` returns `InsufficientContextError` when chunk delimiters absent
+  - [x] `CitationValidator.validate` rejects overlap below `CITATION_MIN_OVERLAP_RATIO`
+  - [x] `RAGRetriever.retrieve` is deterministic for a fixed seed
+  - [x] Unit coverage on the affected modules >= 95%
 
 ## 11. Idempotence and Recovery
 Re-running is safe: deterministic tests; no I/O. Re-running a milestone produces the same files (overwrite-by-edit).
 
 ## 12. Progress
-- [ ] M1: Domain entities + errors
-- [ ] M2: Define LLMPort and EmbeddingPort Protocols
-- [ ] M3: Implement FakeLLM adapter (deterministic)
-- [ ] M4: Implement GroundedLLM wrapper
-- [ ] M5: Implement CitationValidator
-- [ ] M6: Implement RAGRetriever stub
-- [ ] M7: Run full unit suite
+- [x] M1: Domain entities + errors - 2026-06-27 - `uv run --directory apps/api pytest tests/unit/domain -q` passed.
+- [x] M2: Define LLMPort and EmbeddingPort Protocols - 2026-06-27 - `uv run --directory apps/api ruff check app/services/ports` passed.
+- [x] M3: Implement FakeLLM adapter (deterministic) - 2026-06-27 - `uv run --directory apps/api pytest tests/unit/services/test_grounded_llm.py::test_fake_llm_deterministic -q` passed.
+- [x] M4: Implement GroundedLLM wrapper - 2026-06-27 - `uv run --directory apps/api pytest tests/unit/services/test_grounded_llm.py -q` passed.
+- [x] M5: Implement CitationValidator - 2026-06-27 - `uv run --directory apps/api pytest tests/unit/services/test_citation_validator.py -q` passed.
+- [x] M6: Implement RAGRetriever stub - 2026-06-27 - `uv run --directory apps/api pytest tests/unit/services/test_rag_retriever.py -q` passed.
+- [x] M7: Run full unit suite - 2026-06-27 - `uv run --directory apps/api pytest tests/unit -q --cov=app --cov-report=term` passed at 99% total coverage.
 
 ## 13. Surprises & Discoveries
-(empty — append entries here as they occur)
+- 2026-06-27 - `GroundedLLM` needed explicit branch tests for malformed JSON, non-mapping payloads, and invalid citation fields to get the affected modules above the coverage threshold.
+- 2026-06-27 - `FakeLLM` has a separate malformed-context branch in addition to the plain no-delimiter refusal; both are worth pinning in tests.
+- 2026-06-27 - `apps/api/app/config.py` now exposes `citation_min_overlap_ratio=0.4` so the documented environment variable is recognized during future service wiring.
 
 ## 14. Decision Log
-(empty — append entries here as they occur)
+- 2026-06-27 - Context: `ENVIRONMENT.md` and `.env.example` already documented `CITATION_MIN_OVERLAP_RATIO=0.4`. Decision: add `citation_min_overlap_ratio: float = 0.4` to `Settings` now so the runtime config shape matches the docs. Alternative: leave the setting undocumented in code until a later plan. Consequence: future service wiring can consume a real config field without another schema bump.
+- 2026-06-27 - Context: `pnpm audit` stayed noisy after the backend was clean because Next 14 pulled vulnerable transitive packages. Decision: pin `next==15.5.18`, `eslint-config-next==15.5.18`, `@playwright/test==1.61.1`, `postcss==8.5.15`, and add a root pnpm override for `postcss`. Alternative: accept audit warnings or jump to a bigger frontend major. Consequence: audit is green without widening the frontend surface more than needed.
 
 ## 15. Outcomes & Retrospective
-(to be filled at completion)
+EP-002 completed the pure domain and grounding core with deterministic FakeLLM, strict JSON grounded generation, citation overlap validation, and deterministic retrieval. Full unit coverage on the affected modules is above the requested threshold and `scripts/verify.sh` passes again after the new tests and formatting fixes.
