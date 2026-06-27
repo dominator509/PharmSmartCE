@@ -28,7 +28,9 @@ test-results/
 # Local model and runtime state
 models/
 *.gguf
+*.faiss
 var/
+.tools/
 
 # Serena local cache
 .serena/cache/

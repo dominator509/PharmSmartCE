@@ -24,3 +24,10 @@ updates this file.
 | A16 | Observability: structlog + Prometheus + Sentry | Free/cheap tier | Limited tracing | EP-008 | No |
 | A17 | Generation worker: async queue (Redis+RQ or FastAPI BackgroundTasks v1) | CPU LLM slow | Worker mgmt | EP-004 perf | No |
 | A18 | Embeddings: sentence-transformers MiniLM CPU-only | Free, small, fast | Quality ceiling | EP-003 eval | No |
+
+## EP-000 Review Notes
+
+- 2026-06-27: A11 is confirmed for local coding: `uv 0.11.25` and
+  `pnpm 9.15.0` are available with the required Python 3.11 / Node 20 toolchain.
+- 2026-06-27: A1-A10 and A12-A18 remain architectural/product assumptions to
+  verify in their named ExecPlans; no table rows were removed or reclassified.

@@ -94,17 +94,31 @@ any failure. Continue autonomously. Stop only under STOP conditions.
 Re-running this plan is a no-op: it only reads state and updates docs. If a doc was updated, git tracks the diff; re-running yields no further change.
 
 ## 12. Progress
-- [ ] M1: Inventory root contents and git state
-- [ ] M2: Verify tool versions
-- [ ] M3: Reconcile assumptions with reality
-- [ ] M4: Reconcile commands with reality
-- [ ] M5: Create baseline .gitignore
+- [x] M1: Inventory root contents and git state - 2026-06-27 - `git status && ls -la` exited 0; root includes prior GitHub/Serena/Obsidian setup plus ignored `.tools/`.
+- [x] M2: Verify tool versions - 2026-06-27 - Python 3.11.15, Node v20.20.2, Docker 29.5.3, uv 0.11.25, pnpm 9.15.0.
+- [x] M3: Reconcile assumptions with reality - 2026-06-27 - `grep -c '^|' ASSUMPTIONS.md` returned 20 after adding EP-000 review notes.
+- [x] M4: Reconcile commands with reality - 2026-06-27 - `ls scripts/` listed all 14 scripts referenced by `COMMANDS.md`.
+- [x] M5: Create baseline .gitignore - 2026-06-27 - `.gitignore` covers env files, caches, builds, models, `*.gguf`, `*.faiss`, `var/`, and local `.tools/`; validation exited 0.
 
 ## 13. Surprises & Discoveries
+- 2026-06-27 - M1: Repository is no longer a pristine blueprint-only folder. It has been initialized as Git repo `main` tracking `origin/main`, and prior setup added `.serena/`, `.obsidian/`, `.gitattributes`, `REPO_BRIEF.md`, and a local ignored `.tools/` toolchain directory.
+- 2026-06-27 - M1: `git status` reports `.gitignore` modified because `.tools/` was added to keep the repo-local Node 20 toolchain out of commits.
+- 2026-06-27 - M1/M2: Git and Docker commands warn that `C:\Users\domin/.config/git/ignore` and `C:\Users\domin\.docker\config.json` are permission-denied in this managed Codex environment; version checks still complete.
+- 2026-06-27 - M2: Required tools are available through the coding PATH after setup: Python 3.11.15 via uv-managed CPython, Node v20.20.2 via repo-local `.tools`, uv 0.11.25, pnpm 9.15.0, Git sh at `C:\Program Files\Git\usr\bin`, Docker 29.5.3, Docker Compose v5.1.4.
+- 2026-06-27 - M3: `ASSUMPTIONS.md` table row count stayed 20; A11 is confirmed locally and remaining assumptions are still deferred to their named ExecPlans.
+- 2026-06-27 - M4: `COMMANDS.md` script references match the current `scripts/` directory; no command table edits needed.
+- 2026-06-27 - M5: `.gitignore` already existed from repository publishing; added `.tools/` for local toolchain and `*.faiss` to match EP-000 expected generated artifacts.
 (empty — append entries here as they occur)
 
 ## 14. Decision Log
+- 2026-06-27 - Context: Machine PATH had Python 3.14, Node 24, no `uv`, no `sh`, and PowerShell-blocked global pnpm. Decision: Install/wire repo-safe local tooling: uv via user Python, Python 3.11 via uv, portable Node v20.20.2 + pnpm 9.15.0 under ignored `.tools/`, Git `usr\bin` for `sh`, and HKCU `TEMP`/`TMP` to `C:\tmp`. Alternative: replace system Node/Python globally (higher blast radius). Consequence: repo commands can run with the required versions while avoiding global downgrades.
+- 2026-06-27 - Context: `ASSUMPTIONS.md` is mostly forward-looking for EP-001 through EP-010. Decision: Add compact EP-000 review notes instead of rewriting architectural assumptions before their owning ExecPlans. Alternative: mark each future assumption as unverified in-table (noisy). Consequence: table row count remains stable and current reality is recorded.
+- 2026-06-27 - Context: `git diff --name-only` includes `.agent/execplans/EP-000-repository-discovery.md`, which is not listed in Files to Change. Decision: Keep the ExecPlan diff because AGENTS/PLANS require progress, discoveries, decisions, and outcomes to be recorded in the active ExecPlan. Alternative: leave completion evidence only in chat (not durable). Consequence: the extra file is justified.
 (empty — append entries here as they occur)
 
 ## 15. Outcomes & Retrospective
-(to be filled at completion)
+- Landed: EP-000 repository discovery is complete. The repo has verified local toolchain commands, reconciled assumptions notes, confirmed command/script inventory, and a baseline `.gitignore` that covers secrets, caches, builds, local runtime state, model/index artifacts, and repo-local `.tools/`.
+- Deferred: Application skeletons, dependency manifests, CI workflow, and real app tests remain for EP-001 and later ExecPlans.
+- Went well: Repo-local Node 20 and uv-managed Python 3.11 avoided replacing newer system runtimes while satisfying project requirements.
+- Improve later: Add a Windows/Codex shell bootstrap script or docs note once EP-001 creates real manifests, so future agents do not need to rediscover PATH/TEMP quirks.
+- Remaining risks: Docker and Git still warn about permission-denied user-home config files in this managed environment; commands used by EP-000 still passed. Current `verify.sh` is green with intentional skips because apps are not bootstrapped yet.
