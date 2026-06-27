@@ -2,6 +2,11 @@
 set -eu
 cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 
+export UV_CACHE_DIR="${UV_CACHE_DIR:-$PWD/.tools/uv-cache}"
+export TMP="${TMP:-$PWD/.tools/tmp}"
+export TEMP="${TEMP:-$PWD/.tools/tmp}"
+mkdir -p "$UV_CACHE_DIR" "$TMP"
+
 if [ -d apps/api/tests/unit ]; then
   uv run --directory apps/api pytest tests/unit -q
 else

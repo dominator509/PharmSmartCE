@@ -84,8 +84,8 @@ FastAPI app exposes `/healthz` returning `{"status":"ok"}`. Next.js renders an e
 - **Files to read:** `ENVIRONMENT.md`
 - **Files to change:** `.env.example`
 - **Exact edits expected:** Every variable from ENVIRONMENT.md table with placeholder values (no secrets).
-- **Validation command:** `grep -c '^[A-Z_]*=' .env.example`
-- **Expected result:** Count >= 30.
+- **Validation command:** `grep -c '^[A-Z0-9_]*=' .env.example`
+- **Expected result:** Count >= 31.
 - **Recovery:** If count low, cross-check against ENVIRONMENT.md and add missing rows.
 
 ### M5: Create .github/workflows/ci.yml
@@ -123,17 +123,32 @@ any failure. Continue autonomously. Stop only under STOP conditions.
 Re-running the plan is safe: bootstrap files overwritten verbatim; tests are deterministic; CI workflow re-applies idempotently.
 
 ## 12. Progress
-- [ ] M1: Bootstrap apps/api
-- [ ] M2: Bootstrap apps/web (Next.js 14 + TS + Tailwind)
-- [ ] M3: Create infra/docker-compose.yml
-- [ ] M4: Create .env.example
-- [ ] M5: Create .github/workflows/ci.yml
+- [x] M1: Bootstrap apps/api - 2026-06-27 - `uv run --directory apps/api pytest tests/unit -q` passed: 1 smoke test.
+- [x] M2: Bootstrap apps/web (Next.js 14 + TS + Tailwind) - 2026-06-27 - `pnpm --filter web test:unit` passed: 1 smoke test.
+- [x] M3: Create infra/docker-compose.yml - 2026-06-27 - `docker compose -f infra/docker-compose.yml config` parsed successfully.
+- [x] M4: Create .env.example - 2026-06-27 - `grep -c '^[A-Z0-9_]*=' .env.example` returned 31; coverage check found no missing `ENVIRONMENT.md` vars.
+- [x] M5: Create .github/workflows/ci.yml - 2026-06-27 - `test -f .github/workflows/ci.yml` exited 0.
 - [ ] M6: Make scripts/verify.sh green
 
 ## 13. Surprises & Discoveries
+- 2026-06-27 - M1: `uv` initially tried to use `C:\Users\domin\AppData\Local\uv\cache` and hit permission denied in the managed Codex environment. Setting `UV_CACHE_DIR=C:\dev\PharmSmartCE\.tools\uv-cache` allowed validation to pass; `.tools/` is gitignored.
+- 2026-06-27 - M1: First pytest run failed with `ModuleNotFoundError: No module named 'app'`; adding `pythonpath = ["."]` under pytest config fixed the local package import.
+- 2026-06-27 - M2: Vitest could not create temp dirs under `C:\tmp` in this managed run; setting `TEMP`/`TMP` to ignored `.tools/tmp` fixed test startup.
+- 2026-06-27 - M2: Initial smoke test reached the page but failed with `React is not defined`; importing React explicitly in `app/page.tsx` keeps Vitest's simple render path green.
+- 2026-06-27 - M3: Docker Compose config parses, but Docker still warns it cannot read `C:\Users\domin\.docker\config.json` in the managed environment.
+- 2026-06-27 - M4: Original validation regex `^[A-Z_]*=` undercounted `.env.example` because variables such as `S3_ENDPOINT` include digits.
+- 2026-06-27 - M6: `scripts/verify.sh` passes lint, format, typecheck, unit, integration skip, and E2E, then fails at Docker build because the Docker daemon pipe `npipe:////./pipe/docker_engine` is permission-denied/not ready in this Windows environment. Docker Desktop and `com.docker.service` were started, but `docker version` still reports permission denied connecting to the engine.
+- 2026-06-27 - M6: Playwright initially hung after E2E on Windows when using Playwright `webServer` via `pnpm dev`; replacing it with `apps/web/scripts/run-e2e.mjs` made E2E pass and exit cleanly.
 (empty — append entries here as they occur)
 
 ## 14. Decision Log
+- 2026-06-27 - Context: `ENVIRONMENT.md` documents `apps/api/.python-version`, but EP-001 Files to Change omitted it. Decision: Add `apps/api/.python-version` with `3.11` to keep uv aligned with the documented runtime. Alternative: rely on ambient PATH Python (fragile). Consequence: extra file is justified.
+- 2026-06-27 - Context: `uv run` generated `apps/api/uv.lock`, but EP-001 Files to Change omitted lockfiles. Decision: Keep and commit the lockfile because repo rules require deterministic package management and forbid floating lock state. Alternative: omit lockfile (non-reproducible). Consequence: extra file is justified.
+- 2026-06-27 - Context: API Dockerfile command needs an ASGI server, but EP-001 dependency list omitted `uvicorn`. Decision: Add pinned `uvicorn[standard]==0.32.0`. Alternative: leave image entrypoint broken until later. Consequence: small runtime dependency, exact-pinned.
+- 2026-06-27 - Context: `pnpm install` generated `pnpm-lock.yaml`, but EP-001 Files to Change omitted lockfiles. Decision: Keep and commit the lockfile for deterministic Node installs. Alternative: omit lockfile (non-reproducible). Consequence: extra file is justified.
+- 2026-06-27 - Context: EP-001 M4 validation command excluded digits in env var names, contradicting `ENVIRONMENT.md` entries such as `S3_ENDPOINT`. Decision: Update the validation regex to `^[A-Z0-9_]*=` and expected count to `>= 31`, matching the authoritative env table. Alternative: add fake env vars without digits (dishonest). Consequence: validation now proves actual coverage.
+- 2026-06-27 - Context: CI and fresh local runs need dependencies before `scripts/verify.sh`. Decision: Add `scripts/install.sh` to CI before verify and update `scripts/install.sh` to run `uv sync --directory apps/api --all-extras --frozen`, `pnpm install --frozen-lockfile`, and Playwright Chromium install. Alternative: rely on warm local dependencies (not reproducible). Consequence: command docs and CI now reflect fresh setup.
+- 2026-06-27 - Context: Managed Windows environment blocks default user-home caches for uv, Docker config, Playwright browser storage, and Node temp. Decision: Default validation scripts to ignored repo-local `.tools/` cache/temp paths when env vars are unset. Alternative: require manual environment setup for every run. Consequence: scripts are more reliable locally and generated state remains ignored.
 (empty — append entries here as they occur)
 
 ## 15. Outcomes & Retrospective
