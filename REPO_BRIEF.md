@@ -10,7 +10,7 @@ material, with every question and rationale linked to a verifiable source
 citation.
 
 ## Current Repo Shape
-This checkout now has the EP-001 empty-app foundation plus the EP-002 pure domain/grounding core: root project docs, `.agent/` specs and ExecPlans, command entrypoints, `apps/api`, `apps/web`, `packages/shared`, and `infra/docker-compose.yml`. The backend now includes `apps/api/app/domain/`, `apps/api/app/services/generation/`, `apps/api/app/services/ports/`, and the deterministic `FakeLLM` adapter. Database schema, auth, deployment, and production readiness remain later ExecPlan work.
+This checkout now has the EP-001 empty-app foundation plus the EP-002 pure domain/grounding core and the EP-003 persistence slice: root project docs, `.agent/` specs and ExecPlans, command entrypoints, `apps/api`, `apps/web`, `packages/shared`, and `infra/docker-compose.yml`. The backend now includes `apps/api/app/domain/`, `apps/api/app/services/generation/`, `apps/api/app/services/ports/`, `apps/api/app/repositories/`, `apps/api/app/adapters/storage/`, the deterministic `FakeLLM` adapter, and the initial Alembic migration. Auth, deployment, and production readiness remain later ExecPlan work.
 
 ## Planned Stack
 - Backend: Python 3.11, FastAPI, Pydantic, SQLAlchemy, Alembic, Postgres.
@@ -45,7 +45,8 @@ Use only commands documented in `COMMANDS.md`. Key commands:
 ## Important Directories
 - `.agent/`: plans, specs, prompts, templates, and checklists.
 - `apps/api/`: FastAPI app scaffold with `/healthz`, uv lockfile, Dockerfile,
-  smoke test, domain entities, and grounded-generation core.
+  smoke test, domain entities, grounded-generation core, SQLAlchemy repositories,
+  Alembic migration, and FAISS storage adapter.
 - `apps/web/`: Next.js App Router scaffold with Tailwind, Vitest, Playwright,
   Dockerfile, and smoke tests.
 - `packages/shared/`: shared package placeholder.

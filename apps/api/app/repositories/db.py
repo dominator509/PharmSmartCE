@@ -1,9 +1,15 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Generic, TypeVar
 
 from sqlalchemy import DateTime, MetaData, func
-from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 from app.config import get_settings
@@ -41,3 +47,20 @@ class UpdatedAtMixin:
 _settings = get_settings()
 engine: AsyncEngine = create_async_engine(_settings.database_url, pool_pre_ping=True)
 async_session_factory = async_sessionmaker(engine, expire_on_commit=False)
+
+ModelT = TypeVar("ModelT")
+
+
+class AsyncRepository(Generic[ModelT]):
+    model: type[ModelT]
+
+    def __init__(self, session: AsyncSession) -> None:
+        self.session = session
+
+    async def add(self, obj: ModelT) -> ModelT:
+        self.session.add(obj)
+        await self.session.flush()
+        return obj
+
+    async def get(self, identifier: str) -> ModelT | None:
+        return await self.session.get(self.model, identifier)

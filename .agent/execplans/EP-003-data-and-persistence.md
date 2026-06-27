@@ -49,6 +49,7 @@ Builds on EP-002 domain entities. ORM models live in `apps/api/app/repositories/
 - `apps/api/app/repositories/question_repo.py`
 - `apps/api/app/repositories/refresh_token_repo.py`
 - `apps/api/app/repositories/openai_cost_repo.py`
+- `apps/api/app/adapters/storage/__init__.py`
 - `apps/api/alembic.ini`
 - `apps/api/alembic/env.py`
 - `apps/api/alembic/script.py.mako`
@@ -122,16 +123,21 @@ any failure. Continue autonomously. Stop only under STOP conditions.
 Re-running migrations against an empty DB is idempotent. Tests use ephemeral testcontainers; re-running spins fresh containers.
 
 ## 12. Progress
-- [ ] M1: ORM models
-- [ ] M2: Alembic initial migration
-- [ ] M3: Repository classes
-- [ ] M4: FAISS store adapter
-- [ ] M5: Citation NOT NULL fail-then-pass test
+- [x] M1: ORM models â€” 2026-06-27T17:00Z â€” `uv run --directory apps/api python -c "from app.repositories.models import *; print('ok')"` passed.
+  - [x] M2: Alembic initial migration â€” 2026-06-27T17:00Z â€” `uv run --directory apps/api alembic upgrade head` passed against the local Postgres container.
+  - [x] M3: Repository classes â€” 2026-06-27T17:00Z â€” `pytest tests/integration/repositories -q` passed.
+  - [x] M4: FAISS store adapter â€” 2026-06-27T17:00Z â€” `pytest tests/integration/test_faiss_store.py -q` passed.
+  - [x] M5: Citation NOT NULL fail-then-pass test â€” 2026-06-27T17:00Z â€” `pytest tests/integration/test_citation_not_null.py -q` passed.
 
 ## 13. Surprises & Discoveries
+  - 2026-06-27 â€” `testcontainers` was not preinstalled in the backend environment; added exact pin `testcontainers==4.14.2` and used `PostgresContainer` so integration tests stay self-contained.
+  - 2026-06-27 â€” `faiss-cpu==1.14.3` installed successfully on this Windows setup, along with `numpy==2.4.6`.
+  - 2026-06-27 â€” ORM rows without relationships need explicit flush ordering in integration tests so FK parents exist before dependent inserts.
 (empty — append entries here as they occur)
 
 ## 14. Decision Log
+  - 2026-06-27 â€” Decision: use local Postgres containers in integration tests instead of a shared live database. Consequence: CI and local runs stay deterministic.
+  - 2026-06-27 â€” Decision: store FAISS metadata in a companion JSONL file keyed by `chunk_id` rather than embedding it into the binary index. Consequence: reloads stay simple and metadata remains inspectable.
 (empty — append entries here as they occur)
 
 ## 15. Outcomes & Retrospective
