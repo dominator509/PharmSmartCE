@@ -133,13 +133,13 @@ any failure. Continue autonomously. Stop only under STOP conditions.
 Re-running the plan is safe. Tests use testcontainers; restart yields a fresh DB. Worker job idempotency key prevents double-ingest.
 
 ## 12. Progress
-- [ ] M1: AppException hierarchy + RFC 7807 handlers
-- [ ] M2: Health, readiness, metrics routes
-- [ ] M3: Auth route stubs
+- [x] M1: AppException hierarchy + RFC 7807 handlers - 2026-06-27 - `pytest tests/integration/api/test_error_shape.py -q` passed.
+- [x] M2: Health, readiness, metrics routes - 2026-06-27 - `pytest tests/integration/api/test_health.py -q` passed.
+- [x] M3: Auth route stubs - 2026-06-27 - `pytest tests/integration/api/test_auth_stub.py -q` passed.
 - [ ] M4: Course routes and CourseService
 - [ ] M5: Session routes and GenerationService
 - [ ] M6: Ingest worker
-- [ ] M7: OpenAPI snapshot
+- [x] M7: OpenAPI snapshot - 2026-06-27 - `pytest tests/integration/test_openapi_snapshot.py -q` passed.
 
 ## 13. Surprises & Discoveries
 (empty — append entries here as they occur)
