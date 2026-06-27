@@ -177,5 +177,17 @@
     }
   },
   "active": "24112b138f46f541",
-  "lastOpenFiles": []
+  "lastOpenFiles": [
+    "apps/web/scripts/run-e2e.mjs",
+    "apps/web/scripts",
+    "apps/web/test-results",
+    "apps/web/tests/e2e/smoke.spec.ts",
+    "apps/web/tests/e2e",
+    "node_modules/@rushstack",
+    "node_modules/@typescript-eslint",
+    "node_modules/@next",
+    "node_modules/@eslint-community",
+    "node_modules/@eslint",
+    "node_modules"
+  ]
 }
