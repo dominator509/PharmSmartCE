@@ -10,11 +10,11 @@ material, with every question and rationale linked to a verifiable source
 citation.
 
 ## Current Repo Shape
-This checkout is currently a blueprint/control-plane pack: root project docs,
-`.agent/` specs, ordered ExecPlans, checklists, and shell command entrypoints.
-The intended application directories from `ARCHITECTURE.md` (`apps/api`,
-`apps/web`, `packages/shared`, `infra`, `models`, `var`) are not present yet in
-this checkout.
+This checkout now has the EP-001 empty-app foundation in place: root project
+docs, `.agent/` specs and ExecPlans, command entrypoints, `apps/api`,
+`apps/web`, `packages/shared`, and `infra/docker-compose.yml`. Domain logic,
+database schema, auth, deployment, and production readiness remain later
+ExecPlan work.
 
 ## Planned Stack
 - Backend: Python 3.11, FastAPI, Pydantic, SQLAlchemy, Alembic, Postgres.
@@ -48,6 +48,12 @@ Use only commands documented in `COMMANDS.md`. Key commands:
 
 ## Important Directories
 - `.agent/`: plans, specs, prompts, templates, and checklists.
+- `apps/api/`: FastAPI app scaffold with `/healthz`, uv lockfile, Dockerfile,
+  and smoke test.
+- `apps/web/`: Next.js App Router scaffold with Tailwind, Vitest, Playwright,
+  Dockerfile, and smoke tests.
+- `packages/shared/`: shared package placeholder.
+- `infra/`: local Docker Compose services for Postgres, Redis, and MinIO.
 - `scripts/`: documented command entrypoints; scripts enforce repo root.
 - `.obsidian/`: local Obsidian vault settings only.
 - `.serena/`: repo-local Serena activation/navigation config.
@@ -67,5 +73,6 @@ Use only commands documented in `COMMANDS.md`. Key commands:
   `.agent/execplans/` but no active marker file exists.
 - Confirm whether Pack 1/Pack 2 have been converted into an initialized Git
   repository before relying on `git diff` or `git status`.
-- Application source trees are not present yet; update this brief after
-  `apps/api`, `apps/web`, `packages/shared`, or `infra` are created.
+- Docker works for repository verification through the unsandboxed command path
+  in the current Windows setup; plain sandboxed Docker CLI calls still receive
+  daemon pipe permission errors.

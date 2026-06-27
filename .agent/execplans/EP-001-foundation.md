@@ -113,11 +113,11 @@ any failure. Continue autonomously. Stop only under STOP conditions.
 - All milestone validations pass.
 - `scripts/verify.sh` exit 0.
 - Acceptance criteria:
-  - [ ] `scripts/verify.sh` exits 0
-  - [ ] `apps/api/tests/unit/test_smoke.py` passes
-  - [ ] `apps/web/tests/unit/smoke.test.ts` passes
-  - [ ] CI workflow file exists at `.github/workflows/ci.yml`
-  - [ ] `.env.example` contains every required env var
+  - [x] `scripts/verify.sh` exits 0
+  - [x] `apps/api/tests/unit/test_smoke.py` passes
+  - [x] `apps/web/tests/unit/smoke.test.ts` passes
+  - [x] CI workflow file exists at `.github/workflows/ci.yml`
+  - [x] `.env.example` contains every required env var
 
 ## 11. Idempotence and Recovery
 Re-running the plan is safe: bootstrap files overwritten verbatim; tests are deterministic; CI workflow re-applies idempotently.
@@ -128,7 +128,7 @@ Re-running the plan is safe: bootstrap files overwritten verbatim; tests are det
 - [x] M3: Create infra/docker-compose.yml - 2026-06-27 - `docker compose -f infra/docker-compose.yml config` parsed successfully.
 - [x] M4: Create .env.example - 2026-06-27 - `grep -c '^[A-Z0-9_]*=' .env.example` returned 31; coverage check found no missing `ENVIRONMENT.md` vars.
 - [x] M5: Create .github/workflows/ci.yml - 2026-06-27 - `test -f .github/workflows/ci.yml` exited 0.
-- [ ] M6: Make scripts/verify.sh green
+- [x] M6: Make scripts/verify.sh green - 2026-06-27 - `scripts/verify.sh` exited 0 with final line `verify: ok` when run through the unsandboxed command path needed for Docker daemon access.
 
 ## 13. Surprises & Discoveries
 - 2026-06-27 - M1: `uv` initially tried to use `C:\Users\domin\AppData\Local\uv\cache` and hit permission denied in the managed Codex environment. Setting `UV_CACHE_DIR=C:\dev\PharmSmartCE\.tools\uv-cache` allowed validation to pass; `.tools/` is gitignored.
@@ -141,6 +141,8 @@ Re-running the plan is safe: bootstrap files overwritten verbatim; tests are det
 - 2026-06-27 - M6: Playwright initially hung after E2E on Windows when using Playwright `webServer` via `pnpm dev`; replacing it with `apps/web/scripts/run-e2e.mjs` made E2E pass and exit cleanly.
 - 2026-06-27 - M6: Narrower Docker diagnostic found Codex commands run as `DESKTOP-0RCPJ1P\codexsandboxoffline`, while `net localgroup docker-users` lists only `domin`; with repo-local `DOCKER_CONFIG`, `docker version` still exits 1 with permission denied to `npipe:////./pipe/docker_engine`. This points to Windows session/group access rather than repository build configuration.
 - 2026-06-27 - M6: A direct repair attempt to add `codexsandboxoffline` to local `docker-users` was rejected by the escalation policy because it is a persistent OS privilege change outside the repo without explicit approval. Current safe path is owner-approved Docker access repair or a fresh Codex session running under a Docker-authorized identity.
+- 2026-06-27 - M6: Owner explicitly requested Docker setup. `codexsandboxoffline` was added to local `docker-users`, Docker Desktop/service were restarted, and Docker works from the unsandboxed command path. Sandboxed Docker CLI calls still receive pipe permission denied, so Docker-backed repo gates must request escalation in this Windows session.
+- 2026-06-27 - M6: After Docker build became reachable, `scripts/verify.sh` failed at dependency audit. Python advisories were cleared by upgrading FastAPI/Starlette and pytest. Node advisories were cleared by upgrading Next/Playwright/PostCSS and adding a root pnpm override for transitive PostCSS.
 (empty — append entries here as they occur)
 
 ## 14. Decision Log
@@ -151,7 +153,9 @@ Re-running the plan is safe: bootstrap files overwritten verbatim; tests are det
 - 2026-06-27 - Context: EP-001 M4 validation command excluded digits in env var names, contradicting `ENVIRONMENT.md` entries such as `S3_ENDPOINT`. Decision: Update the validation regex to `^[A-Z0-9_]*=` and expected count to `>= 31`, matching the authoritative env table. Alternative: add fake env vars without digits (dishonest). Consequence: validation now proves actual coverage.
 - 2026-06-27 - Context: CI and fresh local runs need dependencies before `scripts/verify.sh`. Decision: Add `scripts/install.sh` to CI before verify and update `scripts/install.sh` to run `uv sync --directory apps/api --all-extras --frozen`, `pnpm install --frozen-lockfile`, and Playwright Chromium install. Alternative: rely on warm local dependencies (not reproducible). Consequence: command docs and CI now reflect fresh setup.
 - 2026-06-27 - Context: Managed Windows environment blocks default user-home caches for uv, Docker config, Playwright browser storage, and Node temp. Decision: Default validation scripts to ignored repo-local `.tools/` cache/temp paths when env vars are unset. Alternative: require manual environment setup for every run. Consequence: scripts are more reliable locally and generated state remains ignored.
+- 2026-06-27 - Context: `scripts/verify.sh` reached dependency audit after Docker access was repaired and found vulnerable pinned packages. Decision: Upgrade exact pins to `fastapi==0.138.1`, `pytest==9.1.1`, `next==15.5.18`, `eslint-config-next==15.5.18`, `@playwright/test==1.61.1`, and `postcss==8.5.15`. Alternative: suppress audit or keep vulnerable pins (not acceptable). Consequence: framework versions are newer but smoke, e2e, build, and audit pass.
+- 2026-06-27 - Context: `next@15.5.18` still pulled transitive `postcss@8.4.31`, which `pnpm audit` flags. Decision: Add root `package.json` with `pnpm.overrides.postcss=8.5.15`. Alternative: jump to Next 16 and possibly React 19 (larger foundation change). Consequence: smallest audited override while staying on React 18-compatible Next 15.
 (empty — append entries here as they occur)
 
 ## 15. Outcomes & Retrospective
-(to be filled at completion)
+EP-001 completed the empty-app foundation: FastAPI `/healthz`, Next.js home page, local compose services, env example, CI workflow, deterministic lockfiles, Docker image build, frontend build, tests, security check, and dependency audit. `scripts/verify.sh` exits 0 with Docker access through the unsandboxed command path. Remaining operational note: plain sandboxed Docker CLI calls still cannot access `npipe:////./pipe/docker_engine`, so Docker-backed validation in this Codex Windows session requires escalation.

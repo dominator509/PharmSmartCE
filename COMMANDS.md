@@ -40,7 +40,9 @@ Do not use `pip install`, `npm install`, `yarn`.
 | Layer | Command |
 |---|---|
 | Python install | `uv sync --directory apps/api --all-extras --frozen` |
+| Python lock refresh | `uv lock --directory apps/api` |
 | Node install | `pnpm install --frozen-lockfile` |
+| Node lock refresh | `pnpm install --lockfile-only` |
 | Python lint | `uv run --directory apps/api ruff check .` |
 | Python format check | `uv run --directory apps/api ruff format --check .` |
 | Python typecheck | `uv run --directory apps/api mypy app` |
