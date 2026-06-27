@@ -178,16 +178,16 @@
   },
   "active": "24112b138f46f541",
   "lastOpenFiles": [
-    "apps/web/scripts/run-e2e.mjs",
-    "apps/web/scripts",
-    "apps/web/test-results",
-    "apps/web/tests/e2e/smoke.spec.ts",
-    "apps/web/tests/e2e",
-    "node_modules/@rushstack",
-    "node_modules/@typescript-eslint",
-    "node_modules/@next",
-    "node_modules/@eslint-community",
-    "node_modules/@eslint",
-    "node_modules"
+    "apps/web/test-results/smoke-home-page-renders-the-product-name/error-context.md",
+    "apps/web/test-results/smoke-home-page-renders-the-product-name",
+    "apps/api/tests/unit/__pycache__/test_smoke.cpython-311-pytest-9.1.1.pyc",
+    "apps/api/tests/unit/__pycache__/test_smoke.cpython-311-pytest-8.3.3.pyc",
+    "apps/api/tests/unit/__pycache__",
+    "_tmp_23388_c181a7493735fe17a9d81f2fbaa50377",
+    "_tmp_9052_6b6a6ea1ff306112d59998c06d36d744",
+    "package.json",
+    "_tmp_19844_2dc4fa948da8fd3b2ec04e9c8643939e",
+    "_tmp_11444_eaf75adccfeb55b930b5717e07ea5322",
+    "_tmp_20872_077560229aec73cdad646ea81b9a1e22"
   ]
 }
