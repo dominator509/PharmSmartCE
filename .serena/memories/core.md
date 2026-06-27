@@ -1,10 +1,9 @@
 # core
 
-- Repo is currently a blueprint/control-plane checkout, not an implemented app tree: root docs + `.agent/` + `scripts/`; intended `apps/`, `packages/shared/`, `infra/`, `models/`, `var/` are absent until an ExecPlan creates them.
-- Authority chain: current user instruction -> `AGENTS.md` -> active `.agent/execplans/*` -> disk code/tests -> `ARCHITECTURE.md` -> `.agent/specs/*` -> `ROADMAP.md`.
-- `ROADMAP.md` is strategy only; implementation must come from an active ExecPlan or a newly created ExecPlan template.
-- Start any agent run by reading `AGENTS.md`, `COMMANDS.md`, `.agent/PLANS.md`, active ExecPlan, then `REPO_BRIEF.md` for compact navigation context.
-- No active-marker file exists; README says pick active ExecPlan from `.agent/execplans/`; current pack guidance starts with `EP-000-repository-discovery.md`.
-- Project invariants: source-grounded pharmacist CE generation, citations on every persisted question, CPU-only local LLM default, optional OpenAI only behind feature flag and cost cap.
-- Read `mem:tech_stack` for planned stack/tools, `mem:suggested_commands` for allowed command surface, `mem:conventions` for guardrails, `mem:task_completion` for done checks.
-- Read `mem:backend/core` when creating or reviewing `apps/api`; read `mem:frontend/core` when creating or reviewing `apps/web`.
+- Repo is a real monorepo checkout now: `apps/api` backend, `apps/web` frontend, `infra/`, `.agent/`, `scripts/`, `REPO_BRIEF.md`, `.serena/`, `.obsidian/`.
+- Authority chain stays: current user instruction -> `AGENTS.md` -> active `.agent/execplans/*` -> disk code/tests -> `ARCHITECTURE.md` -> `.agent/specs/*` -> `ROADMAP.md`.
+- `ROADMAP.md` is strategy only; implementation runs through an active ExecPlan.
+- Control-plane docs to read first: `AGENTS.md`, `COMMANDS.md`, `.agent/PLANS.md`, active ExecPlan, then `REPO_BRIEF.md` for compact navigation context.
+- Project invariant set: pharmacist CE questions must stay source-grounded, every persisted question keeps citation fields, CPU-only local LLM is default, OpenAI remains optional and capped.
+- For module detail, read `mem:backend/core` for `apps/api` and `mem:frontend/core` for `apps/web`.
+- For working habits, read `mem:tech_stack`, `mem:suggested_commands`, `mem:conventions`, and `mem:task_completion`.

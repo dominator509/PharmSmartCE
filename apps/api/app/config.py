@@ -6,6 +6,7 @@ class Settings(BaseSettings):
 
     app_env: str = "local"
     log_level: str = "info"
+    database_url: str = "postgresql+asyncpg://app:app@localhost:5432/pharm"
     citation_min_overlap_ratio: float = 0.4
 
 

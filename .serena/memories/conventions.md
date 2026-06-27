@@ -8,4 +8,5 @@
 - Data invariant: persisted `Question` rows require non-null `source_doc_id`, `source_page`, `source_span` at schema and service levels.
 - Dependency rule: add only when not already available and not practical in <=50 lines; exact version pins only; audit required.
 - Docs rule: changed command -> `COMMANDS.md`; changed route/contract -> `SPEC-003`; changed data model -> `SPEC-002` + Alembic migration; non-trivial architecture -> `DECISIONS.md` ADR.
-- Current checkout lacks a `.git` directory in shell view; treat git checks as environment/repo-state evidence until initialized/restored.
+- Obsidian/Serena hygiene: `REPO_BRIEF.md` is the compact vault-friendly index; `.serena/project.yml` stays headless, LSP-backed, and should ignore generated/build/cache/local-state paths but not source, tests, docs, config, or scripts.
+- `.obsidian/workspace.json` is local editor state only; keep it out of commits unless explicitly asked.
