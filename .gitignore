@@ -1,0 +1,35 @@
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+coverage/
+
+# Node / frontend
+node_modules/
+.next/
+out/
+dist/
+build/
+.turbo/
+playwright-report/
+test-results/
+
+# Local model and runtime state
+models/
+*.gguf
+var/
+
+# Serena local cache
+.serena/cache/
+.serena/project.local.yml

@@ -1,0 +1,150 @@
+# EP-010 — Production Readiness
+
+**Phase:** P9
+
+## 1. Purpose / Big Picture
+Walk through every category in `PRODUCTION_READINESS.md`, tick each checkbox with evidence, run `scripts/production-readiness-check.sh`, and record the human launch gate. This is the final ExecPlan before launch.
+
+## 2. Scope
+- Functional category audit
+- Test category audit (verify.sh + coverage + golden-set)
+- Security category audit (security-check + dep-audit)
+- Privacy + data category audit (SSE-S3, backup test-restore < 7 days)
+- Performance audit (P95 ≤ 30 s; ingest ≤ 5 min)
+- Accessibility audit (axe no serious)
+- Observability audit (logs, metrics, Sentry, alerts wired, runbooks linked)
+- Deployment + rollback audit (release.yml, drill < 30 days)
+- Documentation + support audit
+- Final `scripts/production-readiness-check.sh` exit 0
+- Record human launch gate comment
+
+## 3. Non-goals
+- New product features
+- New endpoints
+- Relaxing any acceptance threshold
+
+## 4. Context and Orientation
+All prior phases complete. Final go/no-go ExecPlan.
+
+## 5. Files to Read First
+- `AGENTS.md`
+- `PRODUCTION_READINESS.md`
+- `.agent/specs/SPEC-008-production-readiness.md`
+- `.agent/checklists/production-readiness.md`
+
+## 6. Files to Change
+- `PRODUCTION_READINESS.md (tick checkboxes)`
+- `CHANGELOG.md (final release notes)`
+
+## 7. Interfaces and Contracts
+`scripts/production-readiness-check.sh` exits 0. `PRODUCTION_READINESS.md` fully ticked. Human launch gate recorded as a PR/issue comment with commit SHA per the Final Launch Gate format in `PRODUCTION_READINESS.md`.
+
+## 8. Milestones
+
+### M1: Functional category audit
+- **Files to read:** `PRODUCTION_READINESS.md`
+- **Files to change:** `PRODUCTION_READINESS.md (functional boxes)`
+- **Exact edits expected:** Run the E2E happy path against staging. Assert: register, login, upload, ingest 3 fixtures, session ≥ 6 Qs with hyperlinks, answer + score, CE PDF download.
+- **Validation command:** `pnpm --filter web test:e2e -- happy_path.spec.ts --grep '@staging'`
+- **Expected result:** All happy-path tests pass against staging.
+- **Recovery:** If a step fails, open an issue and return to the relevant EP. Do not tick the box.
+
+### M2: Test category audit
+- **Files to read:** `TESTING.md`
+- **Files to change:** `PRODUCTION_READINESS.md (test boxes)`
+- **Exact edits expected:** Run verify.sh + coverage gate + golden-set harness.
+- **Validation command:** `scripts/verify.sh && uv run --directory apps/api pytest --cov-fail-under=80 -q && uv run --directory apps/api pytest tests/integration/test_generation_golden.py -q`
+- **Expected result:** verify exit 0; backend coverage ≥ 80%; golden-set ≥ 99% accuracy, ≥ 95% uniqueness.
+- **Recovery:** If golden-set misses, raise `CITATION_MIN_OVERLAP_RATIO` and rerun; if coverage misses, add tests per EP-007.
+
+### M3: Security category audit
+- **Files to read:** `SECURITY.md`
+- **Files to change:** `PRODUCTION_READINESS.md (security boxes)`
+- **Exact edits expected:** Run security-check + dep-audit + security suite.
+- **Validation command:** `scripts/security-check.sh && scripts/dependency-audit.sh && uv run --directory apps/api pytest tests/integration/security -q`
+- **Expected result:** All clean.
+- **Recovery:** If dep audit flags critical, add to allowlist only with documented justification per SECURITY.md.
+
+### M4: Privacy + data category audit
+- **Files to read:** `OPERATIONS.md`, `DEPLOYMENT.md`
+- **Files to change:** `PRODUCTION_READINESS.md (privacy + data boxes)`
+- **Exact edits expected:** Verify: no PHI collected; SSE-S3 enabled on R2 bucket; daily DB backup verified by test-restore in last 7 days; FAISS rebuildable via `app.cli.rebuild_index`.
+- **Validation command:** `aws s3api get-bucket-encryption --bucket pharm-sources-prod || flyctl storage list`
+- **Expected result:** Encryption enabled; backup test-restore log entry within 7 days.
+- **Recovery:** If test-restore older than 7 days, run a fresh one per OPERATIONS.md.
+
+### M5: Performance audit
+- **Files to read:** `TESTING.md`, `OPERATIONS.md`
+- **Files to change:** `PRODUCTION_READINESS.md (performance boxes)`
+- **Exact edits expected:** Run perf smoke + staging perf E2E. Assert P95 session-start ≤ 30 s; ingest of 30-page PDF ≤ 5 min; no N+1.
+- **Validation command:** `uv run --directory apps/api pytest tests/integration/perf -q && pnpm --filter web test:e2e -- happy_path.spec.ts --grep '@perf'`
+- **Expected result:** All within budget.
+- **Recovery:** If P95 misses, profile worker and consider smaller chunk size before launch.
+
+### M6: Observability audit
+- **Files to read:** `OBSERVABILITY.md`
+- **Files to change:** `PRODUCTION_READINESS.md (observability boxes)`
+- **Exact edits expected:** Run staging smoke; verify logs include required fields; named metrics scrape non-empty; Sentry receiving events; alerts visible in alerting provider; runbooks linked.
+- **Validation command:** `scripts/smoke-test.sh https://staging.pharmsmartce.com && curl -fsSL https://staging.pharmsmartce.com/metrics | grep -c http_request_duration_seconds`
+- **Expected result:** Smoke ok; ≥ 1 metric series visible.
+- **Recovery:** If a metric is missing, recheck EP-008 M2.
+
+### M7: Deployment + rollback audit
+- **Files to read:** `RELEASE.md`, `ROLLBACK.md`
+- **Files to change:** `PRODUCTION_READINESS.md (deployment + rollback boxes)`
+- **Exact edits expected:** Verify: release.yml builds, pushes, deploys without manual edits; same image tag in staging and prod; bluegreen verified; release_command runs migrations; rollback drill within last 30 days.
+- **Validation command:** `flyctl releases --app pharmsmartce-api-staging | head`
+- **Expected result:** ≥ 2 releases visible including a rollback within 30 days.
+- **Recovery:** If drill older than 30 days, run a fresh drill before launch.
+
+### M8: Documentation + support audit
+- **Files to read:** `CONTRIBUTING.md`, `OPERATIONS.md`
+- **Files to change:** `PRODUCTION_READINESS.md (docs + support boxes)`, `ASSUMPTIONS.md`
+- **Exact edits expected:** All sections reviewed in last quarter; ASSUMPTIONS reconciled (no `Yes (blocks)` unresolved); every prior ExecPlan has `Outcomes & Retrospective` filled; on-call rota documented; customer contact channel published.
+- **Validation command:** `for ep in .agent/execplans/EP-*.md; do grep -q 'to be filled at completion' "$ep" && echo "MISSING: $ep"; done | head`
+- **Expected result:** No `MISSING:` output (all Outcomes filled).
+- **Recovery:** Fill the missing `Outcomes & Retrospective` section in any flagged ExecPlan.
+
+### M9: Final production-readiness-check
+- **Files to read:** `PRODUCTION_READINESS.md`
+- **Files to change:** (none)
+- **Exact edits expected:** Run the consolidated check.
+- **Validation command:** `scripts/production-readiness-check.sh`
+- **Expected result:** `production readiness: ok` exit 0.
+- **Recovery:** If any check fails, address the specific category and rerun. Record the final human launch gate comment on the release PR per the Final Launch Gate format.
+
+## 9. Concrete Steps
+Execute milestones in order. After each: run validation, verify expected,
+tick `Progress`, append one-line note. Apply bounded-retry (AGENTS §7) on
+any failure. Continue autonomously. Stop only under STOP conditions.
+
+## 10. Validation and Acceptance
+- All milestone validations pass.
+- `scripts/verify.sh` exit 0.
+- Acceptance criteria:
+  - [ ] `scripts/production-readiness-check.sh` exit 0
+  - [ ] `PRODUCTION_READINESS.md` fully ticked
+  - [ ] Human launch gate comment recorded on the release PR
+
+## 11. Idempotence and Recovery
+Re-running the check is a no-op once green; ticking boxes is git-tracked; no side effects on prod. The launch gate itself is a one-time human decision.
+
+## 12. Progress
+- [ ] M1: Functional category audit
+- [ ] M2: Test category audit
+- [ ] M3: Security category audit
+- [ ] M4: Privacy + data category audit
+- [ ] M5: Performance audit
+- [ ] M6: Observability audit
+- [ ] M7: Deployment + rollback audit
+- [ ] M8: Documentation + support audit
+- [ ] M9: Final production-readiness-check
+
+## 13. Surprises & Discoveries
+(empty — append entries here as they occur)
+
+## 14. Decision Log
+(empty — append entries here as they occur)
+
+## 15. Outcomes & Retrospective
+(to be filled at completion)
