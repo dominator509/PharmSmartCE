@@ -67,6 +67,8 @@ must satisfy `AGENTS.md` §13.**
 - **Verification:** monthly test-restore into
   `pharmsmartce-api-staging-restore`; smoke must pass; recorded in
   `.agent/checklists/production-readiness.md` ledger.
+- **Repo-local check:** `scripts/backup-restore-check.sh` proves the restore
+  path against the local Docker Postgres container.
 
 ## Scheduled Jobs
 | Job | Schedule | Action |

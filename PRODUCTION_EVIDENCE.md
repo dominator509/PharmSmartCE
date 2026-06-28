@@ -20,9 +20,9 @@ need a compact Obsidian-friendly summary of the open launch evidence.
 ## Data
 - Local migration proof: verified 2026-06-28 with `cmd.exe /c` + `scripts/bin/uv.cmd run --directory apps/api alembic upgrade head` against the local Postgres container.
 - Local integration proof: verified 2026-06-28 with `scripts/bin/uv.cmd run --directory apps/api pytest tests/integration/repositories -q`, `... test_faiss_store.py -q`, and `... test_citation_not_null.py -q`.
-- Local backup test-restore proof: verified 2026-06-28 with a throwaway `pg_dump`/`pg_restore` round-trip against the local Postgres container.
+- Local backup test-restore proof: verified 2026-06-28 with `scripts/backup-restore-check.sh` against the local Postgres container.
 - FAISS rebuildable: verified in repo with `python -m app.cli.rebuild_index --all`.
-- Backup test-restore: verified 2026-06-28 with a dated throwaway restore log against the local Postgres container.
+- Backup test-restore: verified 2026-06-28 with `scripts/backup-restore-check.sh` against the local Postgres container.
 - R2 retention evidence: TODO - capture bucket retention settings for sources and backups.
 - S3 encryption evidence: TODO - capture bucket encryption settings for sources and backups.
 
