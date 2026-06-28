@@ -16,13 +16,13 @@ router = APIRouter(prefix="/auth")
 
 
 class RegisterDTO(BaseModel):
-    email: str = Field(pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
-    password: str = Field(min_length=12)
+    email: str = Field(strict=True, pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+    password: str = Field(strict=True, min_length=12)
 
 
 class LoginDTO(BaseModel):
-    email: str = Field(pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
-    password: str = Field(min_length=12)
+    email: str = Field(strict=True, pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+    password: str = Field(strict=True, min_length=12)
 
 
 class UserDTO(BaseModel):
@@ -42,8 +42,8 @@ class AccessTokenDTO(BaseModel):
 
 
 class ChangePasswordDTO(BaseModel):
-    current_password: str = Field(min_length=12)
-    new_password: str = Field(min_length=12)
+    current_password: str = Field(strict=True, min_length=12)
+    new_password: str = Field(strict=True, min_length=12)
 
 
 def _auth_service(request: Request, session: AsyncSession) -> AuthService:
