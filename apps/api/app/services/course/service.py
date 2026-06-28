@@ -80,6 +80,8 @@ class CourseService:
             raise ValidationError("Source filename must not be empty.")
         if filename != Path(filename).name or filename in {".", ".."}:
             raise ValidationError("Source filename must not include path separators.")
+        if filename.rstrip(" .") != filename:
+            raise ValidationError("Source filename must not end with dots or spaces.")
         if os.name == "nt" and _is_windows_reserved_filename(filename):
             raise ValidationError("Source filename must not use reserved Windows names.")
         if not content:

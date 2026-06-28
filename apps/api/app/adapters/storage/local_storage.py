@@ -37,6 +37,8 @@ def _ensure_plain_filename(filename: str) -> None:
         raise ValueError("Source filename must not be empty.")
     if filename != Path(filename).name or filename in {".", ".."}:
         raise ValueError("Source filename must not include path separators.")
+    if filename.rstrip(" .") != filename:
+        raise ValueError("Source filename must not end with dots or spaces.")
     if os.name == "nt" and _is_windows_reserved_filename(filename):
         raise ValueError("Source filename must not use reserved Windows names.")
 
