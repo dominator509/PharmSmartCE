@@ -1,6 +1,6 @@
 import pytest
 
-from app.domain.entities import Answer, CERecord, Org, Session, Source, User
+from app.domain.entities import Answer, CERecord, Chunk, Org, Question, Session, Source, User
 from app.domain.errors import DomainError
 
 
@@ -96,6 +96,76 @@ def test_domain_records_accept_valid_baseline_values(entity_type, kwargs, field_
     ],
 )
 def test_domain_records_reject_invalid_values(entity_type, kwargs, field_name, value) -> None:
+    kwargs[field_name] = value
+
+    with pytest.raises(DomainError):
+        entity_type(**kwargs)
+
+
+@pytest.mark.parametrize(
+    "entity_type, kwargs, field_name, value",
+    [
+        (
+            Source,
+            {
+                "id": "source-1",
+                "course_id": "course-1",
+                "doc_id": "doc-1",
+                "filename": "source.pdf",
+            },
+            "page_count",
+            True,
+        ),
+        (
+            Chunk,
+            {"doc_id": "doc-1", "page": 1, "span": "p1:s1", "text": "Alpha beta gamma."},
+            "page",
+            True,
+        ),
+        (
+            Question,
+            {
+                "stem": "What is the key point?",
+                "choices": ("A", "B", "C", "D"),
+                "correct_choice_index": 1,
+                "rationale": "The source text explains the key point clearly.",
+                "source_doc_id": "doc-1",
+                "source_page": 7,
+                "source_span": "p7:s1",
+            },
+            "source_page",
+            True,
+        ),
+        (
+            Answer,
+            {
+                "id": "answer-1",
+                "session_id": "session-1",
+                "question_id": "question-1",
+                "selected_choice_index": 0,
+                "is_correct": True,
+            },
+            "selected_choice_index",
+            True,
+        ),
+        (
+            CERecord,
+            {
+                "id": "record-1",
+                "session_id": "session-1",
+                "user_id": "user-1",
+                "course_id": "course-1",
+                "passed": True,
+                "score_percent": 100.0,
+            },
+            "score_percent",
+            float("nan"),
+        ),
+    ],
+)
+def test_domain_records_reject_bool_and_nonfinite_numeric_values(
+    entity_type, kwargs, field_name, value
+) -> None:
     kwargs[field_name] = value
 
     with pytest.raises(DomainError):

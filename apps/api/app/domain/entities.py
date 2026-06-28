@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from math import isfinite
 
 from app.domain.errors import DomainError
 
@@ -64,6 +65,8 @@ class Source:
             raise DomainError("Source requires a doc_id.")
         if not self.filename.strip():
             raise DomainError("Source requires a filename.")
+        if isinstance(self.page_count, bool):
+            raise DomainError("Source requires a numeric page_count.")
         if self.page_count < 0:
             raise DomainError("Source requires a non-negative page_count.")
 
@@ -79,6 +82,8 @@ class Chunk:
     def __post_init__(self) -> None:
         if not self.doc_id.strip():
             raise DomainError("Chunk requires a doc_id.")
+        if isinstance(self.page, bool):
+            raise DomainError("Chunk requires a numeric page.")
         if self.page <= 0:
             raise DomainError("Chunk requires a positive page.")
         if not self.span.strip():
@@ -105,6 +110,8 @@ class Question:
             raise DomainError("Question requires a rationale.")
         if not self.source_doc_id.strip():
             raise DomainError("Question requires a source_doc_id.")
+        if isinstance(self.source_page, bool):
+            raise DomainError("Question requires a numeric source_page.")
         if self.source_page is None or self.source_page <= 0:
             raise DomainError("Question requires a positive source_page.")
         if not self.source_span.strip():
@@ -150,6 +157,8 @@ class Answer:
             raise DomainError("Answer requires a session_id.")
         if not self.question_id.strip():
             raise DomainError("Answer requires a question_id.")
+        if isinstance(self.selected_choice_index, bool):
+            raise DomainError("Answer requires a numeric selected_choice_index.")
         if self.selected_choice_index < 0:
             raise DomainError("Answer requires a non-negative selected_choice_index.")
 
@@ -172,5 +181,7 @@ class CERecord:
             raise DomainError("CERecord requires a user_id.")
         if not self.course_id.strip():
             raise DomainError("CERecord requires a course_id.")
+        if isinstance(self.score_percent, bool) or not isfinite(self.score_percent):
+            raise DomainError("CERecord requires a finite score_percent.")
         if not 0 <= self.score_percent <= 100:
             raise DomainError("CERecord requires a score_percent between 0 and 100.")
