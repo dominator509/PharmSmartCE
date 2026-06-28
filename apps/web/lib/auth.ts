@@ -7,6 +7,11 @@ export type AuthCredentials = {
   password: string;
 };
 
+export type PasswordChangeCredentials = {
+  currentPassword: string;
+  newPassword: string;
+};
+
 export type AccessTokenDTO = {
   access_token: string;
   token_type: string;
@@ -67,6 +72,10 @@ export async function logoutAction(): Promise<void> {
   await performLogout();
 }
 
+export async function changePasswordAction(formData: FormData): Promise<void> {
+  await performPasswordChange(parsePasswordChange(formData));
+}
+
 export function createAuthActions(deps: AuthDeps = {}) {
   return {
     login: async (credentials: AuthCredentials): Promise<AuthResult> =>
@@ -82,6 +91,8 @@ export function createAuthActions(deps: AuthDeps = {}) {
     },
     refresh: async (): Promise<AuthResult> => performRefresh(deps),
     logout: async (): Promise<void> => performLogout(deps),
+    changePassword: async (credentials: PasswordChangeCredentials): Promise<void> =>
+      performPasswordChange(credentials, deps),
   };
 }
 
@@ -129,6 +140,24 @@ async function performLogout(deps: AuthDeps = {}): Promise<void> {
   }
 }
 
+async function performPasswordChange(
+  credentials: PasswordChangeCredentials,
+  deps: AuthDeps = {},
+): Promise<void> {
+  await requestJson<void>("/auth/password", {
+    ...deps,
+    method: "PATCH",
+    headers: {
+      ...(await accessHeaders(deps)),
+      ...jsonHeaders(),
+    },
+    body: JSON.stringify({
+      current_password: credentials.currentPassword,
+      new_password: credentials.newPassword,
+    }),
+  });
+}
+
 async function requestJson<T>(
   path: string,
   options: RequestInit & AuthDeps = {},
@@ -171,9 +200,21 @@ function parseCredentials(formData: FormData): AuthCredentials {
   };
 }
 
+function parsePasswordChange(formData: FormData): PasswordChangeCredentials {
+  return {
+    currentPassword: String(formData.get("current_password") ?? ""),
+    newPassword: String(formData.get("new_password") ?? ""),
+  };
+}
+
 async function refreshHeaders(deps: AuthDeps): Promise<HeadersInit> {
   const refresh = (await getCookieStore(deps)).get(REFRESH_COOKIE)?.value;
   return refresh ? { cookie: `${REFRESH_COOKIE}=${refresh}` } : {};
+}
+
+async function accessHeaders(deps: AuthDeps): Promise<HeadersInit> {
+  const access = (await getCookieStore(deps)).get("access")?.value;
+  return access ? { authorization: `Bearer ${access}` } : {};
 }
 
 function jsonHeaders(): HeadersInit {

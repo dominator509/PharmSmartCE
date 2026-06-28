@@ -98,6 +98,45 @@ describe("createAuthActions", () => {
     await actions.logout();
     expect(store.get("refresh")).toBeUndefined();
   });
+
+  it("changes passwords with the access cookie", async () => {
+    const fetchImpl = vi.fn().mockResolvedValueOnce(
+      new Response(null, {
+        status: 204,
+      }),
+    );
+    const store = createCookieStore({
+      access: "access-token",
+      refresh: "refresh-token",
+    });
+    const actions = createAuthActions({
+      baseUrl: "https://api.example",
+      fetchImpl,
+      cookieStore: store,
+    });
+
+    await actions.changePassword({
+      currentPassword: "secretsecret12",
+      newPassword: "newsecretsecret12",
+    });
+
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+    expect(fetchImpl).toHaveBeenCalledWith(
+      expect.any(URL),
+      expect.objectContaining({
+        method: "PATCH",
+        headers: expect.objectContaining({
+          authorization: "Bearer access-token",
+          "content-type": "application/json",
+        }),
+        body: JSON.stringify({
+          current_password: "secretsecret12",
+          new_password: "newsecretsecret12",
+        }),
+      }),
+    );
+    expect(store.get("refresh")?.value).toBe("refresh-token");
+  });
 });
 
 function createCookieStore(initial: Record<string, string> = {}) {

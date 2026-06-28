@@ -158,6 +158,20 @@ class AuthService:
 
         await self.session.commit()
 
+    async def change_password(
+        self,
+        user_id: str,
+        current_password: str,
+        new_password: str,
+    ) -> None:
+        user = await self.users.get(user_id)
+        if user is None or not verify_password(current_password, user.password_hash):
+            raise AuthError("Current password is incorrect.")
+
+        user.password_hash = hash_password(new_password)
+        await self.refresh_tokens.revoke_all_for_user(user.id)
+        await self.session.commit()
+
     async def _issue_session(self, user: UserModel) -> AuthResult:
         jti, refresh_cookie, digest, expires_at = mint_refresh_token(
             secret=self.settings.refresh_secret,

@@ -41,6 +41,11 @@ class AccessTokenDTO(BaseModel):
     expires_in: int
 
 
+class ChangePasswordDTO(BaseModel):
+    current_password: str = Field(min_length=12)
+    new_password: str = Field(min_length=12)
+
+
 def _auth_service(request: Request, session: AsyncSession) -> AuthService:
     return AuthService(session=session, settings=request.app.state.settings)
 
@@ -150,3 +155,18 @@ async def delete_account(
         _clear_refresh_cookie(response)
         response.status_code = status.HTTP_204_NO_CONTENT
         return response
+
+
+@router.patch("/password", status_code=status.HTTP_204_NO_CONTENT)
+async def change_password(
+    payload: ChangePasswordDTO,
+    user: Annotated[Principal, Depends(current_user)],
+    request: Request,
+) -> Response:
+    async with request.app.state.session_factory() as session:
+        await _auth_service(request, session).change_password(
+            user.id,
+            payload.current_password,
+            payload.new_password,
+        )
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
