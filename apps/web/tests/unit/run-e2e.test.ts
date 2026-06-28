@@ -1,11 +1,16 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-const spawnCalls: Array<{ command: string; args: string[] }> = [];
+const spawnCalls: Array<{
+  command: string;
+  args: string[];
+  env: Record<string, string | undefined>;
+}> = [];
 const fetchCalls: string[] = [];
 const killedChildren: Array<{ killed: boolean }> = [];
+const reservedPorts = [43210, 43211];
 
 vi.mock("node:child_process", () => ({
-  spawn: vi.fn((command: string, args: string[]) => {
+  spawn: vi.fn((command: string, args: string[], options?: { env?: Record<string, string | undefined> }) => {
     const child = {
       killed: false,
       on(event: string, handler: (code: number | null) => void) {
@@ -17,9 +22,31 @@ vi.mock("node:child_process", () => ({
         this.killed = true;
       },
     };
-    spawnCalls.push({ command, args });
+    spawnCalls.push({ command, args, env: options?.env ?? {} });
     killedChildren.push(child);
     return child;
+  }),
+}));
+
+vi.mock("node:net", () => ({
+  createServer: vi.fn(() => {
+    let port = reservedPorts.shift();
+    return {
+      unref() {},
+      once(_event: string, handler: (error: Error) => void) {
+        void handler;
+      },
+      listen(_port: number, _host: string, handler: () => void) {
+        port = port ?? 43210;
+        queueMicrotask(handler);
+      },
+      address() {
+        return port === undefined ? null : { port };
+      },
+      close(handler: (error?: Error) => void) {
+        queueMicrotask(() => handler());
+      },
+    };
   }),
 }));
 
@@ -47,12 +74,20 @@ describe("run-e2e.mjs", () => {
       global.fetch = originalFetch;
     }
 
-    expect(spawnCalls).toHaveLength(3);
-    expect(spawnCalls[0]?.args).toContain("uvicorn");
-    expect(spawnCalls[1]?.args).toContain("dev");
-    expect(spawnCalls[2]?.args).toContain("test");
-    expect(fetchCalls[0]).toBe("http://127.0.0.1:8000/healthz");
-    expect(fetchCalls[1]).toBe("http://127.0.0.1:3000");
-    expect(killedChildren[0]?.killed).toBe(true);
+    expect(spawnCalls.some(({ args }) => args.includes("uvicorn"))).toBe(true);
+    expect(spawnCalls.some(({ args }) => args.includes("alembic"))).toBe(true);
+    expect(
+      spawnCalls.some(({ args }) => args.includes("dev") && args.includes("43211")),
+    ).toBe(true);
+    expect(spawnCalls.some(({ args }) => args.includes("test"))).toBe(true);
+    expect(spawnCalls[0]?.args).toContain("43210");
+    expect(spawnCalls[0]?.env.WEB_PUBLIC_API_URL).toBe(
+      "http://127.0.0.1:43210",
+    );
+    expect(spawnCalls[2]?.env.PLAYWRIGHT_BASE_URL).toBe(
+      "http://127.0.0.1:43211",
+    );
+    expect(fetchCalls[0]).toBe("http://127.0.0.1:43210/healthz");
+    expect(fetchCalls[1]).toBe("http://127.0.0.1:43211");
   });
 });
