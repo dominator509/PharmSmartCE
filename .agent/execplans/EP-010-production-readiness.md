@@ -149,6 +149,7 @@ Re-running the check is a no-op once green; ticking boxes is git-tracked; no sid
 - 2026-06-28 - The evidence ledger itself now has a local consistency check: `scripts/evidence-ledger-check.sh` validates the required sections and row structure.
 - 2026-06-28 - The performance ledger now records the remaining target-host proof items explicitly: P95 session-start and 30-page ingest placeholders live in `PRODUCTION_EVIDENCE.md`.
 - 2026-06-28 - The evidence ledger check now asserts every open readiness area is represented, so the ledger mirrors the outstanding launch proof rows rather than just the section headings.
+- 2026-06-28 - The privacy gap is now explicit in the ledger too: `Uploaded docs SSE-S3 encrypted at rest` is captured as the remaining proof row.
 - Serena health-check still fails on this Windows profile because the embedded uv/pyright startup cannot create its lock/cache files under the current user context, even after moving Serena's cache path to a repo-local `.tmp` directory.
 
 ## 14. Decision Log

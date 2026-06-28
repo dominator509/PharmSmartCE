@@ -28,6 +28,9 @@ need a compact Obsidian-friendly summary of the open launch evidence.
 ## Security
 - Local security proof: verified 2026-06-28 with `scripts/security-check.sh`, `scripts/dependency-audit.sh`, and `scripts/bin/uv.cmd run --directory apps/api pytest tests/integration/security -q`.
 
+## Privacy
+- Uploaded docs SSE-S3 encrypted at rest: TODO - capture bucket encryption settings for source PDFs and backups.
+
 ## Performance
 - Local perf proof: verified 2026-06-28 with `scripts/bin/uv.cmd run --directory apps/api pytest tests/integration/perf -q`.
 - Target-host P95 session-start: TODO - capture the Fly 4 vCPU / 8 GB timing and record <= 30 s.

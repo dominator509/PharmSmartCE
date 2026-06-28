@@ -22,6 +22,7 @@ required_sections = [
     "Rollback",
     "Data",
     "Security",
+    "Privacy",
     "Performance",
     "Observability",
     "Support / Ops",
@@ -78,6 +79,9 @@ required_patterns = {
     ],
     "Security": [
         "Local security proof",
+    ],
+    "Privacy": [
+        "Uploaded docs SSE-S3 encrypted at rest",
     ],
     "Performance": [
         "Local perf proof",
