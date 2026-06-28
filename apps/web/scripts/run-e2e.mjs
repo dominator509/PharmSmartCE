@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import { execFile } from "node:child_process";
 import { resolve } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 
@@ -54,7 +55,19 @@ function waitForExit(child) {
   });
 }
 
+function execCommand(command, args) {
+  return new Promise((resolve) => {
+    const child = execFile(command, args, { windowsHide: true }, (_error, stdout) => {
+      resolve(stdout ?? "");
+    });
+    child.stdin?.end();
+  });
+}
+
 async function terminate(child) {
+  if (!child) {
+    return;
+  }
   if (child.exitCode === null && child.signalCode === null) {
     if (process.platform === "win32" && child.pid !== undefined) {
       const killer = spawn("taskkill", ["/PID", String(child.pid), "/T", "/F"], {
@@ -69,6 +82,37 @@ async function terminate(child) {
   }
 }
 
+async function freePort(port) {
+  if (process.platform !== "win32") {
+    return;
+  }
+
+  const output = await execCommand("cmd", [
+    "/c",
+    `netstat -ano | findstr :${port}`,
+  ]);
+  const pids = new Set();
+
+  for (const line of output.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || !trimmed.includes("LISTENING")) {
+      continue;
+    }
+    const pid = trimmed.split(/\s+/).at(-1);
+    if (pid && pid !== "0") {
+      pids.add(pid);
+    }
+  }
+
+  for (const pid of pids) {
+    const killer = spawn("taskkill", ["/PID", pid, "/T", "/F"], {
+      stdio: "inherit",
+      windowsHide: true,
+    });
+    await waitForExit(killer);
+  }
+}
+
 const backendEnv = {
   ...process.env,
   UV_CACHE_DIR: process.env.UV_CACHE_DIR ?? resolve(tempRoot, "uv-cache"),
@@ -78,47 +122,53 @@ const backendEnv = {
   WEB_PUBLIC_API_URL: process.env.WEB_PUBLIC_API_URL ?? apiUrl,
 };
 
-const apiServer = spawnCommand(
-  "python",
-  [
-    "-m",
-    "uv",
-    "run",
-    "--directory",
-    resolve(process.cwd(), "..", "api"),
-    "uvicorn",
-    "app.main:app",
-    "--host",
-    "127.0.0.1",
-    "--port",
-    "8000",
-  ],
-  backendEnv,
-);
-
-const migrate = spawnCommand(
-  "python",
-  [
-    "-m",
-    "uv",
-    "run",
-    "--directory",
-    resolve(process.cwd(), "..", "api"),
-    "alembic",
-    "upgrade",
-    "head",
-  ],
-  backendEnv,
-);
-
-const nextServer = spawnCommand(process.execPath, [
-  "node_modules/next/dist/bin/next",
-  "dev",
-  "-H",
-  "127.0.0.1",
-]);
+let apiServer;
+let migrate;
+let nextServer;
 
 try {
+  await freePort(8000);
+  await freePort(3000);
+  apiServer = spawnCommand(
+    "python",
+    [
+      "-m",
+      "uv",
+      "run",
+      "--directory",
+      resolve(process.cwd(), "..", "api"),
+      "uvicorn",
+      "app.main:app",
+      "--host",
+      "127.0.0.1",
+      "--port",
+      "8000",
+    ],
+    backendEnv,
+  );
+
+  migrate = spawnCommand(
+    "python",
+    [
+      "-m",
+      "uv",
+      "run",
+      "--directory",
+      resolve(process.cwd(), "..", "api"),
+      "alembic",
+      "upgrade",
+      "head",
+    ],
+    backendEnv,
+  );
+
+  nextServer = spawnCommand(process.execPath, [
+    "node_modules/next/dist/bin/next",
+    "dev",
+    "-H",
+    "127.0.0.1",
+  ]);
+
   const migrateCode = await waitForExit(migrate);
   if (migrateCode !== 0) {
     process.exitCode = migrateCode ?? 1;
@@ -138,5 +188,6 @@ try {
   }
 } finally {
   await terminate(apiServer);
+  await terminate(migrate);
   await terminate(nextServer);
 }
