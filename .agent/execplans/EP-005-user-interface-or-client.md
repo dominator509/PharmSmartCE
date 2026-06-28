@@ -129,6 +129,7 @@ E2E tests are deterministic when the API is started fresh via docker compose. Re
 - 2026-06-27 - The session drawer now fetches citation previews from `/api/sessions/{session_id}/citation`, which reads stored chunk text so deep links can open a real source passage instead of a placeholder.
 - 2026-06-27 - The e2e runner now applies `alembic upgrade head` before browser tests and uses Windows `taskkill /T /F` cleanup so the API does not linger on port 8000 between runs.
 - 2026-06-27 - The e2e runner now clears stale listeners on ports 3000 and 8000 before it starts, which keeps Playwright on the canonical local origin when earlier runs crashed.
+- 2026-06-27 - The e2e runner now reserves ephemeral local ports and threads them through Playwright, which removed the last hardcoded localhost coupling from the browser suite.
 
 ## 14. Decision Log
 - 2026-06-27 - Next 15.5.18's `cookies()` is async in this repo, so the auth bridge awaits it and casts the returned cookie jar to the repository's narrow cookie-store helper type.
@@ -136,6 +137,7 @@ E2E tests are deterministic when the API is started fresh via docker compose. Re
 - 2026-06-27 - The course pages read the browser-set `access` cookie directly, while the auth-complete handoff page stores that cookie from the server-issued access token and then redirects to `/courses`.
 - 2026-06-27 - `QuestionView` uses native radios plus a server-action-backed form state, and `CitationDrawer` renders as a role="dialog" panel so Playwright and assistive tech can open the citation deep link predictably.
 - 2026-06-27 - `apps/web/scripts/run-e2e.mjs` now runs the API migration before Playwright and force-stops the whole API process tree on Windows to avoid stale port 8000 listeners.
+- 2026-06-27 - `apps/web/scripts/run-e2e.mjs` now reserves ephemeral ports for API and web, exports them through `E2E_API_BASE_URL` / `PLAYWRIGHT_BASE_URL`, and passes the runner env into Next so browser-side server actions hit the correct API origin.
 
 ## 15. Outcomes & Retrospective
 The client layer now has a usable Next.js shell for auth, courses, and source upload. The auth-complete handoff keeps the server actions simple while still giving the browser a persistent token for protected pages, which made the courses flow and Playwright happy path land cleanly without a larger client-state rewrite.

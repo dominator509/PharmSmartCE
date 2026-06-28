@@ -1,7 +1,7 @@
 import axe from "axe-core";
 import { expect, test, type Page } from "@playwright/test";
 
-const API_BASE = "http://127.0.0.1:8000";
+import { API_BASE, WEB_BASE_URL } from "./env";
 
 function uniqueEmail(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2, 8)}@example.com`;
@@ -76,7 +76,7 @@ test("axe-core reports no serious violations on the core pages", async ({
     {
       name: "access",
       value: accessToken,
-      url: "http://127.0.0.1:3000",
+      url: WEB_BASE_URL,
     },
   ]);
 

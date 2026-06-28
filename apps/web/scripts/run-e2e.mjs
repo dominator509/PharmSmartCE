@@ -1,10 +1,8 @@
 import { spawn } from "node:child_process";
-import { execFile } from "node:child_process";
+import { createServer } from "node:net";
 import { resolve } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 
-const baseUrl = "http://127.0.0.1:3000";
-const apiUrl = "http://127.0.0.1:8000";
 const repoRoot = resolve(process.cwd(), "..", "..");
 const tempRoot = resolve(repoRoot, ".tmp");
 
@@ -17,11 +15,35 @@ function spawnCommand(command, args, env = process.env) {
   });
 }
 
-async function waitForServer(timeoutMs = 30_000) {
+async function reservePort() {
+  const server = createServer();
+  server.unref();
+
+  return await new Promise((resolve, reject) => {
+    server.once("error", reject);
+    server.listen(0, "127.0.0.1", () => {
+      const address = server.address();
+      if (address === null || typeof address === "string") {
+        reject(new Error("Unable to reserve a local port."));
+        return;
+      }
+      const port = address.port;
+      server.close((closeError) => {
+        if (closeError) {
+          reject(closeError);
+          return;
+        }
+        resolve(port);
+      });
+    });
+  });
+}
+
+async function waitForUrl(url, timeoutMs = 30_000) {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
     try {
-      const response = await fetch(baseUrl);
+      const response = await fetch(url);
       if (response.ok) {
         return;
       }
@@ -30,37 +52,12 @@ async function waitForServer(timeoutMs = 30_000) {
     }
     await delay(500);
   }
-  throw new Error(`Timed out waiting for ${baseUrl}`);
-}
-
-async function waitForApi(timeoutMs = 30_000) {
-  const deadline = Date.now() + timeoutMs;
-  while (Date.now() < deadline) {
-    try {
-      const response = await fetch(`${apiUrl}/healthz`);
-      if (response.ok) {
-        return;
-      }
-    } catch {
-      // API is not ready yet.
-    }
-    await delay(500);
-  }
-  throw new Error(`Timed out waiting for ${apiUrl}`);
+  throw new Error(`Timed out waiting for ${url}`);
 }
 
 function waitForExit(child) {
   return new Promise((resolve) => {
     child.on("exit", (code) => resolve(code));
-  });
-}
-
-function execCommand(command, args) {
-  return new Promise((resolve) => {
-    const child = execFile(command, args, { windowsHide: true }, (_error, stdout) => {
-      resolve(stdout ?? "");
-    });
-    child.stdin?.end();
   });
 }
 
@@ -82,44 +79,12 @@ async function terminate(child) {
   }
 }
 
-async function freePort(port) {
-  if (process.platform !== "win32") {
-    return;
-  }
-
-  const output = await execCommand("cmd", [
-    "/c",
-    `netstat -ano | findstr :${port}`,
-  ]);
-  const pids = new Set();
-
-  for (const line of output.split(/\r?\n/)) {
-    const trimmed = line.trim();
-    if (!trimmed || !trimmed.includes("LISTENING")) {
-      continue;
-    }
-    const pid = trimmed.split(/\s+/).at(-1);
-    if (pid && pid !== "0") {
-      pids.add(pid);
-    }
-  }
-
-  for (const pid of pids) {
-    const killer = spawn("taskkill", ["/PID", pid, "/T", "/F"], {
-      stdio: "inherit",
-      windowsHide: true,
-    });
-    await waitForExit(killer);
-  }
-}
-
 const backendEnv = {
   ...process.env,
   UV_CACHE_DIR: process.env.UV_CACHE_DIR ?? resolve(tempRoot, "uv-cache"),
   TMP: process.env.TMP ?? tempRoot,
   TEMP: process.env.TEMP ?? tempRoot,
   TMPDIR: process.env.TMPDIR ?? tempRoot,
-  WEB_PUBLIC_API_URL: process.env.WEB_PUBLIC_API_URL ?? apiUrl,
 };
 
 let apiServer;
@@ -127,8 +92,20 @@ let migrate;
 let nextServer;
 
 try {
-  await freePort(8000);
-  await freePort(3000);
+  const apiPort = process.env.E2E_API_PORT
+    ? Number(process.env.E2E_API_PORT)
+    : await reservePort();
+  const webPort = process.env.E2E_WEB_PORT
+    ? Number(process.env.E2E_WEB_PORT)
+    : await reservePort();
+  const apiUrl = process.env.E2E_API_BASE_URL ?? `http://127.0.0.1:${apiPort}`;
+  const webUrl = process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${webPort}`;
+
+  backendEnv.WEB_PUBLIC_API_URL = process.env.WEB_PUBLIC_API_URL ?? apiUrl;
+  backendEnv.E2E_API_BASE_URL = apiUrl;
+  backendEnv.E2E_WEB_BASE_URL = webUrl;
+  backendEnv.PLAYWRIGHT_BASE_URL = webUrl;
+
   apiServer = spawnCommand(
     "python",
     [
@@ -142,7 +119,7 @@ try {
       "--host",
       "127.0.0.1",
       "--port",
-      "8000",
+      String(apiPort),
     ],
     backendEnv,
   );
@@ -167,21 +144,25 @@ try {
     "dev",
     "-H",
     "127.0.0.1",
-  ]);
+    "-p",
+    String(webPort),
+  ], backendEnv);
 
   const migrateCode = await waitForExit(migrate);
   if (migrateCode !== 0) {
     process.exitCode = migrateCode ?? 1;
     throw new Error("Failed to migrate the API database before e2e tests.");
   }
-  await waitForApi();
-  await waitForServer();
+
+  await waitForUrl(`${apiUrl}/healthz`);
+  await waitForUrl(webUrl);
+
   const playwrightArgs = process.argv.slice(2).filter((arg) => arg !== "--");
   const playwright = spawnCommand(process.execPath, [
     "node_modules/@playwright/test/cli.js",
     "test",
     ...playwrightArgs,
-  ]);
+  ], backendEnv);
   const code = await waitForExit(playwright);
   if (code !== 0) {
     process.exitCode = code ?? 1;
