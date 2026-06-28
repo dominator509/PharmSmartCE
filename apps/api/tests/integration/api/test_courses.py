@@ -68,7 +68,7 @@ def test_course_routes_and_upload(tmp_path: Path) -> None:
                     "file": (
                         "source.pdf",
                         b"%PDF-1.4\n1 0 obj\n<<>>\nendobj\ntrailer\n<<>>\n%%EOF",
-                        "application/pdf",
+                        "application/pdf; charset=binary",
                     )
                 },
             )

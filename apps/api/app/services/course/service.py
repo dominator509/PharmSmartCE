@@ -73,7 +73,7 @@ class CourseService:
         if len(content) > max_bytes:
             raise ValidationError("Source file exceeds the maximum size.")
 
-        mime = (content_type or magic.from_buffer(content[:2048], mime=True) or "").lower()
+        mime = _normalize_mime_type(content_type or magic.from_buffer(content[:2048], mime=True))
         is_pdf = mime == "application/pdf" or filename.lower().endswith(".pdf")
         is_docx = (
             mime == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -99,3 +99,9 @@ class CourseService:
         await self.storage.save_source(course_id, source.id, filename, content)
         await self.ingest_service.enqueue(source.id)
         return source
+
+
+def _normalize_mime_type(value: str | None) -> str:
+    if not value:
+        return ""
+    return value.split(";", 1)[0].strip().lower()
