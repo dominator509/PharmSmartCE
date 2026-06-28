@@ -28,6 +28,12 @@ need a compact Obsidian-friendly summary of the open launch evidence.
 ## Security
 - Local security proof: verified 2026-06-28 with `scripts/security-check.sh`, `scripts/dependency-audit.sh`, and `scripts/bin/uv.cmd run --directory apps/api pytest tests/integration/security -q`.
 
+## Performance
+- Local perf proof: verified 2026-06-28 with `scripts/bin/uv.cmd run --directory apps/api pytest tests/integration/perf -q`.
+
+## Observability
+- Local observability proof: verified 2026-06-28 with `scripts/bin/uv.cmd run --directory apps/api pytest tests/integration/test_observability_metrics_shape.py tests/integration/test_observability_redaction.py tests/integration/test_sentry.py tests/integration/test_alert_smoke.py -q`.
+
 ## Support / Ops
 - Incident tabletop: TODO - run the checklist and record outcome within 30 days.
 - Sentry staging/prod evidence: TODO - capture a staging and prod event or dashboard proof.
