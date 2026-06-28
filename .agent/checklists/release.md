@@ -9,3 +9,4 @@
 - [ ] Prod deploy completed + post-deploy smoke green
 - [ ] Dashboards watched for 30 min post-deploy with no Sev1/Sev2
 - [ ] Release notes posted from `CHANGELOG.md`
+- [ ] Evidence captured in `PRODUCTION_EVIDENCE.md`

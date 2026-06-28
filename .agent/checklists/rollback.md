@@ -13,3 +13,4 @@
 - [ ] Customer-impact tickets updated
 - [ ] Communication template posted (status page + internal channel)
 - [ ] Postmortem scheduled within 5 business days for Sev1/Sev2
+- [ ] Evidence captured in `PRODUCTION_EVIDENCE.md`

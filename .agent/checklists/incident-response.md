@@ -10,3 +10,4 @@
 - [ ] **Verify** — dashboards back to baseline; smoke green
 - [ ] **Document** — incident report (timeline + impact + actions)
 - [ ] **Follow up** — postmortem within 5 business days for Sev1/Sev2; action items with owners and dates
+- [ ] **Archive evidence** — capture the drill / incident notes in `PRODUCTION_EVIDENCE.md`
