@@ -46,12 +46,16 @@ test("upload source", async ({ page, request }) => {
   await page.goto("/login");
   await page.getByLabel("Email").fill(email);
   await page.getByLabel("Password").fill(password);
-  await page.getByRole("button", { name: "Log in" }).click();
-  await expect(page).toHaveURL(/\/courses$/);
+  await Promise.all([
+    page.waitForURL(/\/courses$/, { timeout: 10_000 }),
+    page.getByRole("button", { name: "Log in" }).click(),
+  ]);
 
   await expect(page.getByRole("link", { name: "Cardiology CE" })).toBeVisible();
-  await page.getByRole("link", { name: "Cardiology CE" }).click();
-  await expect(page).toHaveURL(new RegExp(`/courses/${courseId}$`));
+  await Promise.all([
+    page.waitForURL(new RegExp(`/courses/${courseId}$`), { timeout: 10_000 }),
+    page.getByRole("link", { name: "Cardiology CE" }).click(),
+  ]);
 
   await page.getByLabel("Source file").setInputFiles({
     name: "source.pdf",
