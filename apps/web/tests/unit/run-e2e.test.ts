@@ -84,6 +84,12 @@ describe("run-e2e.mjs", () => {
     expect(spawnCalls[0]?.env.WEB_PUBLIC_API_URL).toBe(
       "http://127.0.0.1:43210",
     );
+    expect(spawnCalls[0]?.env.E2E_API_BASE_URL).toBe(
+      "http://127.0.0.1:43210",
+    );
+    expect(spawnCalls[2]?.env.E2E_WEB_BASE_URL).toBe(
+      "http://127.0.0.1:43211",
+    );
     expect(spawnCalls[2]?.env.PLAYWRIGHT_BASE_URL).toBe(
       "http://127.0.0.1:43211",
     );
