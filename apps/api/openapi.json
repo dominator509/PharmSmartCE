@@ -407,6 +407,8 @@
             "required": true,
             "schema": {
               "type": "string",
+              "minLength": 1,
+              "pattern": ".*\\S.*",
               "title": "Doc Id"
             }
           },
@@ -427,6 +429,7 @@
             "schema": {
               "type": "string",
               "minLength": 1,
+              "pattern": ".*\\S.*",
               "title": "Span"
             }
           }
@@ -649,6 +652,8 @@
         "properties": {
           "question_id": {
             "type": "string",
+            "minLength": 1,
+            "pattern": ".*\\S.*",
             "title": "Question Id"
           },
           "chosen_index": {
@@ -849,6 +854,9 @@
         "properties": {
           "title": {
             "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "pattern": ".*\\S.*",
             "title": "Title"
           },
           "n_questions": {
@@ -858,6 +866,8 @@
           },
           "pass_pct": {
             "type": "integer",
+            "maximum": 100.0,
+            "minimum": 50.0,
             "title": "Pass Pct",
             "default": 70
           }
@@ -996,6 +1006,7 @@
         "properties": {
           "email": {
             "type": "string",
+            "maxLength": 320,
             "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
             "title": "Email"
           },
@@ -1046,6 +1057,7 @@
         "properties": {
           "email": {
             "type": "string",
+            "maxLength": 320,
             "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
             "title": "Email"
           },
@@ -1173,6 +1185,7 @@
           },
           "filename": {
             "type": "string",
+            "maxLength": 255,
             "title": "Filename"
           },
           "bytes": {

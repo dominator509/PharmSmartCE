@@ -78,6 +78,8 @@ class CourseService:
     ) -> SourceModel:
         if not filename.strip():
             raise ValidationError("Source filename must not be empty.")
+        if len(filename) > 255:
+            raise ValidationError("Source filename must not exceed 255 characters.")
         if filename != Path(filename).name or filename in {".", ".."}:
             raise ValidationError("Source filename must not include path separators.")
         if filename.rstrip(" .") != filename:

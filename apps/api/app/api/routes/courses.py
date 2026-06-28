@@ -50,7 +50,7 @@ class CourseCreateDTO(BaseModel):
 class SourceDTO(BaseModel):
     id: str
     course_id: str
-    filename: str
+    filename: str = Field(max_length=255)
     bytes: int
     sha256: str
     status: str

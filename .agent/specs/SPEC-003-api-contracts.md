@@ -45,6 +45,7 @@ can rely on, with consistent error shapes and authorization.
 ## DTO Shapes (selected)
 - `AccessTokenDTO`: `{ access_token: str, token_type: "Bearer", expires_in: int }`
 - `QuestionDTO`: `{ id, text, options[], citation: {doc_id, page, span, url} }`
+- `SourceDTO`: `{ id, course_id, filename (<=255 chars), bytes, sha256, status, created_at }`
 - `CourseDetailDTO`: `CourseDTO` plus `sources[]` for the detail page; the
   list endpoint continues to use `CourseListDTO`.
 - `AnswerResultDTO`: `{ correct: bool, correct_index: int, rationale: str,
