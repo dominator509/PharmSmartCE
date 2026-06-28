@@ -22,6 +22,12 @@ must satisfy `AGENTS.md` §13.**
 - The smoke flow verifies the record metadata endpoint and the PDF download
   response for each completed session.
 
+## Account Deletion
+- Self-service account deletion is available at `DELETE /auth/account`.
+- The request removes the current user and clears refresh tokens.
+- If the user is the last account in the org, the org and its course/session
+  data are removed as well.
+
 ## Health Checks
 - `GET /healthz` — liveness: 200 if process is up.
 - `GET /readyz` — readiness: 200 only if:

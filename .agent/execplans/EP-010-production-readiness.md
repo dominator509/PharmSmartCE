@@ -149,6 +149,7 @@ Re-running the check is a no-op once green; ticking boxes is git-tracked; no sid
 - Documented CE record export in `OPERATIONS.md` and treated the absence of patient/diagnosis/insurance fields in app schemas and tests as sufficient evidence for the no-PHI checklist item.
 - Added a dedicated `test_no_n_plus_one.py` perf guard for the session read route and kept the query budget low enough to catch accidental fan-out.
 - Kept the changelog aligned with the launch-readiness hardening pass so the release notes reflect the new operational docs and perf guard.
+- Added `DELETE /auth/account` for self-service account deletion with last-user org cleanup, then documented and tested it as the repo privacy path.
 
 ## 15. Outcomes & Retrospective
 Production readiness is partially auditable now: local verify, security, dependency audit, coverage, smoke, and container builds are green, and the repo has the doc and route surface needed for the remaining checklist work. The remaining gaps are external or policy-gated rather than mechanical code failures, so the checklist still needs the staging and human launch evidence before it can be fully closed.

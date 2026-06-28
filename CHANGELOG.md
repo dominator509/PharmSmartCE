@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Repo-local support, rollback, and observability docs for launch readiness.
 - CE record export documentation in `OPERATIONS.md`.
 - Perf guard for the session read route query budget.
+- Self-service account deletion via `DELETE /auth/account`.
 
 ### Changed
 - API Docker image now installs `libmagic1` and uses a multi-stage runtime image.

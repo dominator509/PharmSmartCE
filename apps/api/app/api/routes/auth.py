@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Annotated
 
-from fastapi import APIRouter, Request, Response, status
+from fastapi import APIRouter, Depends, Request, Response, status
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import client_ip, get_rate_limiter
+from app.api.deps import Principal, client_ip, current_user, get_rate_limiter
 from app.api.errors import AuthError, RateLimitError
 from app.observability.metrics import record_auth_login_attempt
 from app.services.auth.service import AuthService
@@ -133,6 +134,19 @@ async def logout(request: Request, response: Response) -> Response:
 
     async with request.app.state.session_factory() as session:
         await _auth_service(request, session).logout(refresh_cookie)
+        _clear_refresh_cookie(response)
+        response.status_code = status.HTTP_204_NO_CONTENT
+        return response
+
+
+@router.delete("/account", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_account(
+    user: Annotated[Principal, Depends(current_user)],
+    request: Request,
+    response: Response,
+) -> Response:
+    async with request.app.state.session_factory() as session:
+        await _auth_service(request, session).delete_account(user.id)
         _clear_refresh_cookie(response)
         response.status_code = status.HTTP_204_NO_CONTENT
         return response

@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from uuid import uuid4
 
+from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.errors import AuthError, ConflictError
@@ -138,6 +139,23 @@ class AuthService:
             raise AuthError("Invalid refresh token.")
 
         await self.refresh_tokens.revoke(token.jti)
+        await self.session.commit()
+
+    async def delete_account(self, user_id: str) -> None:
+        user = await self.users.get(user_id)
+        if user is None:
+            raise AuthError("Invalid bearer token.")
+
+        org_user_count = await self.session.scalar(
+            select(func.count(UserModel.id)).where(UserModel.org_id == user.org_id)
+        )
+
+        await self.session.delete(user)
+        await self.session.flush()
+
+        if int(org_user_count or 0) <= 1:
+            await self.session.execute(delete(OrgModel).where(OrgModel.id == user.org_id))
+
         await self.session.commit()
 
     async def _issue_session(self, user: UserModel) -> AuthResult:

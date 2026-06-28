@@ -38,7 +38,7 @@ through these items.
 ## Privacy Readiness
 - [x] No PHI fields collected.
 - [ ] Uploaded docs SSE-S3 encrypted at rest.
-- [ ] Account deletion documented and tested.
+- [x] Account deletion documented and tested.
 - [x] CE record export documented.
 
 ## Performance Readiness
@@ -107,6 +107,8 @@ through these items.
 - `apps/api/tests/integration/perf/test_no_n_plus_one.py` guards the session
   read route with a query budget of 6 statements.
 - The full readiness pack was re-reviewed in this pass, covering every section.
+- `DELETE /auth/account` removes the current user and, when applicable, the
+  org and its dependent course/session/CE-record data.
 
 ## Final Launch Gate
 Production launch requires a single explicit human decision recorded as an
