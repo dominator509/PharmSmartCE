@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from contextvars import ContextVar, Token
-from typing import Any
+from typing import Any, cast
 
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
@@ -10,6 +10,7 @@ from fastapi.responses import JSONResponse
 from app.api.errors import AppException, GroundingError, UnreadyError
 from app.domain.errors import DomainError
 from app.domain.errors import GroundingError as DomainGroundingError
+from app.observability.sentry import capture_exception
 
 request_id_var: ContextVar[str | None] = ContextVar("request_id", default=None)
 
@@ -119,6 +120,17 @@ async def not_implemented_error_handler(request: Request, exc: NotImplementedErr
     )
 
 
+async def exception_handler(request: Request, exc: Exception) -> JSONResponse:
+    capture_exception(exc)
+    return problem_response(
+        request,
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        slug="internal",
+        title="Internal Server Error",
+        detail="An unexpected error occurred.",
+    )
+
+
 async def unready_error_handler(request: Request, exc: UnreadyError) -> JSONResponse:
     return problem_response(
         request,
@@ -130,13 +142,17 @@ async def unready_error_handler(request: Request, exc: UnreadyError) -> JSONResp
 
 
 def install_exception_handlers(app: FastAPI) -> None:
-    app.add_exception_handler(AppException, app_exception_handler)
-    app.add_exception_handler(GroundingError, app_exception_handler)
-    app.add_exception_handler(UnreadyError, unready_error_handler)
-    app.add_exception_handler(DomainError, domain_error_handler)
-    app.add_exception_handler(RequestValidationError, request_validation_error_handler)
-    app.add_exception_handler(HTTPException, http_exception_handler)
-    app.add_exception_handler(NotImplementedError, not_implemented_error_handler)
+    app.add_exception_handler(AppException, cast(Any, app_exception_handler))
+    app.add_exception_handler(GroundingError, cast(Any, app_exception_handler))
+    app.add_exception_handler(UnreadyError, cast(Any, unready_error_handler))
+    app.add_exception_handler(DomainError, cast(Any, domain_error_handler))
+    app.add_exception_handler(
+        RequestValidationError,
+        cast(Any, request_validation_error_handler),
+    )
+    app.add_exception_handler(HTTPException, cast(Any, http_exception_handler))
+    app.add_exception_handler(NotImplementedError, cast(Any, not_implemented_error_handler))
+    app.add_exception_handler(Exception, cast(Any, exception_handler))
 
 
 def bind_request_id(request_id: str) -> Token[str | None]:

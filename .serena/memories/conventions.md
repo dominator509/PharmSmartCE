@@ -1,12 +1,12 @@
-# conventions
-
-- ExecPlan discipline is the main repo convention: one active plan, milestones in order, validate after each milestone, update `Progress`, `Surprises & Discoveries`, `Decision Log`, and final retrospective.
-- Anti-drift: edit only files listed in active ExecPlan `Files to Change`; end-state `git diff --name-only` must match or extras must be justified/reverted.
+﻿# conventions
+- ExecPlan discipline is the main repo convention: one active plan, milestones in order, validate after each milestone, update Progress, Surprises & Discoveries, Decision Log, and final retrospective.
+- Anti-drift: edit only files listed in active ExecPlan Files to Change; end-state git diff --name-only must match or extras must be justified/reverted.
 - Anti-hallucination: verify package APIs, route paths, env vars, table/column names, commands, and migration ids from disk/source before using them.
-- File creation must follow `ARCHITECTURE.md` repo map; new top-level dirs require architecture update/ADR unless already mapped.
+- File creation must follow ARCHITECTURE.md repo map; new top-level dirs require architecture update/ADR unless already mapped.
 - Security invariants: no secrets in logs/commits; redaction processor for auth bodies; parameterized SQL only; Pydantic validates HTTP inputs; no raw LLM calls outside grounded generation service once implemented.
-- Data invariant: persisted `Question` rows require non-null `source_doc_id`, `source_page`, `source_span` at schema and service levels.
+- Data invariant: persisted Question rows require non-null source_doc_id, source_page, source_span at schema and service levels.
 - Dependency rule: add only when not already available and not practical in <=50 lines; exact version pins only; audit required.
-- Docs rule: changed command -> `COMMANDS.md`; changed route/contract -> `SPEC-003`; changed data model -> `SPEC-002` + Alembic migration; non-trivial architecture -> `DECISIONS.md` ADR.
-- Obsidian/Serena hygiene: `REPO_BRIEF.md` is the compact vault-friendly index; `.serena/project.yml` stays headless, LSP-backed, and should ignore generated/build/cache/local-state paths but not source, tests, docs, config, or scripts.
-- `.obsidian/workspace.json` is local editor state only; keep it out of commits unless explicitly asked.
+- Docs rule: changed command -> COMMANDS.md; changed route/contract -> SPEC-003; changed data model -> SPEC-002 + Alembic migration; non-trivial architecture -> DECISIONS.md ADR.
+- Obsidian/Serena hygiene: REPO_BRIEF.md is the compact vault-friendly index; .serena/project.yml stays headless, LSP-backed, and should ignore generated/build/cache/local-state paths but not source, tests, docs, config, or scripts.
+- .obsidian/workspace.json is local editor state only; keep it out of commits unless explicitly asked.
+- Repo-local Windows shims in scripts/bin/ should stay tiny and mirror the existing Unix wrappers; keep them focused on command discovery rather than repo logic.

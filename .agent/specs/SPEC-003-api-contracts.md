@@ -30,7 +30,7 @@ can rely on, with consistent error shapes and authorization.
 | POST | `/auth/refresh` | refresh cookie | (none) | 200 `AccessTokenDTO` + rotated cookie | 401, 429 |
 | POST | `/auth/logout` | refresh cookie | (none) | 204 | 401 |
 | GET | `/api/courses` | jwt | — | 200 `CourseListDTO` | 401 |
-| GET | `/api/courses/{id}` | jwt | — | 200 `CourseDTO` | 401, 404 |
+| GET | `/api/courses/{id}` | jwt | — | 200 `CourseDetailDTO` (`CourseDTO` + `sources[]`) | 401, 404 |
 | POST | `/api/courses` | jwt (admin) | `CourseCreateDTO` | 201 `CourseDTO` | 401, 403, 422 |
 | POST | `/api/courses/{id}/sources` | jwt (admin) multipart | file | 202 `SourceDTO` | 401, 403, 413, 415, 422 |
 | GET | `/api/sources/{id}/status` | jwt | — | 200 `SourceStatusDTO` | 401, 404 |
@@ -45,6 +45,8 @@ can rely on, with consistent error shapes and authorization.
 ## DTO Shapes (selected)
 - `AccessTokenDTO`: `{ access_token: str, token_type: "Bearer", expires_in: int }`
 - `QuestionDTO`: `{ id, text, options[], citation: {doc_id, page, span, url} }`
+- `CourseDetailDTO`: `CourseDTO` plus `sources[]` for the detail page; the
+  list endpoint continues to use `CourseListDTO`.
 - `AnswerResultDTO`: `{ correct: bool, correct_index: int, rationale: str,
   citation: {...}, session_progress: {answered, total} }`
 

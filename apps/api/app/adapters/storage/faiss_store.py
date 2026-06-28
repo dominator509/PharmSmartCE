@@ -14,7 +14,7 @@ class FaissStore:
         self,
         course_id: str,
         directory: str | Path,
-        index: faiss.IndexFlatL2 | None = None,
+        index: faiss.Index | None = None,
         chunk_ids: Sequence[str] | None = None,
         metadata: Sequence[Mapping[str, Any]] | None = None,
     ) -> None:

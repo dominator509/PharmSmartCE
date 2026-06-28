@@ -116,18 +116,23 @@ any failure. Continue autonomously. Stop only under STOP conditions.
 E2E tests are deterministic when the API is started fresh via docker compose. Re-running spins fresh services.
 
 ## 12. Progress
-- [ ] M1: API client lib + auth bridge
-- [ ] M2: Auth pages
-- [ ] M3: Courses pages
-- [ ] M4: Session page + QuestionView + CitationDrawer
+- [x] M1: API client lib + auth bridge - 2026-06-27 - `pnpm --filter web typecheck`, `pnpm --filter web test:unit`, `pnpm --filter web build`, and `scripts/verify.sh` passed.
+- [x] M2: Auth pages - 2026-06-27 - `pnpm --filter web test:e2e -- auth.spec.ts` passed.
+- [x] M3: Courses pages - 2026-06-27 - `pnpm --filter web test:e2e -- happy_path.spec.ts -g 'upload source'`, `pnpm --filter web typecheck`, and `pnpm --filter web test:unit` passed.
+- [x] M4: Session page + QuestionView + CitationDrawer - 2026-06-27 - `pnpm --filter web typecheck` and `pnpm --filter web test:e2e -- citation_deeplink.spec.ts` passed.
 - [ ] M5: Results page + CE record download
 - [ ] M6: axe-core accessibility
 
 ## 13. Surprises & Discoveries
-(empty — append entries here as they occur)
+- 2026-06-27 - `apps/web/lib/api.ts` now wraps backend fetches with problem+json handling, and `apps/web/lib/auth.ts` provides a testable auth bridge around the refresh cookie.
+- 2026-06-27 - The browser now lands on `/auth/complete` after login/register so it can persist the access token cookie client-side before the Next server renders `/courses` and `/courses/[id]`.
+- 2026-06-27 - The session drawer now fetches citation previews from `/api/sessions/{session_id}/citation`, which reads stored chunk text so deep links can open a real source passage instead of a placeholder.
 
 ## 14. Decision Log
-(empty — append entries here as they occur)
+- 2026-06-27 - Next 15.5.18's `cookies()` is async in this repo, so the auth bridge awaits it and casts the returned cookie jar to the repository's narrow cookie-store helper type.
+- 2026-06-27 - `apps/web/scripts/run-e2e.mjs` now starts both the Next dev server and the local FastAPI API so Playwright auth runs hit the real stack.
+- 2026-06-27 - The course pages read the browser-set `access` cookie directly, while the auth-complete handoff page stores that cookie from the server-issued access token and then redirects to `/courses`.
+- 2026-06-27 - `QuestionView` uses native radios plus a server-action-backed form state, and `CitationDrawer` renders as a role="dialog" panel so Playwright and assistive tech can open the citation deep link predictably.
 
 ## 15. Outcomes & Retrospective
-(to be filled at completion)
+The client layer now has a usable Next.js shell for auth, courses, and source upload. The auth-complete handoff keeps the server actions simple while still giving the browser a persistent token for protected pages, which made the courses flow and Playwright happy path land cleanly without a larger client-state rewrite.

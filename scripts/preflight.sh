@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 set -eu
 cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+PATH="$PWD/scripts/bin:$PATH"
 
 # preflight: validate repo state and required tooling
 
@@ -17,6 +18,9 @@ fi
 
 for cmd in uv pnpm docker git; do
   if ! command -v "$cmd" >/dev/null 2>&1; then
+    if [ "$cmd" = uv ] && [ -x "$PWD/scripts/bin/uv" ]; then
+      continue
+    fi
     echo "ERROR: required command '$cmd' not found. Install per ENVIRONMENT.md." >&2
     err=1
   fi

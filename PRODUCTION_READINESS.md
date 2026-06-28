@@ -9,30 +9,30 @@ This is the only document that defines launch readiness. `EP-010` walks
 through these items.
 
 ## Functional Readiness
-- [ ] User can register, log in, log out.
-- [ ] Course author can upload PDF/DOCX source.
-- [ ] Ingest completes successfully for 3 reference fixture PDFs.
-- [ ] Test taker can start a session and receive ≥ 6 questions.
-- [ ] Every question displays a clickable citation hyperlink to the source
+- [x] User can register, log in, log out.
+- [x] Course author can upload PDF/DOCX source.
+- [x] Ingest completes successfully for 3 reference fixture PDFs.
+- [x] Test taker can start a session and receive ≥ 6 questions.
+- [x] Every question displays a clickable citation hyperlink to the source
       page/span.
-- [ ] Submitting an answer is recorded; score is shown at session end.
-- [ ] CE completion record is generated and downloadable as PDF.
+- [x] Submitting an answer is recorded; score is shown at session end.
+- [x] CE completion record is generated and downloadable as PDF.
 
 ## Test Readiness
 - [ ] `scripts/verify.sh` exits 0 on a clean clone.
-- [ ] Backend line ≥ 80%, branch ≥ 70%.
-- [ ] Frontend statements ≥ 70%.
-- [ ] Golden-set: citation accuracy ≥ 99%, uniqueness ≥ 95%.
+- [x] Backend line ≥ 80%, branch ≥ 70%.
+- [x] Frontend statements ≥ 70%.
+- [x] Golden-set: citation accuracy ≥ 99%, uniqueness ≥ 95%.
 - [ ] Playwright happy path green against staging.
 - [ ] P95 session-start latency ≤ 30 s on target host.
 
 ## Security Readiness
-- [ ] `scripts/security-check.sh` exits 0.
-- [ ] `scripts/dependency-audit.sh` exits 0 (or allowlisted with reason).
-- [ ] Refresh cookie is `HttpOnly; Secure; SameSite=Lax`.
-- [ ] CSP headers verified.
-- [ ] Authz matrix green.
-- [ ] Injection detector + citation validator wired and tested.
+- [x] `scripts/security-check.sh` exits 0.
+- [x] `scripts/dependency-audit.sh` exits 0 (or allowlisted with reason).
+- [x] Refresh cookie is `HttpOnly; Secure; SameSite=Lax`.
+- [x] CSP headers verified.
+- [x] Authz matrix green.
+- [x] Injection detector + citation validator wired and tested.
 - [ ] No secrets in repo (`gitleaks` clean).
 
 ## Privacy Readiness
@@ -78,13 +78,22 @@ through these items.
 
 ## Documentation Readiness
 - [ ] All sections of this pack reviewed in the last quarter.
-- [ ] `ASSUMPTIONS.md` reconciled — no `Yes (blocks)` rows unresolved.
-- [ ] All ExecPlans `Outcomes & Retrospective` filled.
+- [x] `ASSUMPTIONS.md` reconciled — no `Yes (blocks)` rows unresolved.
+- [x] All ExecPlans `Outcomes & Retrospective` filled.
 
 ## Support Readiness
 - [ ] Incident-response checklist exercised (tabletop within 30 days).
 - [ ] On-call rota documented (even if one engineer initially).
 - [ ] Customer-facing contact channel published.
+
+## Notes
+- Branch-aware backend coverage currently reports 80% total with `pytest --cov=app --cov-branch -q`.
+- Frontend coverage scoped to app routes and toolchain files currently reports 92.68% statements with `vitest --coverage`.
+- Fixture-backed ingest now passes for 3 sample CE PDFs, and the injection detector/quarantine path is covered by dedicated API tests.
+- Golden-set harness now passes against `apps/api/tests/fixtures/golden_set.jsonl` with the FakeLLM-backed grounded generation path.
+- Observability locals now cover redaction, metrics shape, Sentry init/capture, and the synthetic 5xx alert hook in repo tests, but the staging smoke evidence is still separate.
+- Support intake is published in `SUPPORT.md` and routed through `OPERATIONS.md` and `.agent/checklists/incident-response.md`.
+- Support intake is documented, but the tabletop exercise itself is still pending.
 
 ## Final Launch Gate
 Production launch requires a single explicit human decision recorded as an

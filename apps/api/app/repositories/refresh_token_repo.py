@@ -17,9 +17,9 @@ class RefreshTokenRepo(AsyncRepository[RefreshTokenModel]):
 
     async def get_by_user(self, user_id: str) -> list[RefreshTokenModel]:
         result = await self.session.scalars(
-            select(RefreshTokenModel).where(RefreshTokenModel.user_id == user_id).order_by(
-                RefreshTokenModel.expires_at
-            )
+            select(RefreshTokenModel)
+            .where(RefreshTokenModel.user_id == user_id)
+            .order_by(RefreshTokenModel.expires_at)
         )
         return list(result)
 
@@ -35,3 +35,11 @@ class RefreshTokenRepo(AsyncRepository[RefreshTokenModel]):
         token.replaced_by_jti = replaced_by_jti
         await self.session.flush()
         return token
+
+    async def revoke_all_for_user(self, user_id: str) -> list[RefreshTokenModel]:
+        tokens = await self.get_by_user(user_id)
+        now = datetime.now(UTC)
+        for token in tokens:
+            token.revoked_at = token.revoked_at or now
+        await self.session.flush()
+        return tokens

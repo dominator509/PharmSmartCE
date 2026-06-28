@@ -67,8 +67,9 @@ and `POST /api/courses/*/sources`. Implementation:
 TLS everywhere. Postgres `sslmode=require`. S3 over HTTPS with SSE-S3.
 
 ## API Security
-- Rate limits (slowapi): `/auth/login` 10/min per IP + 5/min per email;
-  `/auth/register` 5/min per IP; `/api/*` default 30/min per user.
+- Rate limits (native in-process limiter): `/auth/login` 10/min per IP +
+  5/min per email; `/auth/register` 5/min per IP; `/api/*` default 30/min per
+  user.
 - CORS: allowlist from `CORS_ALLOWED_ORIGINS`. No wildcard outside local.
 - Security headers (`SecurityHeadersMiddleware`):
   - `Strict-Transport-Security: max-age=31536000; includeSubDomains`

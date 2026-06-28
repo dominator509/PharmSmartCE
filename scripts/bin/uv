@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+set -eu
+
+for py in py.exe py /c/Windows/py.exe /mnt/c/Windows/py.exe C:/Windows/py.exe; do
+  if command -v "$py" >/dev/null 2>&1; then
+    exec "$py" -3.14 -m uv "$@"
+  fi
+  if [ -x "$py" ]; then
+    exec "$py" -3.14 -m uv "$@"
+  fi
+done
+
+echo "ERROR: unable to locate Python launcher for uv shim." >&2
+exit 127

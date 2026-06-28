@@ -1,0 +1,141 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAMESPACE: ${{ github.repository_owner }}
+  API_IMAGE: ghcr.io/${{ github.repository_owner }}/pharmsmartce-api
+  WEB_IMAGE: ghcr.io/${{ github.repository_owner }}/pharmsmartce-web
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push API image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/api/Dockerfile
+          push: true
+          tags: |
+            ${{ env.API_IMAGE }}:${{ github.sha }}
+            ${{ env.API_IMAGE }}:${{ github.ref_name }}
+
+      - name: Build and push Web image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/web/Dockerfile
+          push: true
+          tags: |
+            ${{ env.WEB_IMAGE }}:${{ github.sha }}
+            ${{ env.WEB_IMAGE }}:${{ github.ref_name }}
+
+  staging:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Deploy API to staging
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: >
+          flyctl deploy
+          --config infra/fly.api.toml
+          --app pharmsmartce-api-staging
+          --image ${{ env.API_IMAGE }}:${{ github.sha }}
+          --strategy rolling
+
+      - name: Deploy worker to staging
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: >
+          flyctl deploy
+          --config infra/fly.worker.toml
+          --app pharmsmartce-worker-staging
+          --image ${{ env.API_IMAGE }}:${{ github.sha }}
+          --strategy rolling
+
+      - name: Deploy web to staging
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: >
+          flyctl deploy
+          --config infra/fly.web.toml
+          --app pharmsmartce-web-staging
+          --image ${{ env.WEB_IMAGE }}:${{ github.sha }}
+          --strategy rolling
+
+      - name: Run staging smoke
+        run: scripts/smoke-test.sh https://staging.pharmsmartce.com
+
+  production:
+    runs-on: ubuntu-latest
+    needs: staging
+    environment:
+      name: production
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Deploy API to production
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: >
+          flyctl deploy
+          --config infra/fly.api.toml
+          --app pharmsmartce-api-prod
+          --image ${{ env.API_IMAGE }}:${{ github.sha }}
+          --strategy rolling
+
+      - name: Deploy worker to production
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: >
+          flyctl deploy
+          --config infra/fly.worker.toml
+          --app pharmsmartce-worker-prod
+          --image ${{ env.API_IMAGE }}:${{ github.sha }}
+          --strategy rolling
+
+      - name: Deploy web to production
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: >
+          flyctl deploy
+          --config infra/fly.web.toml
+          --app pharmsmartce-web-prod
+          --image ${{ env.WEB_IMAGE }}:${{ github.sha }}
+          --strategy bluegreen
+
+      - name: Run production smoke
+        run: scripts/smoke-test.sh https://app.pharmsmartce.com

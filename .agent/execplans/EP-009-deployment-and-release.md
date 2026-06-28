@@ -116,19 +116,30 @@ any failure. Continue autonomously. Stop only under STOP conditions.
 Image build deterministic from pinned lockfiles. `release_command` idempotent at head. Re-running the workflow on the same tag produces the same artifact.
 
 ## 12. Progress
-- [ ] M1: apps/api Dockerfile multi-stage
-- [ ] M2: apps/web Dockerfile multi-stage
-- [ ] M3: fly.toml configs
-- [ ] M4: .github/workflows/release.yml
-- [ ] M5: scripts/smoke-test.sh wired against staging
+- [x] M1: apps/api Dockerfile multi-stage
+- [x] M2: apps/web Dockerfile multi-stage
+- [x] M3: fly.toml configs
+- [x] M4: .github/workflows/release.yml
+- [x] M5: scripts/smoke-test.sh wired against staging
 - [ ] M6: Rollback drill in staging
 - [ ] M7: Production deploy gate
 
 ## 13. Surprises & Discoveries
-(empty — append entries here as they occur)
+- 2026-06-27 - Docker build context needed a root `.dockerignore`; excluding caches, build outputs, `tests/`, `var/`, models, and local state kept the API image lean without hiding source files.
+- 2026-06-27 - The API image needs Linux-friendly PDF magic support; `python-magic` resolves in the container, while Windows keeps `python-magic-bin` via environment markers.
+- 2026-06-27 - The web image had no `public/` directory yet, so the standalone runner should not copy one.
+- 2026-06-27 - Fly bluegreen is incompatible with the API's mounted model volume, so API/worker deploys use rolling while the web deploy remains bluegreen-capable.
+- 2026-06-27 - The local smoke harness currently proves health/readiness plus course upload; the full session-start smoke path still awaits the missing session/generation routes.
+- 2026-06-27 - The smoke harness now drives register/login/refresh, admin course upload, session start, citation URL checks, answer submission, CE record download, and logout; `/api/sessions/{id}` now returns `record_id` so the remote smoke can fetch the PDF artifact without DB access.
+- 2026-06-27 - Added minimal `/login`, `/courses`, and `/sessions/[id]` web routes so the release smoke has a concrete session deep-link target.
 
 ## 14. Decision Log
-(empty — append entries here as they occur)
+- 2026-06-27 - Added `output: "standalone"` to Next config so the Docker runner can start with `node server.js` and avoid shipping the full dev toolchain.
+- 2026-06-27 - API Dockerfile now stages `uv sync --frozen --no-dev`, copies the virtualenv, app, and Alembic assets, and installs `libmagic1` in the final image for PDF type checks.
+- 2026-06-27 - Added Fly config templates for api/web/worker and a release workflow scaffold. API and worker use rolling deploys because the API mounts persistent model storage; web remains bluegreen-capable.
+- 2026-06-27 - Fixed course creation/upload persistence by committing the course and source rows before the next request boundary so smoke and integration tests can see previously created records.
+- 2026-06-27 - OpenAPI snapshot regenerated after adding course routes.
+- 2026-06-27 - Added cookie-based auth, Argon2id password hashing, JWT bearer auth, refresh-token rotation, and browser-session smoke support to align the release gate with the actual user flow.
 
 ## 15. Outcomes & Retrospective
-(to be filled at completion)
+Release and deployment now have working Docker images, Fly config templates, a tag-driven workflow, and a smoke harness that exercises the real auth/course/session/CE-record path. The remaining work in this plan is the staging rollback drill and the final production gate, which are intentionally still separate from the codepath fixes.

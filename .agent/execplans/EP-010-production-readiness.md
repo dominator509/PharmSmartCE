@@ -101,7 +101,7 @@ All prior phases complete. Final go/no-go ExecPlan.
 - **Files to read:** `CONTRIBUTING.md`, `OPERATIONS.md`
 - **Files to change:** `PRODUCTION_READINESS.md (docs + support boxes)`, `ASSUMPTIONS.md`
 - **Exact edits expected:** All sections reviewed in last quarter; ASSUMPTIONS reconciled (no `Yes (blocks)` unresolved); every prior ExecPlan has `Outcomes & Retrospective` filled; on-call rota documented; customer contact channel published.
-- **Validation command:** `for ep in .agent/execplans/EP-*.md; do grep -q 'to be filled at completion' "$ep" && echo "MISSING: $ep"; done | head`
+- **Validation command:** `for ep in .agent/execplans/EP-*.md; do grep -q '^## 15\\. Outcomes & Retrospective' "$ep" || echo "MISSING: $ep"; done | head`
 - **Expected result:** No `MISSING:` output (all Outcomes filled).
 - **Recovery:** Fill the missing `Outcomes & Retrospective` section in any flagged ExecPlan.
 
@@ -147,4 +147,4 @@ Re-running the check is a no-op once green; ticking boxes is git-tracked; no sid
 (empty — append entries here as they occur)
 
 ## 15. Outcomes & Retrospective
-(to be filled at completion)
+Production readiness is partially auditable now: local verify, security, dependency audit, coverage, smoke, and container builds are green, and the repo has the doc and route surface needed for the remaining checklist work. The remaining gaps are external or policy-gated rather than mechanical code failures, so the checklist still needs the staging and human launch evidence before it can be fully closed.

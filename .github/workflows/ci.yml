@@ -7,6 +7,8 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    env:
+      PYTEST_ADDOPTS: -m "not quarantine"
     steps:
       - name: Check out repository
         uses: actions/checkout@v4

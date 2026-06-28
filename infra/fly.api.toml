@@ -1,0 +1,49 @@
+app = "pharmsmartce-api"
+primary_region = "sjc"
+
+[build]
+  dockerfile = "apps/api/Dockerfile"
+
+[deploy]
+  release_command = "alembic upgrade head"
+  strategy = "rolling"
+
+  [deploy.release_command_vm]
+    size = "performance-1x"
+    memory = "8gb"
+
+[processes]
+  app = "uvicorn app.main:app --host 0.0.0.0 --port 8080"
+
+[[mounts]]
+  source = "models"
+  destination = "/app/models"
+  processes = ["app"]
+  initial_size = "8gb"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "off"
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+  [http_service.concurrency]
+    type = "connections"
+    soft_limit = 25
+    hard_limit = 50
+
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval = "30s"
+    method = "GET"
+    timeout = "5s"
+    path = "/healthz"
+
+[[vm]]
+  size = "performance-1x"
+  memory = "8gb"
+  cpus = 4
+  cpu_kind = "performance"
+  processes = ["app"]

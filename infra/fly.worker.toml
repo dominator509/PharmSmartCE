@@ -1,0 +1,12 @@
+app = "pharmsmartce-worker"
+primary_region = "sjc"
+
+[build]
+  dockerfile = "apps/api/Dockerfile"
+
+[processes]
+  worker = "python -m app.workers.main"
+
+[[vm]]
+  size = "performance-1x"
+  processes = ["worker"]

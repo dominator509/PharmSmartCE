@@ -26,7 +26,7 @@ async def _assert_citation_not_null(database_url: str) -> None:
                     "(id, session_id, text, options, correct_index, rationale, source_doc_id, "
                     "source_page, source_span, citation_overlap, created_at) "
                     "VALUES (:id, :session_id, :text, "
-                    "'{\"choices\": [\"A\", \"B\", \"C\", \"D\"]}'::jsonb, "
+                    '\'{"choices": ["A", "B", "C", "D"]}\'::jsonb, '
                     ":correct_index, :rationale, :source_doc_id, :source_page, "
                     ":source_span, :citation_overlap, NOW())"
                 ),

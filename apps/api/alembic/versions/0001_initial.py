@@ -4,9 +4,8 @@
 """
 
 from alembic import op
-
-from app.repositories.db import Base
 from app.repositories import models as _models  # noqa: F401
+from app.repositories.db import Base
 
 revision = "0001_initial"
 down_revision = None

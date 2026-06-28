@@ -72,6 +72,7 @@ must satisfy `AGENTS.md` §13.**
 - **Sev4**: cosmetic. Backlog.
 
 See `.agent/checklists/incident-response.md`.
+Customer-facing intake lives in [SUPPORT.md](SUPPORT.md).
 
 ## Escalation
 On-call → backup on-call (after 15 min unacked Sev1, 60 min Sev2) →

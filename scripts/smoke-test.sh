@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 set -eu
 cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+PATH="$PWD/scripts/bin:$PATH"
 
 BASE_URL="${1:-${SMOKE_BASE_URL:-http://localhost:8000}}"
 

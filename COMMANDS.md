@@ -54,6 +54,9 @@ Do not use `pip install`, `npm install`, `yarn`.
 | Node unit tests | `pnpm --filter web test:unit` |
 | E2E (Playwright) | `pnpm --filter web test:e2e` |
 | API image build | `docker build -f apps/api/Dockerfile -t pharmsmartce-api:dev .` |
+| Web image build | `docker build -f apps/web/Dockerfile -t pharmsmartce-web:dev .` |
+| Fly config validate | `flyctl config validate -c infra/fly.api.toml` |
+| Fly releases | `flyctl releases --app pharmsmartce-api-staging` |
 | Web build | `pnpm --filter web build` |
 | Python security | `uv run --directory apps/api pip-audit` |
 | Node security | `pnpm audit --prod` |
@@ -104,6 +107,7 @@ staging/prod.
 |---|---|
 | `uv` not found | Re-run `scripts/install.sh`. Still missing → S1. |
 | `pnpm` not found | Re-run `scripts/install.sh`. Still missing → S1. |
+| `uv` cache or pytest temp access denied on Windows | Point `UV_CACHE_DIR`, `TMP`, `TEMP`, and `TMPDIR` at a repo-local `.tmp/` directory. |
 | `docker` not found | S1. |
 | `models/*.gguf` missing | Re-run `scripts/install.sh`. If blocked → S1. |
 | Migration fails locally | Check `alembic current`; forward-fix. Never `downgrade base`. |

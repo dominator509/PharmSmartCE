@@ -141,4 +141,4 @@ Re-running migrations against an empty DB is idempotent. Tests use ephemeral tes
 (empty — append entries here as they occur)
 
 ## 15. Outcomes & Retrospective
-(to be filled at completion)
+Data and persistence landed with the initial SQLAlchemy model set, Alembic bootstrap, repository classes, FAISS persistence, and integration coverage against ephemeral Postgres. The main win was keeping the model and repository shape deterministic while still leaving room for later auth/session flow work.

@@ -125,19 +125,19 @@ any failure. Continue autonomously. Stop only under STOP conditions.
 Tests are idempotent. Tokens are scoped per-test by issuing fresh ones.
 
 ## 12. Progress
-- [ ] M1: Argon2id password hashing
-- [ ] M2: JWT issue/verify
-- [ ] M3: Refresh token rotation + chain revocation
-- [ ] M4: Rate limiting + security headers middleware
-- [ ] M5: Per-resource authz + 404-vs-403 policy
-- [ ] M6: OpenAI cost cap circuit breaker
-- [ ] M7: No-traceback-leak test
+- [x] M1: Argon2id password hashing - 2026-06-27 - `pytest tests/unit/services/test_auth_tokens.py -q` passed.
+- [x] M2: JWT issue/verify - 2026-06-27 - `pytest tests/unit/services/test_auth_tokens.py -q` passed.
+- [x] M3: Refresh token rotation + chain revocation - 2026-06-27 - `pytest tests/integration/security/test_refresh_rotation.py -q` passed.
+- [x] M4: Rate limiting + security headers middleware - 2026-06-27 - `pytest tests/integration/security/test_rate_limit.py -q` passed.
+- [x] M5: Per-resource authz + 404-vs-403 policy - 2026-06-27 - `pytest tests/integration/security/test_authz_matrix.py -q` passed.
+- [x] M6: OpenAI cost cap circuit breaker - 2026-06-27 - `pytest tests/integration/security/test_openai_cost_cap.py -q` and `scripts/verify.sh` passed.
+- [x] M7: No-traceback-leak test - 2026-06-27 - `pytest tests/integration/security/test_no_traceback_leak.py -q` passed.
 
 ## 13. Surprises & Discoveries
-(empty — append entries here as they occur)
+- 2026-06-27 - `app/services/generation/cost_cap.py` now checks the current monthly ledger before openai-provider generation and records warn/reached metrics while falling back to local generation when the cap is hit.
 
 ## 14. Decision Log
-(empty — append entries here as they occur)
+- 2026-06-27 - Added config fields for `LLM_PROVIDER`, `OPENAI_API_KEY`, `OPENAI_MODEL`, and `OPENAI_MONTHLY_USD_CAP` so the cost-cap gate can be driven by repo-local settings instead of ad hoc test values.
 
 ## 15. Outcomes & Retrospective
-(to be filled at completion)
+Auth and permissions were initially scaffolded around the repository's security model, and the later implementation now aligns the runtime with the planned JWT/refresh-cookie contract. The durable takeaway is that cross-tenant 404s and problem-json error shaping need to stay explicit, not implicit.

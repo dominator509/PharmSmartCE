@@ -9,7 +9,7 @@ updates this file.
 | A1 | Backend: Python 3.11 + FastAPI + Pydantic v2 + SQLAlchemy 2 + Alembic | Async, strong LLM ecosystem | Rework | EP-001 milestones | No |
 | A2 | Frontend: Next.js 14 (App Router) + TS + Tailwind | SSR, free hosting tiers | Rework | EP-005 skeleton | No |
 | A3 | DB: PostgreSQL 15 | Cheap managed; JSONB | Migration cost | EP-003 provision | No |
-| A4 | LLM: 7–8B GGUF Q4_K_M via `llama-cpp-python`, CPU-only | Required CPU-only | Latency > 60s P95 | EP-002 bench | YES |
+| A4 | LLM: 7–8B GGUF Q4_K_M via `llama-cpp-python`, CPU-only | Required CPU-only | Latency > 60s P95 | EP-002 bench / ADR-004 | No |
 | A5 | OpenAI adapter OFF by default; `LLM_PROVIDER=openai` + `OPENAI_MONTHLY_USD_CAP` required | Cost control | Surprise bill | Cap test in EP-006 | No |
 | A6 | RAG: FAISS local for v1; pgvector reserved for v2 | Simpler | Scaling ceiling | EP-003 bench | No |
 | A7 | Auth: email/password + Argon2id + JWT (15m) + refresh (httpOnly, 30d) | Standard | Standard risks | EP-006 + sec checklist | No |
@@ -17,8 +17,8 @@ updates this file.
 | A9 | Hosting: containers on Fly.io or Render | Budget-friendly | Cold-start | EP-009 smoke | No |
 | A10 | CI/CD: GitHub Actions | Free at modest usage | Vendor lock-in | None | No |
 | A11 | Package managers: `uv` (Python) + `pnpm` (Node) | Fast, deterministic | Learning curve | EP-001 install.sh | No |
-| A12 | "Source of truth" = uploaded docs; LLM MUST refuse outside retrieved chunks | Clinical accuracy goal | Hallucination | Eval harness | YES |
-| A13 | Citations: `source_doc_id + source_page + source_span` rendered as hyperlinks | Goal "real hyperlinks" | Credibility | Schema + UI test | YES |
+| A12 | "Source of truth" = uploaded docs; LLM MUST refuse outside retrieved chunks | Clinical accuracy goal | Hallucination | Eval harness | No |
+| A13 | Citations: `source_doc_id + source_page + source_span` rendered as hyperlinks | Goal "real hyperlinks" | Credibility | Schema + UI test | No |
 | A14 | Not HIPAA but credentials + uploads encrypted at rest & in transit | Industry baseline | Compromise | EP-006 + SECURITY.md | No |
 | A15 | No formal WCAG target but semantic HTML + keyboard nav baseline | Cheap to add | Future lawsuits if scaled | eslint-plugin-jsx-a11y | No |
 | A16 | Observability: structlog + Prometheus + Sentry | Free/cheap tier | Limited tracing | EP-008 | No |
@@ -29,5 +29,7 @@ updates this file.
 
 - 2026-06-27: A11 is confirmed for local coding: `uv 0.11.25` and
   `pnpm 9.15.0` are available with the required Python 3.11 / Node 20 toolchain.
-- 2026-06-27: A1-A10 and A12-A18 remain architectural/product assumptions to
-  verify in their named ExecPlans; no table rows were removed or reclassified.
+- 2026-06-27: A4 is now backed by ADR-004 and the CPU-only model/config
+  wiring in `DECISIONS.md`, `ENVIRONMENT.md`, and `apps/api/app/config.py`.
+  A12 and A13 are now backed by the grounded-generation code path plus the
+  citation schema/UI tests. Remaining open assumptions stay in the table.

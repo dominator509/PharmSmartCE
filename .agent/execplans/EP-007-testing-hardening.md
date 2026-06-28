@@ -106,12 +106,12 @@ any failure. Continue autonomously. Stop only under STOP conditions.
 Coverage and golden-set thresholds are deterministic. Fixture order is stable. Re-running yields the same numbers.
 
 ## 12. Progress
-- [ ] M1: Backend coverage gate
-- [ ] M2: Frontend coverage gate
-- [ ] M3: Regression suite scaffold
-- [ ] M4: Golden-set fixture and harness
-- [ ] M5: Performance smoke
-- [ ] M6: Flaky test enforcement
+- [x] M1: Backend coverage gate - 2026-06-27 - `pytest --cov=app --cov-fail-under=80 -q` passed.
+- [x] M2: Frontend coverage gate - 2026-06-27 - `pnpm --filter web test:unit -- --coverage` passed.
+- [x] M3: Regression suite scaffold - 2026-06-27 - `pytest tests/integration/regression -q` passed.
+- [x] M4: Golden-set fixture and harness - 2026-06-27 - `pytest tests/integration/test_generation_golden.py -q` passed.
+- [x] M5: Performance smoke - 2026-06-27 - `pytest tests/integration/perf -q` passed.
+- [x] M6: Flaky test enforcement - 2026-06-27 - `pytest -m not quarantine -q` passed with `pytest-rerunfailures` configured.
 
 ## 13. Surprises & Discoveries
 (empty — append entries here as they occur)
@@ -120,4 +120,4 @@ Coverage and golden-set thresholds are deterministic. Fixture order is stable. R
 (empty — append entries here as they occur)
 
 ## 15. Outcomes & Retrospective
-(to be filled at completion)
+Testing hardening established the repo's verification spine: unit, integration, smoke, build, and audit gates now run from the documented scripts rather than ad hoc commands. That made later release and readiness debugging much more mechanical because failures show up at the right seam.

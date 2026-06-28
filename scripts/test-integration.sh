@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 set -eu
 cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+PATH="$PWD/scripts/bin:$PATH"
 
 if [ -d apps/api/tests/integration ]; then
   uv run --directory apps/api pytest tests/integration -q

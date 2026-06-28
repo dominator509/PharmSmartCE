@@ -1,3 +1,3 @@
-from app.services.session.service import SessionService
+from app.services.session.service import RecordedAnswer, SessionService
 
-__all__ = ["SessionService"]
+__all__ = ["RecordedAnswer", "SessionService"]

@@ -39,9 +39,7 @@ async def readyz(request: Request) -> Response:
     llm_ready = bool(getattr(request.app.state, "llm_ready", True))
     payload = {"db": db_ready, "faiss": faiss_ready, "llm": llm_ready}
     status_code = (
-        status.HTTP_200_OK
-        if all(payload.values())
-        else status.HTTP_503_SERVICE_UNAVAILABLE
+        status.HTTP_200_OK if all(payload.values()) else status.HTTP_503_SERVICE_UNAVAILABLE
     )
     return JSONResponse(content=payload, status_code=status_code)
 

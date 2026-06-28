@@ -24,6 +24,8 @@ See `SECURITY.md`. Implementation in
 | `llm_tokens_total` | counter | `provider`, `direction` ∈ {input,output} | Token usage |
 | `openai_cost_usd_total` | counter | (none) | Monotonic USD spend |
 | `openai_cost_usd_monthly` | gauge | `year_month` | Current month spend |
+| `openai_cap_warn_80_total` | counter | (none) | Monthly spend reached 80% of cap |
+| `openai_cap_reached_total` | counter | (none) | Monthly spend reached cap |
 | `question_grounding_failures_total` | counter | `reason` ∈ {overlap_low,refused,retry_exhausted,injection_flagged} | Failures |
 | `citation_overlap_ratio` | histogram | (none) | Overlap distribution on accepted Qs |
 | `generation_retries_total` | counter | `outcome` ∈ {success,exhausted} | Retries |

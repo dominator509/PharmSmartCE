@@ -119,12 +119,12 @@ any failure. Continue autonomously. Stop only under STOP conditions.
 Tests use mocked Sentry and alerting; re-runs deterministic. /readyz checks are stateless. Re-running the plan reapplies files.
 
 ## 12. Progress
-- [ ] M1: structlog + RedactProcessor + request_id middleware
-- [ ] M2: Prometheus registry + named metrics
-- [ ] M3: /healthz + /readyz deep checks
-- [ ] M4: Sentry init gated on SENTRY_DSN
-- [ ] M5: Synthetic fault test
-- [ ] M6: Runbooks committed
+- [x] M1: structlog + RedactProcessor + request_id middleware - 2026-06-27 - `pytest tests/integration/test_observability_redaction.py tests/unit/test_redact_processor.py -q` passed.
+- [x] M2: Prometheus registry + named metrics - 2026-06-27 - `pytest tests/integration/test_observability_metrics_shape.py -q` passed.
+- [x] M3: /healthz + /readyz deep checks - 2026-06-27 - `pytest tests/integration/api/test_health.py -q` passed.
+- [x] M4: Sentry init gated on SENTRY_DSN - 2026-06-27 - `pytest tests/integration/test_sentry.py -q` passed.
+- [x] M5: Synthetic fault test - 2026-06-27 - `pytest tests/integration/test_alert_smoke.py -q` passed.
+- [x] M6: Runbooks committed - 2026-06-27 - `ls .agent/runbooks | wc -l` equivalent count returned 5.
 
 ## 13. Surprises & Discoveries
 (empty — append entries here as they occur)
@@ -133,4 +133,4 @@ Tests use mocked Sentry and alerting; re-runs deterministic. /readyz checks are 
 (empty — append entries here as they occur)
 
 ## 15. Outcomes & Retrospective
-(to be filled at completion)
+Observability and operations work tied the repo to the operational surfaces it needs: structured logs, metrics, runbooks, readiness checks, and deploy notes. The biggest practical gain was making local verification and operational docs line up closely enough that the smoke and readiness scripts could be trusted as evidence.
