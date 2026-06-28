@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator
 from dataclasses import dataclass
-from typing import Annotated, cast
+from typing import Annotated, Protocol, cast
 
 from fastapi import Depends, Request
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.api.errors import AuthError, AuthorizationError, RateLimitError
 from app.config import Settings
@@ -23,25 +23,33 @@ class Principal:
     role: str
 
 
+class AppState(Protocol):
+    settings: Settings
+    session_factory: async_sessionmaker[AsyncSession]
+    storage: StoragePort
+    ingest_service: IngestService
+    rate_limiter: RateLimiter
+
+
 def get_settings(request: Request) -> Settings:
-    return cast(Settings, request.app.state.settings)
+    return _state(request).settings
 
 
 async def get_session(request: Request) -> AsyncIterator[AsyncSession]:
-    async with request.app.state.session_factory() as session:
+    async with _state(request).session_factory() as session:
         yield session
 
 
 def get_storage(request: Request) -> StoragePort:
-    return cast(StoragePort, request.app.state.storage)
+    return _state(request).storage
 
 
 def get_ingest_service(request: Request) -> IngestService:
-    return cast(IngestService, request.app.state.ingest_service)
+    return _state(request).ingest_service
 
 
 def get_rate_limiter(request: Request) -> RateLimiter:
-    return cast(RateLimiter, request.app.state.rate_limiter)
+    return _state(request).rate_limiter
 
 
 def client_ip(request: Request) -> str:
@@ -62,7 +70,7 @@ async def current_user(request: Request) -> Principal:
     except ValueError as exc:
         raise AuthError("Invalid bearer token.") from exc
 
-    async with request.app.state.session_factory() as session:
+    async with _state(request).session_factory() as session:
         user = await UserRepo(session).get(claims.user_id)
         if user is None or user.org_id != claims.org_id:
             raise AuthError("Invalid bearer token.")
@@ -96,10 +104,14 @@ async def require_api_rate_limit(
     request: Request,
     user: Annotated[Principal, Depends(current_user)],
 ) -> None:
-    limit, window_seconds = _parse_rate_limit(request.app.state.settings.rate_limit_default)
+    limit, window_seconds = _parse_rate_limit(get_settings(request).rate_limit_default)
     _allow_rate_limit(
         request,
         key=f"api:{user.id}",
         limit=limit,
         window_seconds=window_seconds,
     )
+
+
+def _state(request: Request) -> AppState:
+    return cast(AppState, request.app.state)
