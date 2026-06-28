@@ -7,13 +7,13 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import create_async_engine
-from testcontainers.postgres import PostgresContainer
 
 from app.api.deps import Principal, current_admin, current_user, get_ingest_service
 from app.config import Settings
 from app.main import create_app
 from app.repositories.db import Base
 from app.repositories.models.orgs import OrgModel
+from testcontainers.postgres import PostgresContainer
 
 
 class FakeIngestService:
@@ -79,6 +79,18 @@ def test_course_routes_and_upload(tmp_path: Path) -> None:
             assert body["status"] == "uploaded"
             assert fake_ingest.enqueued == [body["id"]]
             assert (tmp_path / "uploads" / course_id / body["id"] / "source.pdf").exists()
+
+            blank_name_upload = client.post(
+                f"/api/courses/{course_id}/sources",
+                files={
+                    "file": (
+                        "",
+                        b"%PDF-1.4\n1 0 obj\n<<>>\nendobj\ntrailer\n<<>>\n%%EOF",
+                        "application/pdf",
+                    )
+                },
+            )
+            assert blank_name_upload.status_code == 422
 
             with_source_list = client.get(f"/api/courses/{course_id}")
             assert with_source_list.status_code == 200

@@ -72,6 +72,8 @@ class CourseService:
         max_bytes: int,
         content_type: str | None = None,
     ) -> SourceModel:
+        if not filename.strip():
+            raise ValidationError("Source filename must not be empty.")
         if len(content) > max_bytes:
             raise ValidationError("Source file exceeds the maximum size.")
 
