@@ -49,6 +49,20 @@ class Settings(BaseSettings):
             raise ValueError("App environment must be local, test, staging, or prod.")
         return value
 
+    @field_validator("log_level")
+    @classmethod
+    def _validate_log_level(cls, value: str) -> str:
+        if value.upper() not in {"CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET"}:
+            raise ValueError("Log level must be a standard logging level name.")
+        return value
+
+    @field_validator("image_sha", "database_url", "faiss_index_dir", "storage_root")
+    @classmethod
+    def _validate_nonblank_path_like_fields(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("Configuration value must not be empty.")
+        return value
+
     @field_validator("access_token_ttl_minutes", "refresh_token_ttl_days")
     @classmethod
     def _validate_positive(cls, value: int) -> int:

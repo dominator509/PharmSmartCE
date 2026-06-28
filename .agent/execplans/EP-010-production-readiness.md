@@ -180,6 +180,7 @@ Re-running the check is a no-op once green; ticking boxes is git-tracked; no sid
 - Required `Chunk` to carry a nonblank doc id/span/text and a positive page so generated context records cannot be malformed before question synthesis.
 - Required `Session.question_ids` to be nonblank and unique so direct session construction cannot smuggle malformed question lists into later scoring.
 - Tightened the numeric domain fields to reject bools and non-finite score values so direct construction cannot smuggle Python truthy values into persisted records.
+- Validated `log_level`, `database_url`, `image_sha`, `faiss_index_dir`, and `storage_root` so typoed runtime settings fail fast instead of silently falling back or creating directories in the wrong place.
 - Replaced the generic exception adapter cast in `apps/api/app/api/handlers.py` with a runtime `isinstance` guard so the exception handlers fail fast if the adapter is miswired; added a mismatch regression test.
 - Consolidated the FastAPI app-state casts in `apps/api/app/api/deps.py` behind a typed `AppState` protocol helper so request dependencies read from a single typed seam instead of repeating `cast(...)` at every access.
 - Added a runtime check and regression test for missing FastAPI app-state services in `apps/api/app/api/deps.py` so request dependency lookups now fail fast if startup wiring is incomplete.

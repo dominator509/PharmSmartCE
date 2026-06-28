@@ -43,3 +43,18 @@ def test_settings_reject_invalid_upload_and_overlap_limits(field_name: str, valu
 def test_settings_reject_invalid_app_env(value: str) -> None:
     with pytest.raises(ValidationError):
         Settings(app_env=value)
+
+
+@pytest.mark.parametrize(
+    "field_name, value",
+    [
+        ("log_level", "verbose"),
+        ("database_url", "   "),
+        ("image_sha", "   "),
+        ("faiss_index_dir", "   "),
+        ("storage_root", "   "),
+    ],
+)
+def test_settings_reject_invalid_runtime_strings(field_name: str, value: str) -> None:
+    with pytest.raises(ValidationError):
+        Settings(**{field_name: value})
