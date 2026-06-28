@@ -124,9 +124,9 @@ async def start_session(
 @router.get("/{session_id}/citation", response_model=CitationPreviewDTO)
 async def read_citation_preview(
     session_id: str,
-    doc_id: str,
     user: Annotated[Principal, Depends(current_user)],
     request: Request,
+    doc_id: str = Query(min_length=1, pattern=r".*\S.*"),
     page: int = Query(ge=1),
     span: str = Query(min_length=1, pattern=r".*\S.*"),
 ) -> CitationPreviewDTO:
