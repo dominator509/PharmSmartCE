@@ -6,7 +6,7 @@ import sys
 from collections.abc import Mapping
 from pathlib import Path
 
-from app.cli.doc_scan import iter_document_lines
+from app.cli.doc_scan import iter_document_lines, strip_inline_code_spans, unwrap_inline_code
 
 READINESS_PATH = Path(__file__).resolve().parents[4] / "PRODUCTION_READINESS.md"
 EVIDENCE_PATH = Path(__file__).resolve().parents[4] / "PRODUCTION_EVIDENCE.md"
@@ -35,7 +35,7 @@ def extract_todo_rows(text: str) -> dict[str, list[str]]:
             current_section = line.removeprefix("## ").strip()
             sections.setdefault(current_section, [])
             continue
-        if current_section and line.startswith(("- ", "* ")) and "TODO -" in line:
+        if current_section and line.startswith(("- ", "* ")) and "TODO -" in strip_inline_code_spans(line):
             sections.setdefault(current_section, []).append(line[2:].strip())
     return {section: rows for section, rows in sections.items() if rows}
 
@@ -48,7 +48,7 @@ def extract_verified_rows(text: str) -> dict[str, list[str]]:
             current_section = line.removeprefix("## ").strip()
             sections.setdefault(current_section, [])
             continue
-        if current_section and line.startswith(("- ", "* ")) and "TODO -" not in line:
+        if current_section and line.startswith(("- ", "* ")) and "TODO -" not in strip_inline_code_spans(line):
             sections.setdefault(current_section, []).append(line[2:].strip())
     return {section: rows for section, rows in sections.items() if rows}
 
@@ -87,6 +87,9 @@ def extract_execplan_milestones(text: str) -> list[dict[str, str]]:
                 milestones[current_milestone]["validation"] = line.removeprefix(
                     "- **Validation command:** "
                 ).strip()
+                milestones[current_milestone]["validation"] = unwrap_inline_code(
+                    milestones[current_milestone]["validation"]
+                )
             elif line.startswith("- **Expected result:** "):
                 milestones[current_milestone]["expected"] = line.removeprefix(
                     "- **Expected result:** "

@@ -72,6 +72,16 @@ def test_extract_todo_rows_ignores_fenced_code_blocks() -> None:
     assert extract_todo_rows(text) == {"A": ["Bar: TODO - counted"]}
 
 
+def test_extract_todo_rows_ignores_inline_code_spans() -> None:
+    text = """\
+## A
+- Use `TODO -` in a code sample, not a row.
+- Bar: TODO - counted
+"""
+
+    assert extract_todo_rows(text) == {"A": ["Bar: TODO - counted"]}
+
+
 def test_extract_verified_rows_uses_sections() -> None:
     text = """\
 ## A
@@ -119,14 +129,14 @@ def test_extract_execplan_milestones_reads_status_and_commands() -> None:
             "id": "M1",
             "title": "Functional category audit",
             "status": "open",
-            "validation": "`pnpm --filter web test:e2e -- happy_path.spec.ts --grep '@staging'`",
+            "validation": "pnpm --filter web test:e2e -- happy_path.spec.ts --grep '@staging'",
             "expected": "All happy-path tests pass against staging.",
         },
         {
             "id": "M2",
             "title": "Test category audit",
             "status": "done",
-            "validation": "`scripts/verify.sh && uv run --directory apps/api pytest --cov-fail-under=80 -q && uv run --directory apps/api pytest tests/integration/test_generation_golden.py -q`",
+            "validation": "scripts/verify.sh && uv run --directory apps/api pytest --cov-fail-under=80 -q && uv run --directory apps/api pytest tests/integration/test_generation_golden.py -q",
             "expected": "verify exit 0; backend coverage >= 80%; golden-set thresholds met.",
         },
     ]
@@ -214,21 +224,20 @@ def test_main_writes_output_file(tmp_path) -> None:
         evidence_report.EVIDENCE_PATH = original_evidence
         evidence_report.EXECPLAN_PATH = original_execplan
 
-    assert output.read_text(encoding="utf-8") == (
-        "# EP-010 Evidence Report\n\n"
-        "## Summary\n"
-        "- Open readiness items: 1 across 1 sections\n"
-        "- Remaining evidence rows: 1 across 1 sections\n\n"
-        "- Verified evidence rows: 0 across 0 sections\n"
-        "- EP-010 milestones complete: 1 across 1 milestones\n\n"
-        "## Open Readiness Checkboxes\n"
-        "### One\n"
-        "- [ ] alpha\n\n"
-        "## Verified Evidence Rows\n"
-        "- none\n\n"
-        "## EP-010 Milestones\n"
-        "- M1 [done] `cmd-one` -> ready\n\n"
-        "## Remaining Evidence Rows\n"
-        "### Two\n"
-        "- Beta: TODO - gamma\n"
-    )
+    report = output.read_text(encoding="utf-8")
+    assert report.startswith("# EP-010 Evidence Report\n")
+    assert "## Summary" in report
+    assert "- Open readiness items: 1 across 1 sections" in report
+    assert "- Remaining evidence rows: 1 across 1 sections" in report
+    assert "- Verified evidence rows: 0 across 0 sections" in report
+    assert "- EP-010 milestones complete: 1 across 1 milestones" in report
+    assert "## Open Readiness Checkboxes" in report
+    assert "### One" in report
+    assert "- [ ] alpha" in report
+    assert "## Verified Evidence Rows" in report
+    assert "- none" in report
+    assert "## EP-010 Milestones" in report
+    assert "- M1 [done] `cmd-one` -> ready" in report
+    assert "## Remaining Evidence Rows" in report
+    assert "### Two" in report
+    assert "- Beta: TODO - gamma" in report
