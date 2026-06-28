@@ -169,6 +169,33 @@ def test_extract_execplan_milestones_ignores_malformed_headings() -> None:
     ]
 
 
+def test_extract_execplan_milestones_ignores_non_numeric_ids() -> None:
+    text = """\
+## 8. Milestones
+
+### Mfoo: Broken milestone title
+- **Validation command:** `cmd-one`
+- **Expected result:** ready
+
+### M2: Test category audit
+- **Validation command:** `cmd-two`
+- **Expected result:** ready
+
+## 12. Progress
+- [x] M2: Test category audit - complete
+"""
+
+    assert extract_execplan_milestones(text) == [
+        {
+            "id": "M2",
+            "title": "Test category audit",
+            "status": "done",
+            "validation": "cmd-two",
+            "expected": "ready",
+        },
+    ]
+
+
 def test_build_report_renders_markdown_sections() -> None:
     report = build_report(
         {"Test": ["one"]},
