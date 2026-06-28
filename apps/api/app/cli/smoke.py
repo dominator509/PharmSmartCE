@@ -4,7 +4,6 @@ import argparse
 import asyncio
 import tempfile
 from pathlib import Path
-from typing import Any, cast
 from urllib.parse import urlparse
 from uuid import uuid4
 
@@ -230,22 +229,23 @@ def _run_local_smoke() -> None:
 
 async def _prepare_database(database_url: str) -> None:
     engine = create_async_engine(database_url, pool_pre_ping=True)
+    session_factory = async_sessionmaker(engine, expire_on_commit=False)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-        await conn.execute(
-            cast(Any, OrgModel.__table__).insert().values(id="org-1", name="Metro CE")
+    async with session_factory() as session:
+        session.add_all(
+            [
+                OrgModel(id="org-1", name="Metro CE"),
+                UserModel(
+                    id="user-1",
+                    org_id="org-1",
+                    email="pharmacist@example.com",
+                    password_hash="hash",
+                    role="admin",
+                ),
+            ]
         )
-        await conn.execute(
-            cast(Any, UserModel.__table__)
-            .insert()
-            .values(
-                id="user-1",
-                org_id="org-1",
-                email="pharmacist@example.com",
-                password_hash="hash",
-                role="admin",
-            )
-        )
+        await session.commit()
     await engine.dispose()
 
 
