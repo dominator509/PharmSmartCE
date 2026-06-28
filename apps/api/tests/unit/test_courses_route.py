@@ -26,3 +26,9 @@ def test_course_create_dto_rejects_boolean_numeric_fields(field_name: str, value
 
     with pytest.raises(ValidationError):
         CourseCreateDTO(**kwargs)
+
+
+@pytest.mark.parametrize("value", [49, 101])
+def test_course_create_dto_rejects_out_of_range_pass_pct(value: int) -> None:
+    with pytest.raises(ValidationError):
+        CourseCreateDTO(title="Cardiology CE", n_questions=6, pass_pct=value)
