@@ -30,7 +30,7 @@ export function UploadSource({ action, error, notice }: UploadSourceProps) {
         </p>
       ) : null}
 
-      <form action={action} encType="multipart/form-data" style={styles.form}>
+      <form action={action} style={styles.form}>
         <label style={styles.label}>
           <span style={styles.labelText}>Source file</span>
           <input
