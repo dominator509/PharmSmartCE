@@ -68,6 +68,7 @@ required_patterns = {
     "Rollback": [
         "Rollback drill",
         "Rollback verification",
+        "DB rollback policy documented in ROLLBACK.md",
         "Customer-impact follow-up",
     ],
     "Data": [

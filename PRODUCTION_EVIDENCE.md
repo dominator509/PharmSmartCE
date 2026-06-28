@@ -15,6 +15,7 @@ need a compact Obsidian-friendly summary of the open launch evidence.
 ## Rollback
 - Rollback drill: TODO - execute in staging and record the previous release/version.
 - Rollback verification: TODO - confirm /healthz, /readyz, and smoke pass after rollback.
+- DB rollback policy documented in ROLLBACK.md and accepted by ops: TODO - capture ops sign-off on the rollback policy in ROLLBACK.md.
 - Customer-impact follow-up: TODO - link any customer issue or postmortem note.
 
 ## Data
