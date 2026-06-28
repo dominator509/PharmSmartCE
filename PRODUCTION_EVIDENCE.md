@@ -50,4 +50,4 @@ need a compact Obsidian-friendly summary of the open launch evidence.
 
 ## Launch Gate
 - Release candidate: commit b25fd6f is pushed to `origin/main`; draft release PR will hold the final human approval step.
-- Human approval comment: TODO - add the explicit launch comment with the release commit SHA.
+- Human approval comment request posted 2026-06-28 on [PR #1](https://github.com/dominator509/PharmSmartCE/pull/1#issuecomment-4827000647); explicit approval with commit SHA remains TODO and the exact launch text is now templated there.
