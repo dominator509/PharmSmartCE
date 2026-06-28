@@ -72,7 +72,10 @@ def extract_execplan_milestones(text: str) -> list[dict[str, str]]:
             current_milestone = ""
             continue
         if mode == "milestones" and line.startswith("### M"):
-            milestone_id, title = line.removeprefix("### ").split(": ", 1)
+            heading = line.removeprefix("### ")
+            milestone_id, separator, title = heading.partition(": ")
+            if not separator:
+                continue
             milestones[milestone_id] = {
                 "id": milestone_id,
                 "title": title,
