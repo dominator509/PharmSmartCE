@@ -45,7 +45,9 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
   }
 
   const resolved = searchParams ? await searchParams : {};
-  const error = Array.isArray(resolved.error) ? resolved.error[0] : resolved.error;
+  const error = Array.isArray(resolved.error)
+    ? resolved.error[0]
+    : resolved.error;
   const success = Array.isArray(resolved.success)
     ? resolved.success[0]
     : resolved.success;

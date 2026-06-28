@@ -53,6 +53,7 @@ Do not use `pip install`, `npm install`, `yarn`.
 | Node typecheck | `pnpm --filter web typecheck` |
 | Node unit tests | `pnpm --filter web test:unit` |
 | E2E (Playwright) | `pnpm --filter web test:e2e` |
+| Web format write | `apps/web/node_modules/.bin/prettier.CMD --write apps/web/app/account/page.tsx apps/web/lib/auth.ts apps/web/scripts/run-e2e.mjs apps/web/tests/e2e/env.ts apps/web/tests/unit/routes.test.ts apps/web/tests/unit/run-e2e.test.ts` |
 | API image build | `docker build -f apps/api/Dockerfile -t pharmsmartce-api:dev .` |
 | Web image build | `docker build -f apps/web/Dockerfile -t pharmsmartce-web:dev .` |
 | Fly config validate | `flyctl config validate -c infra/fly.api.toml` |

@@ -10,22 +10,28 @@ const killedChildren: Array<{ killed: boolean }> = [];
 const reservedPorts = [43210, 43211];
 
 vi.mock("node:child_process", () => ({
-  spawn: vi.fn((command: string, args: string[], options?: { env?: Record<string, string | undefined> }) => {
-    const child = {
-      killed: false,
-      on(event: string, handler: (code: number | null) => void) {
-        if (event === "exit") {
-          queueMicrotask(() => handler(0));
-        }
-      },
-      kill() {
-        this.killed = true;
-      },
-    };
-    spawnCalls.push({ command, args, env: options?.env ?? {} });
-    killedChildren.push(child);
-    return child;
-  }),
+  spawn: vi.fn(
+    (
+      command: string,
+      args: string[],
+      options?: { env?: Record<string, string | undefined> },
+    ) => {
+      const child = {
+        killed: false,
+        on(event: string, handler: (code: number | null) => void) {
+          if (event === "exit") {
+            queueMicrotask(() => handler(0));
+          }
+        },
+        kill() {
+          this.killed = true;
+        },
+      };
+      spawnCalls.push({ command, args, env: options?.env ?? {} });
+      killedChildren.push(child);
+      return child;
+    },
+  ),
 }));
 
 vi.mock("node:net", () => ({
@@ -77,19 +83,17 @@ describe("run-e2e.mjs", () => {
     expect(spawnCalls.some(({ args }) => args.includes("uvicorn"))).toBe(true);
     expect(spawnCalls.some(({ args }) => args.includes("alembic"))).toBe(true);
     expect(
-      spawnCalls.some(({ args }) => args.includes("dev") && args.includes("43211")),
+      spawnCalls.some(
+        ({ args }) => args.includes("dev") && args.includes("43211"),
+      ),
     ).toBe(true);
     expect(spawnCalls.some(({ args }) => args.includes("test"))).toBe(true);
     expect(spawnCalls[0]?.args).toContain("43210");
     expect(spawnCalls[0]?.env.WEB_PUBLIC_API_URL).toBe(
       "http://127.0.0.1:43210",
     );
-    expect(spawnCalls[0]?.env.E2E_API_BASE_URL).toBe(
-      "http://127.0.0.1:43210",
-    );
-    expect(spawnCalls[2]?.env.E2E_WEB_BASE_URL).toBe(
-      "http://127.0.0.1:43211",
-    );
+    expect(spawnCalls[0]?.env.E2E_API_BASE_URL).toBe("http://127.0.0.1:43210");
+    expect(spawnCalls[2]?.env.E2E_WEB_BASE_URL).toBe("http://127.0.0.1:43211");
     expect(spawnCalls[2]?.env.PLAYWRIGHT_BASE_URL).toBe(
       "http://127.0.0.1:43211",
     );

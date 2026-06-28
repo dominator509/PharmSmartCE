@@ -67,10 +67,14 @@ async function terminate(child) {
   }
   if (child.exitCode === null && child.signalCode === null) {
     if (process.platform === "win32" && child.pid !== undefined) {
-      const killer = spawn("taskkill", ["/PID", String(child.pid), "/T", "/F"], {
-        stdio: "inherit",
-        windowsHide: true,
-      });
+      const killer = spawn(
+        "taskkill",
+        ["/PID", String(child.pid), "/T", "/F"],
+        {
+          stdio: "inherit",
+          windowsHide: true,
+        },
+      );
       await waitForExit(killer);
     } else {
       child.kill();
@@ -99,7 +103,8 @@ try {
     ? Number(process.env.E2E_WEB_PORT)
     : await reservePort();
   const apiUrl = process.env.E2E_API_BASE_URL ?? `http://127.0.0.1:${apiPort}`;
-  const webUrl = process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${webPort}`;
+  const webUrl =
+    process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${webPort}`;
 
   backendEnv.WEB_PUBLIC_API_URL = process.env.WEB_PUBLIC_API_URL ?? apiUrl;
   backendEnv.E2E_API_BASE_URL = apiUrl;
@@ -139,14 +144,18 @@ try {
     backendEnv,
   );
 
-  nextServer = spawnCommand(process.execPath, [
-    "node_modules/next/dist/bin/next",
-    "dev",
-    "-H",
-    "127.0.0.1",
-    "-p",
-    String(webPort),
-  ], backendEnv);
+  nextServer = spawnCommand(
+    process.execPath,
+    [
+      "node_modules/next/dist/bin/next",
+      "dev",
+      "-H",
+      "127.0.0.1",
+      "-p",
+      String(webPort),
+    ],
+    backendEnv,
+  );
 
   const migrateCode = await waitForExit(migrate);
   if (migrateCode !== 0) {
@@ -158,11 +167,11 @@ try {
   await waitForUrl(webUrl);
 
   const playwrightArgs = process.argv.slice(2).filter((arg) => arg !== "--");
-  const playwright = spawnCommand(process.execPath, [
-    "node_modules/@playwright/test/cli.js",
-    "test",
-    ...playwrightArgs,
-  ], backendEnv);
+  const playwright = spawnCommand(
+    process.execPath,
+    ["node_modules/@playwright/test/cli.js", "test", ...playwrightArgs],
+    backendEnv,
+  );
   const code = await waitForExit(playwright);
   if (code !== 0) {
     process.exitCode = code ?? 1;

@@ -146,13 +146,7 @@ vi.mock("../../components/AuthForm", () => ({
 }));
 
 vi.mock("../../app/courses/[id]/UploadSource", () => ({
-  UploadSource: ({
-    notice,
-    error,
-  }: {
-    notice?: string;
-    error?: string;
-  }) =>
+  UploadSource: ({ notice, error }: { notice?: string; error?: string }) =>
     createElement(
       "section",
       null,

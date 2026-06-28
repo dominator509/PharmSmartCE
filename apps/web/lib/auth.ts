@@ -91,8 +91,9 @@ export function createAuthActions(deps: AuthDeps = {}) {
     },
     refresh: async (): Promise<AuthResult> => performRefresh(deps),
     logout: async (): Promise<void> => performLogout(deps),
-    changePassword: async (credentials: PasswordChangeCredentials): Promise<void> =>
-      performPasswordChange(credentials, deps),
+    changePassword: async (
+      credentials: PasswordChangeCredentials,
+    ): Promise<void> => performPasswordChange(credentials, deps),
   };
 }
 
