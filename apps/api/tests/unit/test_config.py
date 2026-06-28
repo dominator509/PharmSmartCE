@@ -37,3 +37,9 @@ def test_get_settings_exposes_citation_overlap_threshold() -> None:
 def test_settings_reject_invalid_upload_and_overlap_limits(field_name: str, value: object) -> None:
     with pytest.raises(ValidationError):
         Settings(**{field_name: value})
+
+
+@pytest.mark.parametrize("value", ["", "qa", "production"])
+def test_settings_reject_invalid_app_env(value: str) -> None:
+    with pytest.raises(ValidationError):
+        Settings(app_env=value)

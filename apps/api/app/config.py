@@ -42,6 +42,13 @@ class Settings(BaseSettings):
                 raise ValueError("Auth secrets must decode to at least 32 bytes.")
         return value
 
+    @field_validator("app_env")
+    @classmethod
+    def _validate_app_env(cls, value: str) -> str:
+        if value not in {"local", "test", "staging", "prod"}:
+            raise ValueError("App environment must be local, test, staging, or prod.")
+        return value
+
     @field_validator("access_token_ttl_minutes", "refresh_token_ttl_days")
     @classmethod
     def _validate_positive(cls, value: int) -> int:
