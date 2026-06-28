@@ -275,11 +275,11 @@ function parseCookieValue(
     return null;
   }
 
-  for (const part of headerValue.split(/,(?=\s*[^;]+?=)/)) {
-    const trimmed = part.trim();
-    if (trimmed.startsWith(`${name}=`)) {
-      return trimmed.slice(name.length + 1).split(";", 1)[0] ?? null;
-    }
+  const match = headerValue.match(
+    new RegExp(`(?:^|,\\s*)${escapeRegExp(name)}=([^;,)\\s]+)`),
+  );
+  if (match) {
+    return match[1];
   }
 
   return null;
@@ -295,6 +295,10 @@ function toAuthResult(payload: AccessTokenDTO): AuthResult {
 
 function isSecureCookie(): boolean {
   return process.env.NODE_ENV === "production";
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function isProblemResponse(value: unknown): value is {

@@ -137,6 +137,42 @@ describe("createAuthActions", () => {
     );
     expect(store.get("refresh")?.value).toBe("refresh-token");
   });
+
+  it("stores the refresh cookie when the set-cookie header includes expires data", async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            access_token: "access-token",
+            token_type: "Bearer",
+            expires_in: 900,
+          }),
+          {
+            status: 200,
+            headers: {
+              "content-type": "application/json",
+              "set-cookie":
+                "session=ignored; Expires=Wed, 21 Oct 2015 07:28:00 GMT; Path=/, refresh=refresh-token; Path=/auth; HttpOnly; Secure; SameSite=Lax",
+            },
+          },
+        ),
+      );
+    const store = createCookieStore();
+    const actions = createAuthActions({
+      baseUrl: "https://api.example",
+      fetchImpl,
+      cookieStore: store,
+    });
+
+    const result = await actions.login({
+      email: "pharmacist@example.com",
+      password: "secretsecret12",
+    });
+
+    expect(result.accessToken).toBe("access-token");
+    expect(store.get("refresh")?.value).toBe("refresh-token");
+  });
 });
 
 function createCookieStore(initial: Record<string, string> = {}) {
