@@ -114,8 +114,16 @@ class FaissStore:
             with metadata_path.open("r", encoding="utf-8") as handle:
                 for line in handle:
                     payload = json.loads(line)
-                    chunk_ids.append(str(payload["chunk_id"]))
-                    metadata.append(dict(payload["metadata"]))
+                    if not isinstance(payload, dict):
+                        raise ValueError("metadata file is malformed.")
+                    chunk_id = payload.get("chunk_id")
+                    metadata_item = payload.get("metadata")
+                    if not isinstance(chunk_id, str) or not chunk_id.strip():
+                        raise ValueError("metadata file is malformed.")
+                    if not isinstance(metadata_item, dict):
+                        raise ValueError("metadata file is malformed.")
+                    chunk_ids.append(chunk_id)
+                    metadata.append(dict(metadata_item))
 
         if index.ntotal != len(chunk_ids):
             raise ValueError("index and metadata are out of sync.")
