@@ -123,6 +123,45 @@ vi.mock("../../components/SessionAutoRefresh", () => ({
   SessionAutoRefresh: () => null,
 }));
 
+vi.mock("../../components/AuthForm", () => ({
+  AuthForm: ({
+    title,
+    submitLabel,
+    helperText,
+    error,
+  }: {
+    title: string;
+    submitLabel: string;
+    helperText: string;
+    error?: string;
+  }) =>
+    createElement(
+      "section",
+      null,
+      createElement("h1", null, title),
+      createElement("p", null, helperText),
+      error ? createElement("p", { role: "alert" }, error) : null,
+      createElement("button", null, submitLabel),
+    ),
+}));
+
+vi.mock("../../app/courses/[id]/UploadSource", () => ({
+  UploadSource: ({
+    notice,
+    error,
+  }: {
+    notice?: string;
+    error?: string;
+  }) =>
+    createElement(
+      "section",
+      null,
+      notice ? createElement("p", null, notice) : null,
+      error ? createElement("p", { role: "alert" }, error) : null,
+      createElement("button", null, "Upload source"),
+    ),
+}));
+
 describe("app routes", () => {
   it("renders the shell and top-level routes", async () => {
     const layoutHtml = renderToStaticMarkup(
