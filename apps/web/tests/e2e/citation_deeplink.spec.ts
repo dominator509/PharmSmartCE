@@ -86,7 +86,10 @@ test("citation drawer deep link opens from click and direct URL", async ({
     page.getByRole("button", { name: "Log in" }).click(),
   ]);
 
-  await page.goto(`/sessions/${sessionId}`);
+  await page.goto(`/sessions/${sessionId}`, {
+    waitUntil: "domcontentloaded",
+    timeout: 10_000,
+  });
   await expect(page.getByRole("heading", { name: sessionId })).toBeVisible();
 
   const questionCard = page.locator(`[data-question-id="${question.id}"]`);
@@ -99,6 +102,10 @@ test("citation drawer deep link opens from click and direct URL", async ({
 
   await page.goto(
     `/sessions/${sessionId}?cite=${question.citation.doc_id}:${question.citation.page}:${question.citation.span}`,
+    {
+      waitUntil: "domcontentloaded",
+      timeout: 10_000,
+    },
   );
   await expect(
     page.getByRole("dialog", { name: "Citation details" }),

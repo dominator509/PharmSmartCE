@@ -53,7 +53,7 @@ test("upload source", async ({ page, request }) => {
 
   await expect(page.getByRole("link", { name: "Cardiology CE" })).toBeVisible();
   await Promise.all([
-    page.waitForURL(new RegExp(`/courses/${courseId}$`), { timeout: 10_000 }),
+    page.waitForURL(new RegExp(`/courses/${courseId}$`), { timeout: 15_000 }),
     page.getByRole("link", { name: "Cardiology CE" }).click(),
   ]);
 

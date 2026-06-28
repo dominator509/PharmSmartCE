@@ -73,10 +73,7 @@ test("axe-core reports no serious violations on the core pages", async ({
   await runAxe(page);
   await expectTabReachable(page, page.getByLabel("Email"));
   await expectTabReachable(page, page.getByLabel("Password"));
-  await expectTabReachable(
-    page,
-    page.getByRole("button", { name: "Log in" }),
-  );
+  await expectTabReachable(page, page.getByRole("button", { name: "Log in" }));
 
   await page.context().addCookies([
     {
@@ -90,7 +87,10 @@ test("axe-core reports no serious violations on the core pages", async ({
   await runAxe(page);
   await expectTabReachable(page, page.getByRole("link", { name: "A11y CE" }));
 
-  await page.goto(`/sessions/${sessionId}`);
+  await page.goto(`/sessions/${sessionId}`, {
+    waitUntil: "domcontentloaded",
+    timeout: 10_000,
+  });
   await runAxe(page);
   await expectTabReachable(page, page.getByRole("radio").first());
   await expectTabReachable(
@@ -129,7 +129,9 @@ async function runAxe(page: Page) {
 
 async function expectTabReachable(page: Page, target: Locator): Promise<void> {
   for (let i = 0; i < 12; i += 1) {
-    if (await target.evaluate((element) => element === document.activeElement)) {
+    if (
+      await target.evaluate((element) => element === document.activeElement)
+    ) {
       return;
     }
     await page.keyboard.press("Tab");
