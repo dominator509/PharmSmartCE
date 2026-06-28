@@ -173,5 +173,5 @@ def bind_request_id(request_id: str) -> Token[str | None]:
     return request_id_var.set(request_id)
 
 
-def reset_request_id(token: Any) -> None:
+def reset_request_id(token: Token[str | None]) -> None:
     request_id_var.reset(token)
