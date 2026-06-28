@@ -15,6 +15,11 @@ def test_answer_dto_rejects_boolean_choice_index() -> None:
         AnswerDTO(question_id="question-1", chosen_index=True)
 
 
+def test_answer_dto_rejects_blank_question_id() -> None:
+    with pytest.raises(ValidationError):
+        AnswerDTO(question_id="   ", chosen_index=1)
+
+
 @pytest.mark.parametrize(
     "options",
     [

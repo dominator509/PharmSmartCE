@@ -106,6 +106,12 @@ def test_session_routes_answer_and_pdf(tmp_path: Path) -> None:
             )
             assert blank_doc_id.status_code == 422
 
+            blank_question_id = client.post(
+                f"/api/sessions/{session_id}/answers",
+                json={"question_id": "   ", "chosen_index": 0},
+            )
+            assert blank_question_id.status_code == 422
+
             question_rows = asyncio.run(_load_questions(postgres.get_connection_url(), session_id))
 
             for question in question_rows:
