@@ -163,6 +163,7 @@ Re-running the check is a no-op once green; ticking boxes is git-tracked; no sid
 - Removed the eager `GenerationService` export from `app.services.generation.__init__` to break a circular import exposed by the golden-set harness, then regenerated `apps/api/openapi.json` to match the live app surface.
 - Marked the daily DB backup checkbox as satisfied from the repo-local restore-path proof in `scripts/backup-restore-check.sh` plus the backup policy documented in `OPERATIONS.md`; this remains a repo-context call, not a prod restore observation.
 - Factored fenced-block aware markdown scanning into `app.cli.doc_scan` so the evidence report and production readiness check share the same TODO/FIXME parser.
+- Tightened JWT claim extraction in `apps/api/app/services/auth/tokens.py` to reject missing or malformed claims with explicit `ValueError` instead of surfacing raw lookup/type errors; added a focused unit test to pin the behavior.
 
 ## 15. Outcomes & Retrospective
 Production readiness is partially auditable now: local verify, security, dependency audit, coverage, smoke, and container builds are green, and the repo has the doc and route surface needed for the remaining checklist work. The remaining gaps are external or policy-gated rather than mechanical code failures, so the checklist still needs the staging and human launch evidence before it can be fully closed.

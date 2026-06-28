@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import base64
+import hashlib
+import hmac
+import json
 from datetime import UTC
 
 import pytest
@@ -55,6 +59,24 @@ def test_access_token_rejects_expired_tokens() -> None:
         verify_access_token("local-secret", token)
 
 
+def test_access_token_rejects_missing_claims() -> None:
+    token, _ = issue_access_token(
+        secret="local-secret",
+        user_id="user-1",
+        org_id="org-1",
+        role="admin",
+        ttl_minutes=15,
+    )
+
+    header_b64, payload_b64, _ = token.split(".")
+    payload = json.loads(_base64url_decode(payload_b64))
+    payload.pop("exp")
+    tampered_token = _sign_jwt(header_b64, payload, "local-secret")
+
+    with pytest.raises(ValueError):
+        verify_access_token("local-secret", tampered_token)
+
+
 def test_refresh_cookie_helpers_round_trip() -> None:
     jti, cookie, digest, _ = mint_refresh_token(secret="local-secret", ttl_days=30)
 
@@ -69,3 +91,19 @@ def test_refresh_cookie_helpers_round_trip() -> None:
 def test_parse_refresh_cookie_rejects_invalid_format() -> None:
     with pytest.raises(ValueError):
         parse_refresh_cookie("missing-delimiter")
+
+
+def _sign_jwt(header_b64: str, payload: dict[str, object], secret: str) -> str:
+    payload_b64 = _base64url_encode(json.dumps(payload, separators=(",", ":")).encode("utf-8"))
+    signing_input = f"{header_b64}.{payload_b64}".encode("ascii")
+    signature = hmac.new(secret.encode("utf-8"), signing_input, hashlib.sha256).digest()
+    return f"{header_b64}.{payload_b64}.{_base64url_encode(signature)}"
+
+
+def _base64url_encode(payload: bytes) -> str:
+    return base64.urlsafe_b64encode(payload).rstrip(b"=").decode("ascii")
+
+
+def _base64url_decode(payload: str) -> bytes:
+    padding = "=" * (-len(payload) % 4)
+    return base64.urlsafe_b64decode(payload + padding)

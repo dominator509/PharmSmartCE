@@ -8,7 +8,6 @@ import json
 import secrets
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
-from typing import Any
 from uuid import uuid4
 
 from argon2 import PasswordHasher, Type
@@ -68,15 +67,15 @@ def issue_access_token(
 
 def verify_access_token(secret: str, token: str) -> AccessTokenClaims:
     payload = _decode_jwt(token, secret)
-    expires_at = datetime.fromtimestamp(int(payload["exp"]), tz=UTC)
+    expires_at = datetime.fromtimestamp(_require_int_claim(payload, "exp"), tz=UTC)
     if expires_at <= datetime.now(UTC):
         raise ValueError("Access token expired.")
     return AccessTokenClaims(
-        user_id=str(payload["sub"]),
-        org_id=str(payload["org_id"]),
-        role=str(payload["role"]),
+        user_id=_require_string_claim(payload, "sub"),
+        org_id=_require_string_claim(payload, "org_id"),
+        role=_require_string_claim(payload, "role"),
         expires_at=expires_at,
-        jti=str(payload["jti"]),
+        jti=_require_string_claim(payload, "jti"),
     )
 
 
@@ -108,7 +107,7 @@ def refresh_cookie_matches(secret: str, cookie: str, digest: str) -> bool:
     return hmac.compare_digest(digest_refresh_cookie(secret, cookie), digest)
 
 
-def _encode_jwt(payload: dict[str, Any], secret: str) -> str:
+def _encode_jwt(payload: dict[str, object], secret: str) -> str:
     header = {"alg": "HS256", "typ": "JWT"}
     header_bytes = _base64url_encode(json.dumps(header, separators=(",", ":")).encode("utf-8"))
     payload_bytes = _base64url_encode(json.dumps(payload, separators=(",", ":")).encode("utf-8"))
@@ -117,7 +116,7 @@ def _encode_jwt(payload: dict[str, Any], secret: str) -> str:
     return f"{header_bytes}.{payload_bytes}.{_base64url_encode(signature)}"
 
 
-def _decode_jwt(token: str, secret: str) -> dict[str, Any]:
+def _decode_jwt(token: str, secret: str) -> dict[str, object]:
     try:
         header_b64, payload_b64, signature_b64 = token.split(".")
     except ValueError as exc:
@@ -137,6 +136,32 @@ def _decode_jwt(token: str, secret: str) -> dict[str, Any]:
     if not isinstance(payload, dict):
         raise ValueError("Invalid access token.")
     return payload
+
+
+def _require_string_claim(payload: dict[str, object], key: str) -> str:
+    value = _require_claim(payload, key)
+    if not isinstance(value, str) or not value:
+        raise ValueError("Invalid access token.")
+    return value
+
+
+def _require_int_claim(payload: dict[str, object], key: str) -> int:
+    value = _require_claim(payload, key)
+    if isinstance(value, bool):
+        raise ValueError("Invalid access token.")
+    try:
+        return int(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Invalid access token.") from exc
+
+
+def _require_claim(payload: dict[str, object], key: str) -> object:
+    if key not in payload:
+        raise ValueError("Invalid access token.")
+    value = payload[key]
+    if value is None:
+        raise ValueError("Invalid access token.")
+    return value
 
 
 def _secret_bytes(secret: str) -> bytes:
