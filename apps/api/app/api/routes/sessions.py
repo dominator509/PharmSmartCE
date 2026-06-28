@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query, Request, Response, status
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -63,7 +63,7 @@ class SessionDTO(BaseModel):
 
 class AnswerDTO(BaseModel):
     question_id: str
-    chosen_index: int
+    chosen_index: int = Field(strict=True)
 
 
 class SessionProgressDTO(BaseModel):

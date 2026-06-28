@@ -1,12 +1,18 @@
 from __future__ import annotations
 
 import pytest
+from pydantic import ValidationError
 
-from app.api.routes.sessions import _question_choices
+from app.api.routes.sessions import AnswerDTO, _question_choices
 
 
 def test_question_choices_extracts_valid_string_choices() -> None:
     assert _question_choices({"choices": ["A", "B", "C"]}) == ["A", "B", "C"]
+
+
+def test_answer_dto_rejects_boolean_choice_index() -> None:
+    with pytest.raises(ValidationError):
+        AnswerDTO(question_id="question-1", chosen_index=True)
 
 
 @pytest.mark.parametrize(
