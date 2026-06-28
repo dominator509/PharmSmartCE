@@ -4,6 +4,9 @@ Compact place to record the external proof that EP-010 still needs.
 Use one dated line per item, with the exact command or link and a short
 result note.
 
+Refresh this ledger with `scripts/production-evidence-report.sh` when you
+need a compact Obsidian-friendly summary of the open launch evidence.
+
 ## Staging / Release
 - Happy path vs staging: TODO - needs Fly auth, staging deploy, and smoke against https://staging.pharmsmartce.com.
 - Bluegreen verification: TODO - needs staging deploy history that proves bluegreen or documented rolling exception.

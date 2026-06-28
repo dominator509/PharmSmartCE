@@ -34,6 +34,7 @@ Do not use `pip install`, `npm install`, `yarn`.
 | Smoke test | `scripts/smoke-test.sh` |
 | Full verification | `scripts/verify.sh` |
 | Production readiness check | `scripts/production-readiness-check.sh` |
+| Production evidence report | `scripts/production-evidence-report.sh` |
 
 ## Underlying Tool Commands
 
