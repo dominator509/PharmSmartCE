@@ -4,6 +4,7 @@ import random
 import time
 from collections.abc import Awaitable, Callable
 from datetime import UTC, datetime
+from typing import Protocol, runtime_checkable
 
 import structlog
 import structlog.contextvars
@@ -14,6 +15,11 @@ from app.api.handlers import bind_request_id, reset_request_id
 from app.observability.metrics import record_http_request
 
 _CROCKFORD = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"
+
+
+@runtime_checkable
+class AlertProvider(Protocol):
+    def record(self, alert_name: str) -> None: ...
 
 
 def generate_request_id() -> str:
@@ -67,11 +73,8 @@ class RequestIdMiddleware(BaseHTTPMiddleware):
             org_id = getattr(principal, "org_id", "") if principal is not None else ""
             route = request.url.path
             record_http_request(request.method, route, status_code, duration)
-            alert_provider = getattr(request.app.state, "alert_provider", None)
-            if status_code >= 500 and alert_provider is not None:
-                record = getattr(alert_provider, "record", None)
-                if callable(record):
-                    record("api_5xx_high")
+            if status_code >= 500:
+                _record_alert(request)
             structlog.get_logger("http_request").info(
                 "http_request",
                 request_id=request_id,
@@ -86,3 +89,9 @@ class RequestIdMiddleware(BaseHTTPMiddleware):
             )
             reset_request_id(token)
             structlog.contextvars.clear_contextvars()
+
+
+def _record_alert(request: Request) -> None:
+    alert_provider = getattr(request.app.state, "alert_provider", None)
+    if isinstance(alert_provider, AlertProvider):
+        alert_provider.record("api_5xx_high")
