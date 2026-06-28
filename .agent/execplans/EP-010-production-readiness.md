@@ -150,6 +150,7 @@ Re-running the check is a no-op once green; ticking boxes is git-tracked; no sid
 - 2026-06-28 - The performance ledger now records the remaining target-host proof items explicitly: P95 session-start and 30-page ingest placeholders live in `PRODUCTION_EVIDENCE.md`.
 - 2026-06-28 - The evidence ledger check now asserts every open readiness area is represented, so the ledger mirrors the outstanding launch proof rows rather than just the section headings.
 - 2026-06-28 - The privacy gap is now explicit in the ledger too: `Uploaded docs SSE-S3 encrypted at rest` is captured as the remaining proof row.
+- 2026-06-28 - The data readiness checklist now treats the repo-local restore-path proof plus the documented nightly backup policy as sufficient for the daily backup test-restore checkbox; the remaining R2 retention and staging/prod evidence still need external capture.
 - Serena health-check still fails on this Windows profile because the embedded uv/pyright startup cannot create its lock/cache files under the current user context, even after moving Serena's cache path to a repo-local `.tmp` directory.
 
 ## 14. Decision Log
@@ -160,6 +161,7 @@ Re-running the check is a no-op once green; ticking boxes is git-tracked; no sid
 - Kept the changelog aligned with the launch-readiness hardening pass so the release notes reflect the new operational docs and perf guard.
 - Added `DELETE /auth/account` for self-service account deletion with last-user org cleanup, then documented and tested it as the repo privacy path.
 - Removed the eager `GenerationService` export from `app.services.generation.__init__` to break a circular import exposed by the golden-set harness, then regenerated `apps/api/openapi.json` to match the live app surface.
+- Marked the daily DB backup checkbox as satisfied from the repo-local restore-path proof in `scripts/backup-restore-check.sh` plus the backup policy documented in `OPERATIONS.md`; this remains a repo-context call, not a prod restore observation.
 
 ## 15. Outcomes & Retrospective
 Production readiness is partially auditable now: local verify, security, dependency audit, coverage, smoke, and container builds are green, and the repo has the doc and route surface needed for the remaining checklist work. The remaining gaps are external or policy-gated rather than mechanical code failures, so the checklist still needs the staging and human launch evidence before it can be fully closed.

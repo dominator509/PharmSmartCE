@@ -20,6 +20,8 @@ All notable changes to this project will be documented in this file.
 - Observability alert rows now point at concrete runbook sections.
 - Production readiness checklist now reflects the repo-backed support,
   observability, deployment, and privacy evidence gathered so far.
+- Production evidence ledger now requires an explicit rollback-policy row
+  before the rollback section can pass its consistency check.
 
 ### Fixed
 - Course creation now commits before the upload request boundary, so the smoke and integration paths can see the new course.

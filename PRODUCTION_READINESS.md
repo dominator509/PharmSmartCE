@@ -71,7 +71,7 @@ through these items.
 - [ ] DB rollback policy documented in `ROLLBACK.md` and accepted by ops.
 
 ## Data Readiness
-- [ ] Daily DB backup verified by test-restore in last 7 days.
+- [x] Daily DB backup verified by test-restore in last 7 days.
 - [ ] R2 retention set (sources: 365 d; backups: 30 d).
 - [x] FAISS indices rebuildable (`python -m app.cli.rebuild_index --all` in
       staging).
