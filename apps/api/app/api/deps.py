@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator
 from dataclasses import dataclass
-from typing import Annotated, Protocol, cast
+from typing import Annotated, Protocol, runtime_checkable
 
 from fastapi import Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
@@ -23,6 +23,7 @@ class Principal:
     role: str
 
 
+@runtime_checkable
 class AppState(Protocol):
     settings: Settings
     session_factory: async_sessionmaker[AsyncSession]
@@ -114,4 +115,7 @@ async def require_api_rate_limit(
 
 
 def _state(request: Request) -> AppState:
-    return cast(AppState, request.app.state)
+    state = request.app.state
+    if not isinstance(state, AppState):
+        raise RuntimeError("FastAPI app state is missing required services.")
+    return state
