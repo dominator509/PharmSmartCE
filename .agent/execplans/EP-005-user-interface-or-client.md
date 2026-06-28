@@ -133,6 +133,7 @@ E2E tests are deterministic when the API is started fresh via docker compose. Re
 - 2026-06-27 - `apps/web/playwright.config.ts` now reads `PLAYWRIGHT_BASE_URL`, and the unit suite verifies the env override so the browser origin stays runner-driven.
 - 2026-06-27 - The route-render unit test now stubs server-action-heavy upload/auth wrappers so the shell snapshot stays useful without React form-action warnings.
 - 2026-06-27 - The e2e runner test now pins `E2E_API_BASE_URL`, `E2E_WEB_BASE_URL`, and `PLAYWRIGHT_BASE_URL` so both the API client and Playwright stay on the same runner-selected origin.
+- 2026-06-27 - The e2e runner test now also proves explicit `E2E_API_PORT` / `E2E_WEB_PORT` overrides, so a fixed local pair can still be forced when needed.
 
 ## 14. Decision Log
 - 2026-06-27 - Next 15.5.18's `cookies()` is async in this repo, so the auth bridge awaits it and casts the returned cookie jar to the repository's narrow cookie-store helper type.

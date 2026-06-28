@@ -96,4 +96,29 @@ describe("run-e2e.mjs", () => {
     expect(fetchCalls[0]).toBe("http://127.0.0.1:43210/healthz");
     expect(fetchCalls[1]).toBe("http://127.0.0.1:43211");
   });
+
+  it("honors explicit api and web port env vars", async () => {
+    vi.stubEnv("E2E_API_PORT", "5001");
+    vi.stubEnv("E2E_WEB_PORT", "5002");
+    vi.resetModules();
+
+    const originalFetch = global.fetch;
+    global.fetch = (async (input: RequestInfo | URL) => {
+      fetchCalls.push(String(input));
+      return { ok: true } as Response;
+    }) as typeof fetch;
+
+    try {
+      await import("../../scripts/run-e2e.mjs");
+    } finally {
+      global.fetch = originalFetch;
+      vi.unstubAllEnvs();
+      vi.resetModules();
+    }
+
+    expect(spawnCalls.some(({ args }) => args.includes("5001"))).toBe(true);
+    expect(spawnCalls.some(({ args }) => args.includes("5002"))).toBe(true);
+    expect(fetchCalls[0]).toBe("http://127.0.0.1:5001/healthz");
+    expect(fetchCalls[1]).toBe("http://127.0.0.1:5002");
+  });
 });
