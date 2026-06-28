@@ -49,5 +49,5 @@ need a compact Obsidian-friendly summary of the open launch evidence.
 - Alerting provider wiring: TODO - record provider/rule IDs and a test-fire result.
 
 ## Launch Gate
-- Release candidate: commit 00ac235 is pushed to `origin/codex/release-readiness`; draft release PR will hold the final human approval step.
-- Human approval comment request posted 2026-06-28 on [PR #1](https://github.com/dominator509/PharmSmartCE/pull/1#issuecomment-4827000647); explicit approval with commit SHA remains TODO and the exact launch text is now templated there.
+- Release candidate: the current `origin/codex/release-readiness` head is the draft release candidate; the launch comment template is generated from that head.
+- Human approval comment request posted 2026-06-28 on [PR #1](https://github.com/dominator509/PharmSmartCE/pull/1#issuecomment-4827000647); explicit approval with commit SHA remains TODO and `scripts/launch-gate-comment.sh` generates the exact launch text from the current branch head.
