@@ -172,6 +172,7 @@ Re-running the check is a no-op once green; ticking boxes is git-tracked; no sid
 - Capped session answer and citation lookup IDs at 36 characters so unbounded question/doc identifiers are rejected early, then refreshed `apps/api/openapi.json` and added regressions for the DTO and citation route.
 - Added positive/range validation for `upload_max_bytes` and `citation_min_overlap_ratio` so the runtime upload guard and overlap threshold cannot be misconfigured into silent no-op or impossible states.
 - Constrained `app_env` to the runtime modes the app already branches on so configuration typos cannot silently bypass staging/prod secret and logging behavior.
+- Mirrored the 255-character filename cap in `LocalSourceStorage` so the filesystem adapter cannot accept a source name wider than the database field.
 - Replaced the generic exception adapter cast in `apps/api/app/api/handlers.py` with a runtime `isinstance` guard so the exception handlers fail fast if the adapter is miswired; added a mismatch regression test.
 - Consolidated the FastAPI app-state casts in `apps/api/app/api/deps.py` behind a typed `AppState` protocol helper so request dependencies read from a single typed seam instead of repeating `cast(...)` at every access.
 - Added a runtime check and regression test for missing FastAPI app-state services in `apps/api/app/api/deps.py` so request dependency lookups now fail fast if startup wiring is incomplete.

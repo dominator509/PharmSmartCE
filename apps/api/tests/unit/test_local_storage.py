@@ -17,6 +17,16 @@ def test_local_source_storage_rejects_path_like_filename(tmp_path) -> None:
         asyncio.run(_run())
 
 
+def test_local_source_storage_rejects_overlong_filename(tmp_path) -> None:
+    storage = LocalSourceStorage(tmp_path / "uploads")
+
+    async def _run() -> None:
+        await storage.save_source("course-1", "source-1", f"{'a' * 256}.pdf", b"data")
+
+    with pytest.raises(ValueError):
+        asyncio.run(_run())
+
+
 def test_local_source_storage_rejects_reserved_windows_filename(tmp_path) -> None:
     storage = LocalSourceStorage(tmp_path / "uploads")
 
