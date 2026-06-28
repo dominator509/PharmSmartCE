@@ -37,6 +37,16 @@ def test_extract_todo_rows_uses_sections() -> None:
     }
 
 
+def test_extract_todo_rows_ignores_non_bullets() -> None:
+    text = """\
+## A
+This line mentions TODO - but is not a bullet.
+* Baz: TODO - still counted
+"""
+
+    assert extract_todo_rows(text) == {"A": ["Baz: TODO - still counted"]}
+
+
 def test_extract_execplan_milestones_reads_status_and_commands() -> None:
     text = """\
 ## 8. Milestones

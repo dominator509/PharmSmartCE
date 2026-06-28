@@ -35,8 +35,8 @@ def extract_todo_rows(text: str) -> dict[str, list[str]]:
             current_section = line.removeprefix("## ").strip()
             sections.setdefault(current_section, [])
             continue
-        if "TODO -" in line and current_section:
-            sections.setdefault(current_section, []).append(line.removeprefix("- ").strip())
+        if current_section and line.startswith(("- ", "* ")) and "TODO -" in line:
+            sections.setdefault(current_section, []).append(line[2:].strip())
     return {section: rows for section, rows in sections.items() if rows}
 
 
