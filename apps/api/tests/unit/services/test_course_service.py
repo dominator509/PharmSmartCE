@@ -28,6 +28,16 @@ def test_create_course_rejects_overlong_title() -> None:
         asyncio.run(_run())
 
 
+def test_create_course_rejects_nonpositive_question_count() -> None:
+    service = CourseService(session=object(), storage=object(), ingest_service=object())
+
+    async def _run() -> None:
+        await service.create_course(org_id="org-1", title="Cardiology CE", n_questions=0)
+
+    with pytest.raises(ValidationError):
+        asyncio.run(_run())
+
+
 def test_upload_source_rejects_blank_filename() -> None:
     service = CourseService(session=object(), storage=object(), ingest_service=object())
 

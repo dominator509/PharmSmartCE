@@ -55,6 +55,8 @@ class CourseService:
             raise ValidationError("Course title must not be empty.")
         if len(title) > 255:
             raise ValidationError("Course title must not exceed 255 characters.")
+        if n_questions <= 0:
+            raise ValidationError("Course must have at least one question.")
         course = CourseModel(
             id=uuid4().hex,
             org_id=org_id,

@@ -31,7 +31,7 @@ can rely on, with consistent error shapes and authorization.
 | POST | `/auth/logout` | refresh cookie | (none) | 204 | 401 |
 | GET | `/api/courses` | jwt | — | 200 `CourseListDTO` | 401 |
 | GET | `/api/courses/{id}` | jwt | — | 200 `CourseDetailDTO` (`CourseDTO` + `sources[]`) | 401, 404 |
-| POST | `/api/courses` | jwt (admin) | `CourseCreateDTO` | 201 `CourseDTO` | 401, 403, 422 |
+| POST | `/api/courses` | jwt (admin) | `CourseCreateDTO {title, n_questions>=1, pass_pct 50-100}` | 201 `CourseDTO` | 401, 403, 422 |
 | POST | `/api/courses/{id}/sources` | jwt (admin) multipart | file | 202 `SourceDTO` | 401, 403, 413, 415, 422 |
 | GET | `/api/sources/{id}/status` | jwt | — | 200 `SourceStatusDTO` | 401, 404 |
 | POST | `/api/sessions/{course_id}/start` | jwt | (none) | 201 `SessionDTO` (Q list each with `citation_url`) | 401, 404, 409, 503 |
@@ -48,6 +48,7 @@ can rely on, with consistent error shapes and authorization.
 - `SourceDTO`: `{ id, course_id, filename (<=255 chars), bytes, sha256, status, created_at }`
 - `AnswerDTO`: `{ question_id: nonblank string (<=36 chars), chosen_index: int >= 0 }`
 - `CitationPreviewDTO`: `{ doc_id: nonblank string (<=36 chars), page, span, source_filename, passage }`
+- `CourseCreateDTO`: `{ title: nonblank string (<=255 chars), n_questions: int >= 1, pass_pct: 50-100 }`
 - `CourseDetailDTO`: `CourseDTO` plus `sources[]` for the detail page; the
   list endpoint continues to use `CourseListDTO`.
 - `AnswerResultDTO`: `{ correct: bool, correct_index: int, rationale: str,
