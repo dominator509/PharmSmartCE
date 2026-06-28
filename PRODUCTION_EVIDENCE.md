@@ -49,4 +49,5 @@ need a compact Obsidian-friendly summary of the open launch evidence.
 - Alerting provider wiring: TODO - record provider/rule IDs and a test-fire result.
 
 ## Launch Gate
+- Release candidate: commit b25fd6f is pushed to `origin/main`; draft release PR will hold the final human approval step.
 - Human approval comment: TODO - add the explicit launch comment with the release commit SHA.
