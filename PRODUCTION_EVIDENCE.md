@@ -25,6 +25,9 @@ need a compact Obsidian-friendly summary of the open launch evidence.
 - R2 retention evidence: TODO - capture bucket retention settings for sources and backups.
 - S3 encryption evidence: TODO - capture bucket encryption settings for sources and backups.
 
+## Security
+- Local security proof: verified 2026-06-28 with `scripts/security-check.sh`, `scripts/dependency-audit.sh`, and `scripts/bin/uv.cmd run --directory apps/api pytest tests/integration/security -q`.
+
 ## Support / Ops
 - Incident tabletop: TODO - run the checklist and record outcome within 30 days.
 - Sentry staging/prod evidence: TODO - capture a staging and prod event or dashboard proof.

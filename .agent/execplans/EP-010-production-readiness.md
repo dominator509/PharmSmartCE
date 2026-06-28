@@ -132,7 +132,7 @@ Re-running the check is a no-op once green; ticking boxes is git-tracked; no sid
 ## 12. Progress
 - [ ] M1: Functional category audit
 - [x] M2: Test category audit â€” 2026-06-27T19:00Z â€” `scripts/verify.sh`, backend coverage >= 80%, and the golden-set harness all pass in the current checkout.
-- [ ] M3: Security category audit
+- [x] M3: Security category audit — 2026-06-28 — `scripts/security-check.sh`, `scripts/dependency-audit.sh`, and `pytest tests/integration/security -q` all pass locally in the current checkout.
 - [ ] M4: Privacy + data category audit
 - [ ] M5: Performance audit
 - [ ] M6: Observability audit
@@ -142,6 +142,7 @@ Re-running the check is a no-op once green; ticking boxes is git-tracked; no sid
 
 ## 13. Surprises & Discoveries
 - 2026-06-28 - On this Windows profile the repo-local web formatter is easiest to run through `apps/web/node_modules/.bin/prettier.CMD`; the consolidated readiness chain also needs elevated host Docker access to finish the Docker-backed integration and e2e segments cleanly.
+- 2026-06-28 - The security audit remains fully localizable: `scripts/security-check.sh`, `scripts/dependency-audit.sh`, and `tests/integration/security` all pass without staging access.
 - Serena health-check still fails on this Windows profile because the embedded uv/pyright startup cannot create its lock/cache files under the current user context, even after moving Serena's cache path to a repo-local `.tmp` directory.
 
 ## 14. Decision Log

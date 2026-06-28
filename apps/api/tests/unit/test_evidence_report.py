@@ -5,6 +5,7 @@ from app.cli.evidence_report import (
     build_report,
     extract_execplan_milestones,
     extract_open_checkboxes,
+    extract_verified_rows,
     extract_todo_rows,
 )
 
@@ -47,6 +48,19 @@ This line mentions TODO - but is not a bullet.
     assert extract_todo_rows(text) == {"A": ["Baz: TODO - still counted"]}
 
 
+def test_extract_verified_rows_uses_sections() -> None:
+    text = """\
+## A
+- verified line
+* another verified line
+- TODO - ignored
+"""
+
+    assert extract_verified_rows(text) == {
+        "A": ["verified line", "another verified line"],
+    }
+
+
 def test_extract_execplan_milestones_reads_status_and_commands() -> None:
     text = """\
 ## 8. Milestones
@@ -86,6 +100,7 @@ def test_build_report_renders_markdown_sections() -> None:
     report = build_report(
         {"Test": ["one"]},
         {"Data": ["- Foo: TODO - bar"]},
+        {"Data": ["local proof"], "Security": ["security proof"]},
         [
             {
                 "id": "M1",
@@ -108,10 +123,16 @@ def test_build_report_renders_markdown_sections() -> None:
     assert "## Summary" in report
     assert "- Open readiness items: 1 across 1 sections" in report
     assert "- Remaining evidence rows: 1 across 1 sections" in report
+    assert "- Verified evidence rows: 2 across 2 sections" in report
     assert "- EP-010 milestones complete: 1 across 2 milestones" in report
     assert "## Open Readiness Checkboxes" in report
     assert "### Test" in report
     assert "- [ ] one" in report
+    assert "## Verified Evidence Rows" in report
+    assert "### Data" in report
+    assert "- local proof" in report
+    assert "### Security" in report
+    assert "- security proof" in report
     assert "## EP-010 Milestones" in report
     assert "- M1 [open] `cmd-one` -> All happy-path tests pass against staging." in report
     assert (
@@ -162,15 +183,16 @@ def test_main_writes_output_file(tmp_path) -> None:
         "## Summary\n"
         "- Open readiness items: 1 across 1 sections\n"
         "- Remaining evidence rows: 1 across 1 sections\n\n"
+        "- Verified evidence rows: 0 across 0 sections\n"
+        "- EP-010 milestones complete: 1 across 1 milestones\n\n"
         "## Open Readiness Checkboxes\n"
         "### One\n"
         "- [ ] alpha\n\n"
+        "## Verified Evidence Rows\n"
+        "- none\n\n"
         "## EP-010 Milestones\n"
         "- M1 [done] `cmd-one` -> ready\n\n"
         "## Remaining Evidence Rows\n"
         "### Two\n"
         "- Beta: TODO - gamma\n"
-    )
-    assert "- EP-010 milestones complete: 1 across 1 milestones" in output.read_text(
-        encoding="utf-8"
     )

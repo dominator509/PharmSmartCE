@@ -40,6 +40,20 @@ def extract_todo_rows(text: str) -> dict[str, list[str]]:
     return {section: rows for section, rows in sections.items() if rows}
 
 
+def extract_verified_rows(text: str) -> dict[str, list[str]]:
+    sections: dict[str, list[str]] = {}
+    current_section = ""
+    for raw_line in text.splitlines():
+        line = raw_line.strip()
+        if line.startswith("## "):
+            current_section = line.removeprefix("## ").strip()
+            sections.setdefault(current_section, [])
+            continue
+        if current_section and line.startswith(("- ", "* ")) and "TODO -" not in line:
+            sections.setdefault(current_section, []).append(line[2:].strip())
+    return {section: rows for section, rows in sections.items() if rows}
+
+
 def extract_execplan_milestones(text: str) -> list[dict[str, str]]:
     milestones: dict[str, dict[str, str]] = {}
     current_milestone = ""
@@ -102,10 +116,12 @@ def extract_execplan_milestones(text: str) -> list[dict[str, str]]:
 def build_report(
     open_checkboxes: Mapping[str, list[str]],
     todo_rows: Mapping[str, list[str]],
+    verified_rows: Mapping[str, list[str]],
     milestones: list[dict[str, str]],
 ) -> str:
     open_item_count = sum(len(items) for items in open_checkboxes.values())
     todo_item_count = sum(len(rows) for rows in todo_rows.values())
+    verified_item_count = sum(len(rows) for rows in verified_rows.values())
     completed_milestone_count = sum(1 for milestone in milestones if milestone["status"] == "done")
     lines: list[str] = ["# EP-010 Evidence Report", ""]
 
@@ -115,6 +131,9 @@ def build_report(
     )
     lines.append(
         f"- Remaining evidence rows: {todo_item_count} across " f"{len(todo_rows)} sections"
+    )
+    lines.append(
+        f"- Verified evidence rows: {verified_item_count} across {len(verified_rows)} sections"
     )
     lines.append(
         f"- EP-010 milestones complete: {completed_milestone_count} across {len(milestones)} milestones"
@@ -127,6 +146,17 @@ def build_report(
             lines.append(f"### {section}")
             for item in items:
                 lines.append(f"- [ ] {item}")
+            lines.append("")
+    else:
+        lines.append("- none")
+        lines.append("")
+
+    lines.append("## Verified Evidence Rows")
+    if verified_rows:
+        for section, rows in verified_rows.items():
+            lines.append(f"### {section}")
+            for row in rows:
+                lines.append(f"- {row}")
             lines.append("")
     else:
         lines.append("- none")
@@ -172,8 +202,9 @@ def main(argv: list[str] | None = None) -> int:
         reconfigure(encoding="utf-8")
     readiness = extract_open_checkboxes(READINESS_PATH.read_text(encoding="utf-8"))
     evidence = extract_todo_rows(EVIDENCE_PATH.read_text(encoding="utf-8"))
+    verified = extract_verified_rows(EVIDENCE_PATH.read_text(encoding="utf-8"))
     milestones = extract_execplan_milestones(EXECPLAN_PATH.read_text(encoding="utf-8"))
-    report = build_report(readiness, evidence, milestones)
+    report = build_report(readiness, evidence, verified, milestones)
     if args.output is None:
         print(report, end="")
     else:
