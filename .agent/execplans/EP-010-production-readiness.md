@@ -176,6 +176,7 @@ Re-running the check is a no-op once green; ticking boxes is git-tracked; no sid
 - Replaced the request-id middleware’s loose alert-provider check in `apps/api/app/api/middleware/request_id.py` with a typed protocol helper so synthetic 5xx alerting only fires when the provider really supports `record(...)`; added a unit test for the helper.
 - Narrowed `apps/api/app/api/routes/health.py` database probing to expected runtime failures (`SQLAlchemyError`, `TimeoutError`, `OSError`) instead of swallowing every exception class; added a unit test for the SQLAlchemy-error path.
 - Hardened `apps/api/app/cli/evidence_report.py` so malformed milestone headings are skipped instead of crashing the report parser; added a regression test for malformed `### M...` lines.
+- Hardened `apps/api/app/services/auth/tokens.py` so malformed JWT headers that decode to non-mappings are rejected with the normal invalid-token path; added a tampered-header regression test.
 
 ## 15. Outcomes & Retrospective
 Production readiness is partially auditable now: local verify, security, dependency audit, coverage, smoke, and container builds are green, and the repo has the doc and route surface needed for the remaining checklist work. The remaining gaps are external or policy-gated rather than mechanical code failures, so the checklist still needs the staging and human launch evidence before it can be fully closed.

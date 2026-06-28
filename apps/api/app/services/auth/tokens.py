@@ -129,6 +129,8 @@ def _decode_jwt(token: str, secret: str) -> dict[str, object]:
         raise ValueError("Invalid access token.")
 
     header = json.loads(_base64url_decode(header_b64))
+    if not isinstance(header, dict):
+        raise ValueError("Invalid access token.")
     if header.get("alg") != "HS256":
         raise ValueError("Invalid access token.")
 

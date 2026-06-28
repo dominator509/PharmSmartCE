@@ -77,6 +77,21 @@ def test_access_token_rejects_missing_claims() -> None:
         verify_access_token("local-secret", tampered_token)
 
 
+def test_access_token_rejects_non_object_header() -> None:
+    payload = {
+        "sub": "user-1",
+        "org_id": "org-1",
+        "role": "admin",
+        "iat": 1,
+        "exp": 2,
+        "jti": "token-id",
+    }
+    token = _sign_jwt(_base64url_encode(b"[]"), payload, "local-secret")
+
+    with pytest.raises(ValueError):
+        verify_access_token("local-secret", token)
+
+
 def test_refresh_cookie_helpers_round_trip() -> None:
     jti, cookie, digest, _ = mint_refresh_token(secret="local-secret", ttl_days=30)
 
