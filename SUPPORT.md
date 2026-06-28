@@ -21,3 +21,6 @@ Compact support intake and incident routing for PharmSmartCE.
 ## Operator Notes
 - Keep incidents and customer reports linked to the issue or postmortem trail.
 - Do not store secrets, tokens, or full `/auth/*` payloads in support notes.
+
+## Evidence Ledger
+- Capture tabletop exercises and follow-up notes in `PRODUCTION_EVIDENCE.md`.

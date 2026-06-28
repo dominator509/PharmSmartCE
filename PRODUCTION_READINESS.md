@@ -117,6 +117,8 @@ through these items.
 - The full readiness pack was re-reviewed in this pass, covering every section.
 - `DELETE /auth/account` removes the current user and, when applicable, the
   org and its dependent course/session/CE-record data.
+- External proof items still need dated entries in `PRODUCTION_EVIDENCE.md`
+  before the final launch gate can be signed.
 
 ## Final Launch Gate
 Production launch requires a single explicit human decision recorded as an

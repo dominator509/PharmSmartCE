@@ -72,3 +72,7 @@ Next update at HH:MM UTC.
 ## Postmortem
 Blameless postmortem within 5 business days for any Sev1/Sev2 rollback.
 Template: `.agent/templates/runbook-template.md` (Postmortem section).
+
+## Evidence Ledger
+Record each actual drill in `PRODUCTION_EVIDENCE.md` with the date,
+version/commit, and verification outcome.

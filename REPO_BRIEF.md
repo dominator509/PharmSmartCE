@@ -27,7 +27,8 @@ This checkout now has the EP-001 empty-app foundation plus the EP-002 pure domai
   `.agent/execplans/EP-010-production-readiness.md`.
 - Operations docs: `ENVIRONMENT.md`, `SECURITY.md`, `TESTING.md`,
   `OBSERVABILITY.md`, `OPERATIONS.md`, `SUPPORT.md`, `DEPLOYMENT.md`,
-  `RELEASE.md`, `ROLLBACK.md`, `PRODUCTION_READINESS.md`.
+  `RELEASE.md`, `ROLLBACK.md`, `PRODUCTION_READINESS.md`,
+  `PRODUCTION_EVIDENCE.md`.
 
 ## Commands
 Use only commands documented in `COMMANDS.md`. Key commands:
