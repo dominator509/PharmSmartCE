@@ -26,6 +26,12 @@ class Course:
     title: str
     description: str = ""
 
+    def __post_init__(self) -> None:
+        if not self.org_id.strip():
+            raise DomainError("Course requires an org_id.")
+        if not self.title.strip():
+            raise DomainError("Course requires a title.")
+
 
 @dataclass(frozen=True, slots=True)
 class Source:

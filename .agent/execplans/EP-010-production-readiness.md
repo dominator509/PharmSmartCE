@@ -174,6 +174,7 @@ Re-running the check is a no-op once green; ticking boxes is git-tracked; no sid
 - Constrained `app_env` to the runtime modes the app already branches on so configuration typos cannot silently bypass staging/prod secret and logging behavior.
 - Mirrored the 255-character filename cap in `LocalSourceStorage` so the filesystem adapter cannot accept a source name wider than the database field.
 - Rejected zero-question courses at the DTO, service, and HTTP integration boundaries so session generation cannot silently create an empty question set.
+- Required nonblank `org_id` and `title` on the domain `Course` entity so direct construction cannot create a course that the service layer would immediately reject.
 - Required nonblank `stem` and `rationale` on `Question` so direct domain construction cannot persist empty question text.
 - Replaced the generic exception adapter cast in `apps/api/app/api/handlers.py` with a runtime `isinstance` guard so the exception handlers fail fast if the adapter is miswired; added a mismatch regression test.
 - Consolidated the FastAPI app-state casts in `apps/api/app/api/deps.py` behind a typed `AppState` protocol helper so request dependencies read from a single typed seam instead of repeating `cast(...)` at every access.
