@@ -38,4 +38,16 @@ describe("apiFetch", () => {
       },
     });
   });
+
+  it("rejects non-path inputs before making a request", async () => {
+    const fetchImpl = vi.fn();
+    vi.stubGlobal("fetch", fetchImpl);
+
+    await expect(
+      apiFetch("https://example.test/api/test", {
+        baseUrl: "https://api.example",
+      }),
+    ).rejects.toThrow("API paths must start with '/'.");
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
 });

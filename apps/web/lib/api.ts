@@ -37,6 +37,9 @@ export async function apiFetch<T>(
   path: string,
   options: ApiFetchOptions = {},
 ): Promise<T> {
+  if (!path.startsWith("/")) {
+    throw new Error("API paths must start with '/'.");
+  }
   const baseUrl = options.baseUrl ?? getApiBaseUrl();
   const url = new URL(path, `${baseUrl}/`);
   const response = await fetch(url, {

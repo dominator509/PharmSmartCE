@@ -181,6 +181,7 @@ Re-running the check is a no-op once green; ticking boxes is git-tracked; no sid
 - Hardened `apps/web/app/auth/complete/AuthCompleteClient.tsx` to only honor same-site `next` paths and fall back to `/courses` for malformed or off-origin values; added a unit test for the redirect resolver.
 - Hardened `apps/web/lib/auth.ts` so refresh-cookie extraction no longer splits blindly on commas inside `Expires=` attributes; added a unit test for a cookie header with date commas.
 - Hardened `apps/api/app/services/generation/grounded_llm.py` to reject boolean `correct_choice_index` values instead of treating them as integers; added a regression test for a JSON `true` index.
+- Hardened `apps/web/lib/api.ts` to reject non-path inputs before building a request URL, closing an easy SSRF-style misuse path; added a unit test for absolute URLs.
 
 ## 15. Outcomes & Retrospective
 Production readiness is partially auditable now: local verify, security, dependency audit, coverage, smoke, and container builds are green, and the repo has the doc and route surface needed for the remaining checklist work. The remaining gaps are external or policy-gated rather than mechanical code failures, so the checklist still needs the staging and human launch evidence before it can be fully closed.
