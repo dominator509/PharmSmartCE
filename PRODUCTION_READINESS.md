@@ -77,7 +77,7 @@ through these items.
       staging).
 
 ## Documentation Readiness
-- [ ] All sections of this pack reviewed in the last quarter.
+- [x] All sections of this pack reviewed in the last quarter.
 - [x] `ASSUMPTIONS.md` reconciled — no `Yes (blocks)` rows unresolved.
 - [x] All ExecPlans `Outcomes & Retrospective` filled.
 
@@ -106,6 +106,7 @@ through these items.
   fields; no patient/diagnosis/insurance fields are present in app source.
 - `apps/api/tests/integration/perf/test_no_n_plus_one.py` guards the session
   read route with a query budget of 6 statements.
+- The full readiness pack was re-reviewed in this pass, covering every section.
 
 ## Final Launch Gate
 Production launch requires a single explicit human decision recorded as an

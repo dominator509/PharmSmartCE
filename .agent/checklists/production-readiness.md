@@ -12,7 +12,7 @@ Cross-reference with `PRODUCTION_READINESS.md` — this is the operational ledge
 - [ ] Deployment audited (release.yml works, same image staging/prod, bluegreen verified)
 - [ ] Rollback drill completed in last 30 days
 - [ ] Data audited (R2 retention set; backup test-restore < 7 days; FAISS rebuildable)
-- [ ] Documentation reviewed in last quarter
+- [x] Documentation reviewed in last quarter
 - [ ] Support audited (incident tabletop < 30 days; on-call rota; customer contact)
 - [ ] `scripts/production-readiness-check.sh` exit 0
 - [ ] Final human launch gate comment recorded on release PR with SHA
