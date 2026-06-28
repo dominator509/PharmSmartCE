@@ -2,11 +2,19 @@ from __future__ import annotations
 
 import importlib
 from dataclasses import dataclass
-from typing import Any
+from typing import Protocol, runtime_checkable
 
 from app.config import Settings
 
-_sentry_sdk: Any = None
+
+@runtime_checkable
+class _SentrySDKModule(Protocol):
+    def init(self, *, dsn: str, environment: str, before_send: object) -> object: ...
+
+    def capture_exception(self, exc: BaseException) -> object: ...
+
+
+_sentry_sdk: _SentrySDKModule | None = None
 
 
 @dataclass(slots=True)
@@ -20,9 +28,14 @@ def init_sentry(settings: Settings) -> SentryState:
         return SentryState(enabled=False)
 
     try:
-        _sentry_sdk = importlib.import_module("sentry_sdk")
+        module = importlib.import_module("sentry_sdk")
     except ModuleNotFoundError:
         return SentryState(enabled=False)
+
+    if not isinstance(module, _SentrySDKModule):
+        return SentryState(enabled=False)
+
+    _sentry_sdk = module
 
     _sentry_sdk.init(
         dsn=settings.sentry_dsn,
