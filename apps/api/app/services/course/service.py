@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from hashlib import sha256
+from pathlib import Path
 from uuid import uuid4
 
 import magic
@@ -74,6 +75,8 @@ class CourseService:
     ) -> SourceModel:
         if not filename.strip():
             raise ValidationError("Source filename must not be empty.")
+        if filename != Path(filename).name or filename in {".", ".."}:
+            raise ValidationError("Source filename must not include path separators.")
         if not content:
             raise ValidationError("Source file must not be empty.")
         if len(content) > max_bytes:
