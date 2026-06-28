@@ -658,6 +658,7 @@
           },
           "chosen_index": {
             "type": "integer",
+            "minimum": 0.0,
             "title": "Chosen Index"
           }
         },

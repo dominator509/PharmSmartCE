@@ -63,7 +63,7 @@ class SessionDTO(BaseModel):
 
 class AnswerDTO(BaseModel):
     question_id: str = Field(strict=True, min_length=1, pattern=r".*\S.*")
-    chosen_index: int = Field(strict=True)
+    chosen_index: int = Field(strict=True, ge=0)
 
 
 class SessionProgressDTO(BaseModel):
