@@ -57,6 +57,10 @@ class Question:
     id: str = ""
 
     def __post_init__(self) -> None:
+        if not self.stem.strip():
+            raise DomainError("Question requires a stem.")
+        if not self.rationale.strip():
+            raise DomainError("Question requires a rationale.")
         if not self.source_doc_id.strip():
             raise DomainError("Question requires a source_doc_id.")
         if self.source_page is None or self.source_page <= 0:

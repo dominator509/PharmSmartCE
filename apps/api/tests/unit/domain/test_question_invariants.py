@@ -20,6 +20,23 @@ def test_question_accepts_valid_citation_fields() -> None:
     assert question.source_span == "p7:s1"
 
 
+@pytest.mark.parametrize("field_name", ["stem", "rationale"])
+def test_question_rejects_blank_core_text(field_name: str) -> None:
+    kwargs = {
+        "stem": "What is the key point?",
+        "choices": ("A", "B", "C", "D"),
+        "correct_choice_index": 1,
+        "rationale": "The source text explains the key point clearly.",
+        "source_doc_id": "doc-1",
+        "source_page": 7,
+        "source_span": "p7:s1",
+    }
+    kwargs[field_name] = "   "
+
+    with pytest.raises(DomainError):
+        Question(**kwargs)
+
+
 @pytest.mark.parametrize(
     ("source_doc_id", "source_page", "source_span"),
     [
