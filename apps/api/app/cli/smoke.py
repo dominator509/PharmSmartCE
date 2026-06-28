@@ -11,7 +11,6 @@ import httpx
 from fastapi.testclient import TestClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
-from testcontainers.postgres import PostgresContainer
 
 from app.api.deps import Principal, current_admin, current_user, get_ingest_service
 from app.config import Settings
@@ -21,6 +20,7 @@ from app.repositories.models.ce_records import CERecordModel
 from app.repositories.models.orgs import OrgModel
 from app.repositories.models.questions import QuestionModel
 from app.repositories.models.users import UserModel
+from testcontainers.postgres import PostgresContainer
 
 
 class FakeIngestService:

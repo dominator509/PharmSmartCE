@@ -26,16 +26,16 @@ fi
 restore_db="pharm_restore_$$"
 dump_file="/tmp/${restore_db}.dump"
 cleanup() {
-  docker exec "$db_container" rm -f "$dump_file" >/dev/null 2>&1 || true
-  docker exec "$db_container" dropdb --if-exists --username=app "$restore_db" >/dev/null 2>&1 || true
+  MSYS_NO_PATHCONV=1 docker exec "$db_container" rm -f "$dump_file" >/dev/null 2>&1 || true
+  MSYS_NO_PATHCONV=1 docker exec "$db_container" dropdb --if-exists --username=app "$restore_db" >/dev/null 2>&1 || true
 }
 trap cleanup EXIT
 
-docker exec "$db_container" pg_dump --format=custom --username=app --dbname=pharm --file="$dump_file"
-docker exec "$db_container" createdb --username=app "$restore_db"
-docker exec "$db_container" pg_restore --clean --if-exists --no-owner --username=app --dbname="$restore_db" "$dump_file"
+MSYS_NO_PATHCONV=1 docker exec "$db_container" pg_dump --format=custom --username=app --dbname=pharm --file="$dump_file"
+MSYS_NO_PATHCONV=1 docker exec "$db_container" createdb --username=app "$restore_db"
+MSYS_NO_PATHCONV=1 docker exec "$db_container" pg_restore --clean --if-exists --no-owner --username=app --dbname="$restore_db" "$dump_file"
 
-table_count="$(docker exec "$db_container" psql --username=app --dbname="$restore_db" --tuples-only --no-align --command="SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public';")"
+table_count="$(MSYS_NO_PATHCONV=1 docker exec "$db_container" psql --username=app --dbname="$restore_db" --tuples-only --no-align --command="SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public';")"
 if [ "${table_count:-0}" -le 0 ]; then
   echo "ERROR: restore validation returned no public tables" >&2
   exit 1

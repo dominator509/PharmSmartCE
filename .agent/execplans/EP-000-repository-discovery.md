@@ -85,10 +85,10 @@ any failure. Continue autonomously. Stop only under STOP conditions.
 - All milestone validations pass.
 - `scripts/verify.sh` exit 0.
 - Acceptance criteria:
-  - [ ] `scripts/preflight.sh` exits 0 — `preflight: ok`
-  - [ ] `ASSUMPTIONS.md` reflects current reality
-  - [ ] `COMMANDS.md` has no broken commands
-  - [ ] Baseline `.gitignore` covers secrets and generated artifacts
+  - [x] `scripts/preflight.sh` exits 0 — `preflight: ok`
+  - [x] `ASSUMPTIONS.md` reflects current reality
+  - [x] `COMMANDS.md` has no broken commands
+  - [x] Baseline `.gitignore` covers secrets and generated artifacts
 
 ## 11. Idempotence and Recovery
 Re-running this plan is a no-op: it only reads state and updates docs. If a doc was updated, git tracks the diff; re-running yields no further change.

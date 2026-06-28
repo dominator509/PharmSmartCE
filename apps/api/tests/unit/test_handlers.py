@@ -9,8 +9,8 @@ from starlette.requests import Request
 
 from app.api.errors import AppException, AuthError, UnreadyError
 from app.api.handlers import (
-    app_exception_handler,
     _adapt_exception_handler,
+    app_exception_handler,
     bind_request_id,
     domain_error_handler,
     http_exception_handler,

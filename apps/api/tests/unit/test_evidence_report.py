@@ -5,8 +5,8 @@ from app.cli.evidence_report import (
     build_report,
     extract_execplan_milestones,
     extract_open_checkboxes,
-    extract_verified_rows,
     extract_todo_rows,
+    extract_verified_rows,
 )
 
 
@@ -108,21 +108,24 @@ def test_extract_verified_rows_ignores_fenced_code_blocks() -> None:
 
 
 def test_extract_execplan_milestones_reads_status_and_commands() -> None:
-    text = """\
-## 8. Milestones
-
-### M1: Functional category audit
-- **Validation command:** `pnpm --filter web test:e2e -- happy_path.spec.ts --grep '@staging'`
-- **Expected result:** All happy-path tests pass against staging.
-
-### M2: Test category audit
-- **Validation command:** `scripts/verify.sh && uv run --directory apps/api pytest --cov-fail-under=80 -q && uv run --directory apps/api pytest tests/integration/test_generation_golden.py -q`
-- **Expected result:** verify exit 0; backend coverage >= 80%; golden-set thresholds met.
-
-## 12. Progress
-- [ ] M1: Functional category audit
-- [x] M2: Test category audit - 2026-06-27T19:00Z - done
-"""
+    validation_command = (
+        "scripts/verify.sh && uv run --directory apps/api pytest --cov-fail-under=80 -q "
+        "&& uv run --directory apps/api pytest tests/integration/test_generation_golden.py -q"
+    )
+    expected_result = "verify exit 0; backend coverage >= 80%; golden-set thresholds met."
+    text = (
+        "## 8. Milestones\n\n"
+        "### M1: Functional category audit\n"
+        "- **Validation command:** "
+        "`pnpm --filter web test:e2e -- happy_path.spec.ts --grep '@staging'`\n"
+        "- **Expected result:** All happy-path tests pass against staging.\n\n"
+        "### M2: Test category audit\n"
+        f"- **Validation command:** `{validation_command}`\n"
+        f"- **Expected result:** {expected_result}\n\n"
+        "## 12. Progress\n"
+        "- [ ] M1: Functional category audit\n"
+        "- [x] M2: Test category audit - 2026-06-27T19:00Z - done\n"
+    )
 
     assert extract_execplan_milestones(text) == [
         {
@@ -136,8 +139,8 @@ def test_extract_execplan_milestones_reads_status_and_commands() -> None:
             "id": "M2",
             "title": "Test category audit",
             "status": "done",
-            "validation": "scripts/verify.sh && uv run --directory apps/api pytest --cov-fail-under=80 -q && uv run --directory apps/api pytest tests/integration/test_generation_golden.py -q",
-            "expected": "verify exit 0; backend coverage >= 80%; golden-set thresholds met.",
+            "validation": validation_command,
+            "expected": expected_result,
         },
     ]
 
@@ -197,6 +200,16 @@ def test_extract_execplan_milestones_ignores_non_numeric_ids() -> None:
 
 
 def test_build_report_renders_markdown_sections() -> None:
+    validation_command = (
+        "scripts/verify.sh && uv run --directory apps/api pytest --cov-fail-under=80 -q "
+        "&& uv run --directory apps/api pytest tests/integration/test_generation_golden.py -q"
+    )
+    expected_m2_line = (
+        "- M2 [done] `scripts/verify.sh && uv run --directory apps/api pytest "
+        "--cov-fail-under=80 -q && uv run --directory apps/api pytest "
+        "tests/integration/test_generation_golden.py -q` -> verify exit 0; backend coverage "
+        ">= 80%; golden-set thresholds met."
+    )
     report = build_report(
         {"Test": ["one"]},
         {"Data": ["- Foo: TODO - bar"]},
@@ -213,7 +226,7 @@ def test_build_report_renders_markdown_sections() -> None:
                 "id": "M2",
                 "title": "Test category audit",
                 "status": "done",
-                "validation": "cmd-two",
+                "validation": validation_command,
                 "expected": "verify exit 0; backend coverage >= 80%; golden-set thresholds met.",
             },
         ],
@@ -235,10 +248,7 @@ def test_build_report_renders_markdown_sections() -> None:
     assert "- security proof" in report
     assert "## EP-010 Milestones" in report
     assert "- M1 [open] `cmd-one` -> All happy-path tests pass against staging." in report
-    assert (
-        "- M2 [done] `cmd-two` -> verify exit 0; backend coverage >= 80%; golden-set thresholds met."
-        in report
-    )
+    assert expected_m2_line in report
     assert "## Remaining Evidence Rows" in report
     assert "### Data" in report
     assert "- Foo: TODO - bar" in report

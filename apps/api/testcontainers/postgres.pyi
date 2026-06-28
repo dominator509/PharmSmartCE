@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-from collections.abc import Iterator
-
-
 class PostgresContainer:
     def __init__(
         self,

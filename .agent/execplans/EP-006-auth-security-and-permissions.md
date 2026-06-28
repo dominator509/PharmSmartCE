@@ -115,11 +115,11 @@ any failure. Continue autonomously. Stop only under STOP conditions.
 - All milestone validations pass.
 - `scripts/verify.sh` exit 0.
 - Acceptance criteria:
-  - [ ] `scripts/security-check.sh` clean
-  - [ ] All security tests pass
-  - [ ] Refresh rotation + chain revocation tested
-  - [ ] OpenAI cost cap exercised in test
-  - [ ] Security headers present
+  - [x] `scripts/security-check.sh` clean
+  - [x] All security tests pass
+  - [x] Refresh rotation + chain revocation tested
+  - [x] OpenAI cost cap exercised in test
+  - [x] Security headers present
 
 ## 11. Idempotence and Recovery
 Tests are idempotent. Tokens are scoped per-test by issuing fresh ones.

@@ -96,11 +96,11 @@ any failure. Continue autonomously. Stop only under STOP conditions.
 - All milestone validations pass.
 - `scripts/verify.sh` exit 0.
 - Acceptance criteria:
-  - [ ] Backend coverage ≥ 80% line
-  - [ ] Frontend coverage ≥ 70% statements
-  - [ ] Golden-set: citation accuracy ≥ 99%, uniqueness ≥ 95%
-  - [ ] Performance smoke passes
-  - [ ] Flaky policy enforced in CI
+  - [x] Backend coverage ≥ 80% line
+  - [x] Frontend coverage ≥ 70% statements
+  - [x] Golden-set: citation accuracy ≥ 99%, uniqueness ≥ 95%
+  - [x] Performance smoke passes
+  - [x] Flaky policy enforced in CI
 
 ## 11. Idempotence and Recovery
 Coverage and golden-set thresholds are deterministic. Fixture order is stable. Re-running yields the same numbers.

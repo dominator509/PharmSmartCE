@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+import re
 from collections.abc import Iterable
 from pathlib import Path
-import re
 
 TODO_MARKER_PATTERN = re.compile(r"\b(?:TODO|FIXME)\b")
 INLINE_CODE_PATTERN = re.compile(r"`[^`]*`")

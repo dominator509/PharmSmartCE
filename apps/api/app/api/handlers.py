@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from contextvars import ContextVar, Token
 from collections.abc import Awaitable, Callable
+from contextvars import ContextVar, Token
 from typing import TypeVar
 
 from fastapi import FastAPI, HTTPException, Request, status
@@ -168,12 +168,18 @@ def install_exception_handlers(app: FastAPI) -> None:
         UnreadyError,
         _adapt_exception_handler(UnreadyError, unready_error_handler),
     )
-    app.add_exception_handler(DomainError, _adapt_exception_handler(DomainError, domain_error_handler))
+    app.add_exception_handler(
+        DomainError,
+        _adapt_exception_handler(DomainError, domain_error_handler),
+    )
     app.add_exception_handler(
         RequestValidationError,
         _adapt_exception_handler(RequestValidationError, request_validation_error_handler),
     )
-    app.add_exception_handler(HTTPException, _adapt_exception_handler(HTTPException, http_exception_handler))
+    app.add_exception_handler(
+        HTTPException,
+        _adapt_exception_handler(HTTPException, http_exception_handler),
+    )
     app.add_exception_handler(
         NotImplementedError,
         _adapt_exception_handler(NotImplementedError, not_implemented_error_handler),

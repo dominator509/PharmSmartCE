@@ -10,7 +10,9 @@ from app.cli.doc_scan import iter_document_lines, strip_inline_code_spans, unwra
 
 READINESS_PATH = Path(__file__).resolve().parents[4] / "PRODUCTION_READINESS.md"
 EVIDENCE_PATH = Path(__file__).resolve().parents[4] / "PRODUCTION_EVIDENCE.md"
-EXECPLAN_PATH = Path(__file__).resolve().parents[4] / ".agent" / "execplans" / "EP-010-production-readiness.md"
+EXECPLAN_PATH = (
+    Path(__file__).resolve().parents[4] / ".agent" / "execplans" / "EP-010-production-readiness.md"
+)
 MILESTONE_PROGRESS_PATTERN = re.compile(r"^- \[(?P<checked>[ x])\] (?P<id>M\d+): (?P<summary>.+)$")
 
 
@@ -35,7 +37,8 @@ def extract_todo_rows(text: str) -> dict[str, list[str]]:
             current_section = line.removeprefix("## ").strip()
             sections.setdefault(current_section, [])
             continue
-        if current_section and line.startswith(("- ", "* ")) and "TODO -" in strip_inline_code_spans(line):
+        stripped_line = strip_inline_code_spans(line)
+        if current_section and line.startswith(("- ", "* ")) and "TODO -" in stripped_line:
             sections.setdefault(current_section, []).append(line[2:].strip())
     return {section: rows for section, rows in sections.items() if rows}
 
@@ -48,7 +51,8 @@ def extract_verified_rows(text: str) -> dict[str, list[str]]:
             current_section = line.removeprefix("## ").strip()
             sections.setdefault(current_section, [])
             continue
-        if current_section and line.startswith(("- ", "* ")) and "TODO -" not in strip_inline_code_spans(line):
+        stripped_line = strip_inline_code_spans(line)
+        if current_section and line.startswith(("- ", "* ")) and "TODO -" not in stripped_line:
             sections.setdefault(current_section, []).append(line[2:].strip())
     return {section: rows for section, rows in sections.items() if rows}
 
@@ -141,7 +145,8 @@ def build_report(
         f"- Verified evidence rows: {verified_item_count} across {len(verified_rows)} sections"
     )
     lines.append(
-        f"- EP-010 milestones complete: {completed_milestone_count} across {len(milestones)} milestones"
+        f"- EP-010 milestones complete: {completed_milestone_count} "
+        f"across {len(milestones)} milestones"
     )
     lines.append("")
 

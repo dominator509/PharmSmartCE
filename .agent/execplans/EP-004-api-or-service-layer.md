@@ -123,11 +123,11 @@ any failure. Continue autonomously. Stop only under STOP conditions.
 - All milestone validations pass.
 - `scripts/verify.sh` exit 0.
 - Acceptance criteria:
-  - [ ] All contract tests pass
-  - [ ] OpenAPI snapshot committed and stable
-  - [ ] Authz dependencies in place (full enforcement in EP-006)
-  - [ ] Generation happy path passes with FakeLLM
-  - [ ] `scripts/verify.sh` exit 0
+  - [x] All contract tests pass
+  - [x] OpenAPI snapshot committed and stable
+  - [x] Authz dependencies in place (full enforcement in EP-006)
+  - [x] Generation happy path passes with FakeLLM
+  - [x] `scripts/verify.sh` exit 0
 
 ## 11. Idempotence and Recovery
 Re-running the plan is safe. Tests use testcontainers; restart yields a fresh DB. Worker job idempotency key prevents double-ingest.

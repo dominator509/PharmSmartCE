@@ -116,8 +116,8 @@ class Question:
             raise DomainError("Question requires a positive source_page.")
         if not self.source_span.strip():
             raise DomainError("Question requires a source_span.")
-        if not self.choices:
-            raise DomainError("Question requires at least one answer choice.")
+        if len(self.choices) < 2:
+            raise DomainError("Question requires at least two answer choices.")
         if not 0 <= self.correct_choice_index < len(self.choices):
             raise DomainError("Question correct_choice_index out of range.")
 

@@ -3,10 +3,10 @@ from __future__ import annotations
 from pathlib import Path
 
 from fastapi.testclient import TestClient
-from testcontainers.postgres import PostgresContainer
 
 from app.config import Settings
 from app.main import create_app
+from testcontainers.postgres import PostgresContainer
 
 
 def test_health_and_readyz_and_metrics(tmp_path: Path) -> None:

@@ -26,6 +26,10 @@ def test_check_database_returns_false_for_sqlalchemy_errors(monkeypatch) -> None
         async def __aexit__(self, *_exc_info) -> None:
             return None
 
-    monkeypatch.setattr("app.api.routes.health.create_async_engine", lambda *_args, **_kwargs: _FakeEngine())
+    monkeypatch.setattr(
+        "app.api.routes.health.create_async_engine",
+        lambda *_args, **_kwargs: _FakeEngine(),
+    )
 
-    assert asyncio.run(_check_database("postgresql+asyncpg://app:app@localhost:5432/pharm")) is False
+    database_url = "postgresql+asyncpg://app:app@localhost:5432/pharm"
+    assert asyncio.run(_check_database(database_url)) is False

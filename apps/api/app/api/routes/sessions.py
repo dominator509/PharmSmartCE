@@ -294,7 +294,7 @@ def _session_dto(
     answered_questions: int,
     record_id: str | None = None,
 ) -> SessionDTO:
-        return SessionDTO(
+    return SessionDTO(
         id=session_row.id,
         course_id=session_row.course_id,
         user_id=session_row.user_id,

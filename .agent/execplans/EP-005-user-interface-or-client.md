@@ -107,10 +107,10 @@ any failure. Continue autonomously. Stop only under STOP conditions.
 - All milestone validations pass.
 - `scripts/verify.sh` exit 0.
 - Acceptance criteria:
-  - [ ] Playwright happy path green
-  - [ ] Auth flow E2E green
-  - [ ] Citation deep link E2E green
-  - [ ] axe-core: no serious violations on listed pages
+  - [x] Playwright happy path green
+  - [x] Auth flow E2E green
+  - [x] Citation deep link E2E green
+  - [x] axe-core: no serious violations on listed pages
 
 ## 11. Idempotence and Recovery
 E2E tests are deterministic when the API is started fresh via docker compose. Re-running spins fresh services.

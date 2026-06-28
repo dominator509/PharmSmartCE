@@ -151,6 +151,10 @@ def _require_int_claim(payload: dict[str, object], key: str) -> int:
     value = _require_claim(payload, key)
     if isinstance(value, bool):
         raise ValueError("Invalid access token.")
+    if isinstance(value, int):
+        return value
+    if not isinstance(value, str):
+        raise ValueError("Invalid access token.")
     try:
         return int(value)
     except (TypeError, ValueError) as exc:

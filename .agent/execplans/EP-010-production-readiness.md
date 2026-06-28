@@ -122,7 +122,7 @@ any failure. Continue autonomously. Stop only under STOP conditions.
 - All milestone validations pass.
 - `scripts/verify.sh` exit 0.
 - Acceptance criteria:
-  - [ ] `scripts/production-readiness-check.sh` exit 0
+  - [x] `scripts/production-readiness-check.sh` exit 0
   - [ ] `PRODUCTION_READINESS.md` fully ticked
   - [ ] Human launch gate comment recorded on the release PR
 
@@ -138,9 +138,11 @@ Re-running the check is a no-op once green; ticking boxes is git-tracked; no sid
 - [ ] M6: Observability audit
 - [ ] M7: Deployment + rollback audit
 - [x] M8: Documentation + support audit — 2026-06-27T18:10Z — SUPPORT.md and OPERATIONS.md publish the contact/on-call path; all ExecPlans have Outcomes & Retrospective sections.
-- [ ] M9: Final production-readiness-check
+- [x] M9: Final production-readiness-check
 
 ## 13. Surprises & Discoveries
+- 2026-06-28 - `scripts/production-readiness-check.sh` now passes end-to-end after the backup/restore script disables MSYS path conversion for container file paths under Git Bash.
+- 2026-06-28 - The local Docker stack is back up and healthy here: `docker compose -f infra/docker-compose.yml up -d db redis minio` succeeds and all three services report healthy in `docker compose ps`.
 - 2026-06-28 - On this Windows profile the repo-local web formatter is easiest to run through `apps/web/node_modules/.bin/prettier.CMD`; the consolidated readiness chain also needs elevated host Docker access to finish the Docker-backed integration and e2e segments cleanly.
 - 2026-06-28 - The security audit remains fully localizable: `scripts/security-check.sh`, `scripts/dependency-audit.sh`, and `tests/integration/security` all pass without staging access.
 - 2026-06-28 - Perf and observability slices are also locally provable here: `tests/integration/perf` plus the observability metrics/redaction/Sentry/alert-smoke tests pass in the current checkout.
@@ -155,7 +157,9 @@ Re-running the check is a no-op once green; ticking boxes is git-tracked; no sid
 
 ## 14. Decision Log
 - Removed Markdown from `.serena/project.yml` language startup on this workstation so Serena stops launching the failing Marksman server; docs navigation still has `REPO_BRIEF.md` and the repo brief links.
+- Disabled MSYS path conversion in `scripts/backup-restore-check.sh` so Git Bash no longer rewrites the container `/tmp` dump path before `docker exec` runs `pg_dump` / `pg_restore`.
 - Added explicit runbook targets to every alert row in `OBSERVABILITY.md` so the readiness pack can link each alert to a concrete response path.
+- Tightened `Question` invariants so a generated question must have at least two answer choices, with a regression test to keep the degenerate single-choice case out.
 - Documented CE record export in `OPERATIONS.md` and treated the absence of patient/diagnosis/insurance fields in app schemas and tests as sufficient evidence for the no-PHI checklist item.
 - Added a dedicated `test_no_n_plus_one.py` perf guard for the session read route and kept the query budget low enough to catch accidental fan-out.
 - Kept the changelog aligned with the launch-readiness hardening pass so the release notes reflect the new operational docs and perf guard.

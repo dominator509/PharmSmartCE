@@ -6,8 +6,8 @@ from pathlib import Path
 from fastapi import APIRouter, Request, Response, status
 from fastapi.responses import JSONResponse
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
-from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from app.api.deps import get_settings
@@ -26,7 +26,7 @@ async def _check_database(database_url: str) -> bool:
         async with engine.connect() as connection:
             await asyncio.wait_for(connection.execute(text("SELECT 1")), timeout=0.5)
         return True
-    except (OSError, SQLAlchemyError, asyncio.TimeoutError):
+    except (TimeoutError, OSError, SQLAlchemyError):
         return False
     finally:
         await engine.dispose()
