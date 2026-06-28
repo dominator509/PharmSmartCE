@@ -145,6 +145,7 @@ Re-running the check is a no-op once green; ticking boxes is git-tracked; no sid
 - 2026-06-28 - The security audit remains fully localizable: `scripts/security-check.sh`, `scripts/dependency-audit.sh`, and `tests/integration/security` all pass without staging access.
 - 2026-06-28 - Perf and observability slices are also locally provable here: `tests/integration/perf` plus the observability metrics/redaction/Sentry/alert-smoke tests pass in the current checkout.
 - 2026-06-28 - Backup test-restore is locally demonstrable here as well: `scripts/backup-restore-check.sh` completed successfully against the local Postgres container.
+- 2026-06-28 - Support docs are locally checkable now too: `scripts/incident-response-check.sh` validates the incident-response checklist and support routing references.
 - Serena health-check still fails on this Windows profile because the embedded uv/pyright startup cannot create its lock/cache files under the current user context, even after moving Serena's cache path to a repo-local `.tmp` directory.
 
 ## 14. Decision Log

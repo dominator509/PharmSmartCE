@@ -5,12 +5,14 @@ cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 # Production-readiness gate.
 # 1. Run full verify chain.
 # 2. Verify the local backup/restore path.
-# 3. Check pack file presence.
-# 4. Check for unresolved TODO/FIXME in core docs.
-# 5. Optional Alembic head check.
+# 3. Verify incident-response support docs.
+# 4. Check pack file presence.
+# 5. Check for unresolved TODO/FIXME in core docs.
+# 6. Optional Alembic head check.
 
 scripts/verify.sh
 scripts/backup-restore-check.sh
+scripts/incident-response-check.sh
 
 err=0
 warn=0
