@@ -18,6 +18,8 @@ need a compact Obsidian-friendly summary of the open launch evidence.
 - Customer-impact follow-up: TODO - link any customer issue or postmortem note.
 
 ## Data
+- Local migration proof: verified 2026-06-28 with `cmd.exe /c` + `scripts/bin/uv.cmd run --directory apps/api alembic upgrade head` against the local Postgres container.
+- Local integration proof: verified 2026-06-28 with `scripts/bin/uv.cmd run --directory apps/api pytest tests/integration/repositories -q`, `... test_faiss_store.py -q`, and `... test_citation_not_null.py -q`.
 - FAISS rebuildable: verified in repo with `python -m app.cli.rebuild_index --all`.
 - Backup test-restore: TODO - dated restore log within 7 days required.
 - R2 retention evidence: TODO - capture bucket retention settings for sources and backups.

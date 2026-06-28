@@ -114,10 +114,10 @@ any failure. Continue autonomously. Stop only under STOP conditions.
 - All milestone validations pass.
 - `scripts/verify.sh` exit 0.
 - Acceptance criteria:
-  - [ ] `alembic upgrade head` from empty DB succeeds
-  - [ ] All repo round-trip tests pass
-  - [ ] FAISS round-trip test passes
-  - [ ] Citation NOT NULL test passes
+  - [x] `alembic upgrade head` from empty DB succeeds - 2026-06-28 - local Postgres container and repo-local `uv` cache paths passed.
+  - [x] All repo round-trip tests pass - 2026-06-28 - `pytest tests/integration/repositories -q` passed.
+  - [x] FAISS round-trip test passes - 2026-06-28 - `pytest tests/integration/test_faiss_store.py -q` passed.
+  - [x] Citation NOT NULL test passes - 2026-06-28 - `pytest tests/integration/test_citation_not_null.py -q` passed.
 
 ## 11. Idempotence and Recovery
 Re-running migrations against an empty DB is idempotent. Tests use ephemeral testcontainers; re-running spins fresh containers.
