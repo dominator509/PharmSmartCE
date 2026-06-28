@@ -125,6 +125,7 @@ Image build deterministic from pinned lockfiles. `release_command` idempotent at
 - [ ] M7: Production deploy gate
 
 ## 13. Surprises & Discoveries
+- 2026-06-28 - The local smoke harness passes end-to-end on Windows once `UV_CACHE_DIR`, `TMP`, `TEMP`, and `TMPDIR` point at repo-local scratch space; the repo's Docker compose stack for db/redis/minio is healthy.
 - 2026-06-27 - Docker build context needed a root `.dockerignore`; excluding caches, build outputs, `tests/`, `var/`, models, and local state kept the API image lean without hiding source files.
 - 2026-06-27 - The API image needs Linux-friendly PDF magic support; `python-magic` resolves in the container, while Windows keeps `python-magic-bin` via environment markers.
 - 2026-06-27 - The web image had no `public/` directory yet, so the standalone runner should not copy one.
