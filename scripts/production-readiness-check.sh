@@ -64,13 +64,9 @@ done
 
 # No unresolved TODO/FIXME in core docs, except the evidence ledger which is
 # intentionally used to track remaining external proof items.
-for f in PROJECT_BRIEF.md AGENTS.md COMMANDS.md ARCHITECTURE.md ROADMAP.md \
-         DECISIONS.md PRODUCTION_READINESS.md; do
-  if [ -f "$f" ] && grep -nE "TODO|FIXME" "$f" >/dev/null 2>&1; then
-    echo "WARNING: unresolved TODO/FIXME in $f" >&2
-    warn=1
-  fi
-done
+if ! scripts/bin/uv.cmd run --directory apps/api python -m app.cli.check_core_docs; then
+  warn=1
+fi
 
 # Production evidence ledger presence
 if [ ! -f PRODUCTION_EVIDENCE.md ]; then

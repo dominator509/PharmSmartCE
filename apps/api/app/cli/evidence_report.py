@@ -6,24 +6,12 @@ import sys
 from collections.abc import Mapping
 from pathlib import Path
 
+from app.cli.doc_scan import iter_document_lines
+
 READINESS_PATH = Path(__file__).resolve().parents[4] / "PRODUCTION_READINESS.md"
 EVIDENCE_PATH = Path(__file__).resolve().parents[4] / "PRODUCTION_EVIDENCE.md"
 EXECPLAN_PATH = Path(__file__).resolve().parents[4] / ".agent" / "execplans" / "EP-010-production-readiness.md"
 MILESTONE_PROGRESS_PATTERN = re.compile(r"^- \[(?P<checked>[ x])\] (?P<id>M\d+): (?P<summary>.+)$")
-
-
-def iter_document_lines(text: str) -> list[str]:
-    lines: list[str] = []
-    in_fenced_block = False
-    for raw_line in text.splitlines():
-        line = raw_line.strip()
-        if line.startswith(("```", "~~~")):
-            in_fenced_block = not in_fenced_block
-            continue
-        if in_fenced_block:
-            continue
-        lines.append(line)
-    return lines
 
 
 def extract_open_checkboxes(text: str) -> dict[str, list[str]]:

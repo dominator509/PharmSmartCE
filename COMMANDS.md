@@ -71,6 +71,7 @@ Do not use `pip install`, `npm install`, `yarn`.
 | Local DB backup / restore verify | `scripts/backup-restore-check.sh` |
 | Incident response doc check | `scripts/incident-response-check.sh` |
 | Evidence ledger check | `scripts/evidence-ledger-check.sh` |
+| Core-doc TODO/FIXME scan | `scripts/bin/uv.cmd run --directory apps/api python -m app.cli.check_core_docs` |
 
 ## Local Development
 
