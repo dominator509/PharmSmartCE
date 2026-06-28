@@ -58,12 +58,25 @@ done
 
 # No unresolved TODO/FIXME in core docs
 for f in PROJECT_BRIEF.md AGENTS.md COMMANDS.md ARCHITECTURE.md ROADMAP.md \
-         DECISIONS.md PRODUCTION_READINESS.md; do
+         DECISIONS.md PRODUCTION_READINESS.md PRODUCTION_EVIDENCE.md; do
   if [ -f "$f" ] && grep -nE "TODO|FIXME" "$f" >/dev/null 2>&1; then
     echo "WARNING: unresolved TODO/FIXME in $f" >&2
     warn=1
   fi
 done
+
+# Production evidence ledger presence
+if [ ! -f PRODUCTION_EVIDENCE.md ]; then
+  echo "WARNING: PRODUCTION_EVIDENCE.md missing; external launch evidence will be harder to capture." >&2
+  warn=1
+elif ! grep -q "^## Staging / Release$" PRODUCTION_EVIDENCE.md \
+  || ! grep -q "^## Rollback$" PRODUCTION_EVIDENCE.md \
+  || ! grep -q "^## Data$" PRODUCTION_EVIDENCE.md \
+  || ! grep -q "^## Support / Ops$" PRODUCTION_EVIDENCE.md \
+  || ! grep -q "^## Launch Gate$" PRODUCTION_EVIDENCE.md; then
+  echo "WARNING: PRODUCTION_EVIDENCE.md is missing one or more required sections." >&2
+  warn=1
+fi
 
 # Optional Alembic head check
 if [ -d apps/api/alembic ]; then
