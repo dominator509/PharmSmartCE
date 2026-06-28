@@ -46,6 +46,7 @@ Do not use `pip install`, `npm install`, `yarn`.
 | Node lock refresh | `pnpm install --lockfile-only` |
 | Python lint | `uv run --directory apps/api ruff check .` |
 | Python format check | `uv run --directory apps/api ruff format --check .` |
+| Python format write | `uv run --directory apps/api ruff format .` |
 | Python typecheck | `uv run --directory apps/api mypy app` |
 | Python unit tests | `uv run --directory apps/api pytest tests/unit -q` |
 | Python integration tests | `uv run --directory apps/api pytest tests/integration -q` |

@@ -36,6 +36,9 @@ def test_build_report_renders_markdown_sections() -> None:
     report = build_report({"Test": ["one"]}, {"Data": ["- Foo: TODO - bar"]})
 
     assert "# EP-010 Evidence Report" in report
+    assert "## Summary" in report
+    assert "- Open readiness items: 1 across 1 sections" in report
+    assert "- Remaining evidence rows: 1 across 1 sections" in report
     assert "## Open Readiness Checkboxes" in report
     assert "### Test" in report
     assert "- [ ] one" in report
@@ -63,6 +66,9 @@ def test_main_writes_output_file(tmp_path) -> None:
 
     assert output.read_text(encoding="utf-8") == (
         "# EP-010 Evidence Report\n\n"
+        "## Summary\n"
+        "- Open readiness items: 1 across 1 sections\n"
+        "- Remaining evidence rows: 1 across 1 sections\n\n"
         "## Open Readiness Checkboxes\n"
         "### One\n"
         "- [ ] alpha\n\n"

@@ -41,7 +41,18 @@ def build_report(
     open_checkboxes: Mapping[str, list[str]],
     todo_rows: Mapping[str, list[str]],
 ) -> str:
+    open_item_count = sum(len(items) for items in open_checkboxes.values())
+    todo_item_count = sum(len(rows) for rows in todo_rows.values())
     lines: list[str] = ["# EP-010 Evidence Report", ""]
+
+    lines.append("## Summary")
+    lines.append(
+        f"- Open readiness items: {open_item_count} across " f"{len(open_checkboxes)} sections"
+    )
+    lines.append(
+        f"- Remaining evidence rows: {todo_item_count} across " f"{len(todo_rows)} sections"
+    )
+    lines.append("")
 
     lines.append("## Open Readiness Checkboxes")
     if open_checkboxes:
@@ -70,7 +81,11 @@ def build_report(
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="evidence-report")
-    parser.add_argument("--output", type=Path, help="write the report to a file")
+    parser.add_argument(
+        "--output",
+        type=Path,
+        help="write the report to a file",
+    )
     args = parser.parse_args(argv)
     reconfigure = getattr(sys.stdout, "reconfigure", None)
     if callable(reconfigure):

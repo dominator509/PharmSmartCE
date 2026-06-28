@@ -35,6 +35,7 @@ Use only commands documented in `COMMANDS.md`. Key commands:
 - Preflight: `scripts/preflight.sh`
 - Lint: `scripts/lint.sh`
 - Format check: `scripts/format-check.sh`
+- Format write: `uv run --directory apps/api ruff format .`
 - Typecheck: `scripts/typecheck.sh`
 - Unit tests: `scripts/test-unit.sh`
 - Integration tests: `scripts/test-integration.sh`
