@@ -58,6 +58,21 @@ placeholder_rows = [
     if re.match(r"^- [A-Za-z].*:\s*$", raw_line.strip())
 ]
 
+required_patterns = {
+    "Performance": [
+        "Local perf proof",
+        "Target-host P95 session-start",
+        "Target-host 30-page ingest",
+    ],
+}
+
+missing_patterns: list[str] = []
+for section, patterns in required_patterns.items():
+    rows = section_rows.get(section, [])
+    for pattern in patterns:
+        if not any(pattern in row for row in rows):
+            missing_patterns.append(f"{section}: {pattern}")
+
 if missing_sections:
     print(f"ERROR: missing ledger sections: {', '.join(missing_sections)}", file=sys.stderr)
     raise SystemExit(1)
@@ -77,6 +92,12 @@ if placeholder_rows:
     print(
         "ERROR: unresolved placeholder evidence rows: "
         + "; ".join(placeholder_rows),
+        file=sys.stderr,
+    )
+    raise SystemExit(1)
+if missing_patterns:
+    print(
+        "ERROR: required evidence rows missing: " + "; ".join(missing_patterns),
         file=sys.stderr,
     )
     raise SystemExit(1)

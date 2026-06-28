@@ -30,6 +30,8 @@ need a compact Obsidian-friendly summary of the open launch evidence.
 
 ## Performance
 - Local perf proof: verified 2026-06-28 with `scripts/bin/uv.cmd run --directory apps/api pytest tests/integration/perf -q`.
+- Target-host P95 session-start: TODO - capture the Fly 4 vCPU / 8 GB timing and record <= 30 s.
+- Target-host 30-page ingest: TODO - capture ingest timing on the target host and record <= 5 min.
 
 ## Observability
 - Local observability proof: verified 2026-06-28 with `scripts/bin/uv.cmd run --directory apps/api pytest tests/integration/test_observability_metrics_shape.py tests/integration/test_observability_redaction.py tests/integration/test_sentry.py tests/integration/test_alert_smoke.py -q`.
