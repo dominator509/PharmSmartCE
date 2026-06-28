@@ -137,14 +137,18 @@ Re-running the check is a no-op once green; ticking boxes is git-tracked; no sid
 - [ ] M5: Performance audit
 - [ ] M6: Observability audit
 - [ ] M7: Deployment + rollback audit
-- [ ] M8: Documentation + support audit
+- [x] M8: Documentation + support audit — 2026-06-27T18:10Z — SUPPORT.md and OPERATIONS.md publish the contact/on-call path; all ExecPlans have Outcomes & Retrospective sections.
 - [ ] M9: Final production-readiness-check
 
 ## 13. Surprises & Discoveries
-(empty — append entries here as they occur)
+- Serena health-check still fails on this Windows profile because the embedded uv/pyright startup cannot create its lock/cache files under the current user context, even after moving Serena's cache path to a repo-local `.tmp` directory.
 
 ## 14. Decision Log
-(empty — append entries here as they occur)
+- Removed Markdown from `.serena/project.yml` language startup on this workstation so Serena stops launching the failing Marksman server; docs navigation still has `REPO_BRIEF.md` and the repo brief links.
+- Added explicit runbook targets to every alert row in `OBSERVABILITY.md` so the readiness pack can link each alert to a concrete response path.
+- Documented CE record export in `OPERATIONS.md` and treated the absence of patient/diagnosis/insurance fields in app schemas and tests as sufficient evidence for the no-PHI checklist item.
+- Added a dedicated `test_no_n_plus_one.py` perf guard for the session read route and kept the query budget low enough to catch accidental fan-out.
+- Kept the changelog aligned with the launch-readiness hardening pass so the release notes reflect the new operational docs and perf guard.
 
 ## 15. Outcomes & Retrospective
 Production readiness is partially auditable now: local verify, security, dependency audit, coverage, smoke, and container builds are green, and the repo has the doc and route surface needed for the remaining checklist work. The remaining gaps are external or policy-gated rather than mechanical code failures, so the checklist still needs the staging and human launch evidence before it can be fully closed.

@@ -16,6 +16,12 @@
 Identical commands with `--app pharmsmartce-api-prod`. **Every write action
 must satisfy `AGENTS.md` §13.**
 
+## CE Record Export
+- Learner CE completion records are available at
+  `/api/ce-records/{record_id}/download`.
+- The smoke flow verifies the record metadata endpoint and the PDF download
+  response for each completed session.
+
 ## Health Checks
 - `GET /healthz` — liveness: 200 if process is up.
 - `GET /readyz` — readiness: 200 only if:

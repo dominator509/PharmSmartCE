@@ -33,18 +33,18 @@ through these items.
 - [x] CSP headers verified.
 - [x] Authz matrix green.
 - [x] Injection detector + citation validator wired and tested.
-- [ ] No secrets in repo (`gitleaks` clean).
+- [x] No secrets in repo (`gitleaks` clean).
 
 ## Privacy Readiness
-- [ ] No PHI fields collected.
+- [x] No PHI fields collected.
 - [ ] Uploaded docs SSE-S3 encrypted at rest.
 - [ ] Account deletion documented and tested.
-- [ ] CE record export documented.
+- [x] CE record export documented.
 
 ## Performance Readiness
 - [ ] P95 session-start ≤ 30 s on 4 vCPU / 8 GB Fly machine.
 - [ ] 30-page ingest ≤ 5 min.
-- [ ] No N+1 queries on hot routes (`test_no_n_plus_one.py`).
+- [x] No N+1 queries on hot routes (`test_no_n_plus_one.py`).
 
 ## Accessibility Readiness
 - [ ] axe-core no `serious` violations on `/login`, `/courses`,
@@ -53,16 +53,16 @@ through these items.
 - [ ] Color contrast ≥ WCAG AA on text.
 
 ## Observability Readiness
-- [ ] Structured logs with required fields.
-- [ ] `/metrics` exposes all named metrics.
+- [x] Structured logs with required fields.
+- [x] `/metrics` exposes all named metrics.
 - [ ] Sentry receiving events from staging and prod.
 - [ ] All alerts wired in alerting provider.
-- [ ] Runbooks linked from each alert.
+- [x] Runbooks linked from each alert.
 
 ## Deployment Readiness
-- [ ] `.github/workflows/release.yml` builds, pushes, deploys without manual
+- [x] `.github/workflows/release.yml` builds, pushes, deploys without manual
       edits.
-- [ ] Same image tag in staging and prod.
+- [x] Same image tag in staging and prod.
 - [ ] Bluegreen verified in staging.
 - [ ] `release_command` runs migrations before traffic switch.
 
@@ -83,8 +83,8 @@ through these items.
 
 ## Support Readiness
 - [ ] Incident-response checklist exercised (tabletop within 30 days).
-- [ ] On-call rota documented (even if one engineer initially).
-- [ ] Customer-facing contact channel published.
+- [x] On-call rota documented (even if one engineer initially).
+- [x] Customer-facing contact channel published.
 
 ## Notes
 - Branch-aware backend coverage currently reports 80% total with `pytest --cov=app --cov-branch -q`.
@@ -93,7 +93,19 @@ through these items.
 - Golden-set harness now passes against `apps/api/tests/fixtures/golden_set.jsonl` with the FakeLLM-backed grounded generation path.
 - Observability locals now cover redaction, metrics shape, Sentry init/capture, and the synthetic 5xx alert hook in repo tests, but the staging smoke evidence is still separate.
 - Support intake is published in `SUPPORT.md` and routed through `OPERATIONS.md` and `.agent/checklists/incident-response.md`.
-- Support intake is documented, but the tabletop exercise itself is still pending.
+- Support intake is documented, the on-call rota is documented, and the
+  customer-facing contact channel is published, but the tabletop exercise
+  itself is still pending.
+- Repo secret scan and dependency audit are currently clean on this tree.
+- Release workflow pins staging and prod to the same `github.sha` image tag;
+  bluegreen and migration-before-traffic-switch still need external proof.
+- Observability tests prove structured logs include request and image context,
+  and `/metrics` exposes every metric name in `METRIC_NAMES`.
+- Alert rows in `OBSERVABILITY.md` now point at the relevant runbook sections.
+- App schemas/routes only collect learner, course, session, and CE-record
+  fields; no patient/diagnosis/insurance fields are present in app source.
+- `apps/api/tests/integration/perf/test_no_n_plus_one.py` guards the session
+  read route with a query budget of 6 statements.
 
 ## Final Launch Gate
 Production launch requires a single explicit human decision recorded as an

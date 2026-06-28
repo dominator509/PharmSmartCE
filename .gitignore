@@ -33,6 +33,9 @@ models/
 var/
 .tools/
 .tmp/
+.playwright-mcp/
+.serena/logs/
+*.log
 
 # Serena local cache
 .serena/cache/

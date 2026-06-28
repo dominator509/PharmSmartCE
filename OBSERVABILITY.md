@@ -55,16 +55,16 @@ See `OPERATIONS.md`.
 6. **System** — CPU, memory, disk; FAISS size; pool utilization.
 
 ## Alerts
-| Name | Condition | Severity | Channel |
-|---|---|---|---|
-| `api_5xx_high` | 5xx rate > 1% over 5 m | Sev2 | page |
-| `api_latency_p95_high` | P95(/api/sessions/start) > 30 s over 10 m | Sev2 | page |
-| `grounding_failure_high` | `question_grounding_failures_total` rate > 0.1% over 1 h | Sev1 | page |
-| `openai_cap_warn_80` | `openai_cost_usd_monthly >= 0.8 * cap` | Sev3 | email |
-| `openai_cap_reached` | `openai_cost_usd_monthly >= cap` | Sev2 | page (auto-fallback) |
-| `queue_depth_high` | `background_queue_depth{queue!=eval} > 100` 15 m | Sev3 | email |
-| `readyz_failing` | `/readyz` down 2 m | Sev1 | page |
-| `auth_brute_force` | `auth_login_attempts_total{outcome="bad_password"} > 100/min` | Sev2 | page |
+| Name | Condition | Severity | Channel | Runbook |
+|---|---|---|---|---|
+| `api_5xx_high` | 5xx rate > 1% over 5 m | Sev2 | page | `OPERATIONS.md#incident-triage` |
+| `api_latency_p95_high` | P95(/api/sessions/start) > 30 s over 10 m | Sev2 | page | `OPERATIONS.md#common-failure-modes` |
+| `grounding_failure_high` | `question_grounding_failures_total` rate > 0.1% over 1 h | Sev1 | page | `OPERATIONS.md#incident-triage` |
+| `openai_cap_warn_80` | `openai_cost_usd_monthly >= 0.8 * cap` | Sev3 | email | `OPERATIONS.md#common-failure-modes` |
+| `openai_cap_reached` | `openai_cost_usd_monthly >= cap` | Sev2 | page (auto-fallback) | `OPERATIONS.md#common-failure-modes` |
+| `queue_depth_high` | `background_queue_depth{queue!=eval} > 100` 15 m | Sev3 | email | `OPERATIONS.md#common-failure-modes` |
+| `readyz_failing` | `/readyz` down 2 m | Sev1 | page | `OPERATIONS.md#health-checks` |
+| `auth_brute_force` | `auth_login_attempts_total{outcome="bad_password"} > 100/min` | Sev2 | page | `SECURITY.md#authentication` |
 
 ## SLI / SLO
 | SLI | Definition | SLO (90-day) |
