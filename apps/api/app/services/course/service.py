@@ -49,6 +49,8 @@ class CourseService:
         n_questions: int = 6,
         pass_pct: int = 70,
     ) -> CourseModel:
+        if not title.strip():
+            raise ValidationError("Course title must not be empty.")
         course = CourseModel(
             id=uuid4().hex,
             org_id=org_id,
