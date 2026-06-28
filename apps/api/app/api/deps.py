@@ -89,9 +89,17 @@ async def current_admin(
 
 
 def _parse_rate_limit(value: str) -> tuple[int, int]:
-    limit_part, unit = value.split("/", 1)
+    normalized = value.strip().lower()
+    if "/" not in normalized:
+        raise ValueError("Rate limit must use '<limit>/<unit>' format.")
+    limit_part, unit = normalized.split("/", 1)
+    if not limit_part.isdigit() or int(limit_part) <= 0:
+        raise ValueError("Rate limit limit must be positive.")
+    try:
+        window_seconds = {"second": 1, "minute": 60, "hour": 3600}[unit]
+    except KeyError as exc:
+        raise ValueError("Rate limit unit must be second, minute, or hour.") from exc
     limit = int(limit_part)
-    window_seconds = {"second": 1, "minute": 60, "hour": 3600}[unit]
     return limit, window_seconds
 
 
