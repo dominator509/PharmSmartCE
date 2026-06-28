@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 
+import pytest
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 from starlette.requests import Request
@@ -9,6 +10,7 @@ from starlette.requests import Request
 from app.api.errors import AppException, AuthError, UnreadyError
 from app.api.handlers import (
     app_exception_handler,
+    _adapt_exception_handler,
     bind_request_id,
     domain_error_handler,
     http_exception_handler,
@@ -97,6 +99,10 @@ def test_exception_handlers_cover_problem_json_branches() -> None:
 
         unready = await unready_error_handler(request, UnreadyError("not ready"))
         assert unready.status_code == 503
+
+        adapter = _adapt_exception_handler(AppException, app_exception_handler)
+        with pytest.raises(TypeError):
+            await adapter(request, ValueError("wrong type"))
 
     asyncio.run(_run())
 

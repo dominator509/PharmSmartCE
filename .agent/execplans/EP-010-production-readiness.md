@@ -168,6 +168,7 @@ Re-running the check is a no-op once green; ticking boxes is git-tracked; no sid
 - Narrowed the redaction processor in `apps/api/app/observability/logging.py` from `Any` to `object` so the remaining event-mapping path stays typed without changing the recursive redaction behavior already covered by tests.
 - Wrapped grounded question construction in `apps/api/app/services/generation/grounded_llm.py` so any domain-level payload violation is surfaced consistently as `GroundingError`; added an out-of-range `correct_choice_index` regression test.
 - Replaced the session response cast in `apps/api/app/api/routes/sessions.py` with explicit validation of stored `choices` so malformed question options fail loudly instead of being silently coerced into the API payload; added a helper regression test.
+- Replaced the generic exception adapter cast in `apps/api/app/api/handlers.py` with a runtime `isinstance` guard so the exception handlers fail fast if the adapter is miswired; added a mismatch regression test.
 
 ## 15. Outcomes & Retrospective
 Production readiness is partially auditable now: local verify, security, dependency audit, coverage, smoke, and container builds are green, and the repo has the doc and route surface needed for the remaining checklist work. The remaining gaps are external or policy-gated rather than mechanical code failures, so the checklist still needs the staging and human launch evidence before it can be fully closed.
