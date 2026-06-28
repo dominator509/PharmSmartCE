@@ -54,6 +54,21 @@ function waitForExit(child) {
   });
 }
 
+async function terminate(child) {
+  if (child.exitCode === null && child.signalCode === null) {
+    if (process.platform === "win32" && child.pid !== undefined) {
+      const killer = spawn("taskkill", ["/PID", String(child.pid), "/T", "/F"], {
+        stdio: "inherit",
+        windowsHide: true,
+      });
+      await waitForExit(killer);
+    } else {
+      child.kill();
+    }
+    await waitForExit(child);
+  }
+}
+
 const backendEnv = {
   ...process.env,
   UV_CACHE_DIR: process.env.UV_CACHE_DIR ?? resolve(tempRoot, "uv-cache"),
@@ -81,6 +96,21 @@ const apiServer = spawnCommand(
   backendEnv,
 );
 
+const migrate = spawnCommand(
+  "python",
+  [
+    "-m",
+    "uv",
+    "run",
+    "--directory",
+    resolve(process.cwd(), "..", "api"),
+    "alembic",
+    "upgrade",
+    "head",
+  ],
+  backendEnv,
+);
+
 const nextServer = spawnCommand(process.execPath, [
   "node_modules/next/dist/bin/next",
   "dev",
@@ -89,6 +119,11 @@ const nextServer = spawnCommand(process.execPath, [
 ]);
 
 try {
+  const migrateCode = await waitForExit(migrate);
+  if (migrateCode !== 0) {
+    process.exitCode = migrateCode ?? 1;
+    throw new Error("Failed to migrate the API database before e2e tests.");
+  }
   await waitForApi();
   await waitForServer();
   const playwrightArgs = process.argv.slice(2).filter((arg) => arg !== "--");
@@ -102,6 +137,6 @@ try {
     process.exitCode = code ?? 1;
   }
 } finally {
-  apiServer.kill();
-  nextServer.kill();
+  await terminate(apiServer);
+  await terminate(nextServer);
 }
