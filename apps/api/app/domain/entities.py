@@ -129,6 +129,10 @@ class Session:
             raise DomainError("Session requires a user_id.")
         if not self.course_id.strip():
             raise DomainError("Session requires a course_id.")
+        if any(not question_id.strip() for question_id in self.question_ids):
+            raise DomainError("Session requires nonblank question_ids.")
+        if len(set(self.question_ids)) != len(self.question_ids):
+            raise DomainError("Session requires unique question_ids.")
 
 
 @dataclass(frozen=True, slots=True)
