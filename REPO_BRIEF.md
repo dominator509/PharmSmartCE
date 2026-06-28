@@ -94,6 +94,7 @@ Use only commands documented in `COMMANDS.md`. Key commands:
 - Local `uv` and pytest runs on this Windows session may need repo-local
   `UV_CACHE_DIR` / `TMP` / `TEMP` / `TMPDIR` because the default user temp/cache
   path can deny access.
-- Docker verification works through the unsandboxed command path in this
-  Windows setup; plain sandboxed Docker CLI calls still receive daemon pipe
-  permission errors.
+- `scripts/build.sh` now prefers `docker.exe` on Windows and hands the web
+  build to `cmd.exe /c pnpm` when available; plain sandboxed Docker CLI calls
+  can still hit daemon pipe permission errors, so verify through the repo
+  scripts.

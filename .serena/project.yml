@@ -17,7 +17,9 @@ ignored_paths:
 - .serena/
 - .obsidian/workspace.json
 - .venv/
+- .tmp/
 - venv/
+- tmp/
 - __pycache__/
 - .pytest_cache/
 - .ruff_cache/
@@ -119,7 +121,10 @@ ls_specific_settings: {}
 #   additional_workspace_folders:
 #     - ../sibling-package
 #     - ../shared-lib
-additional_workspace_folders: []
+additional_workspace_folders:
+- apps/api
+- apps/web
+- packages/shared
 
 # whether the project is in read-only mode
 # If set to true, all editing tools will be disabled and attempts to use them will result in an error

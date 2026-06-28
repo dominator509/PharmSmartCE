@@ -15,13 +15,17 @@ fi
 if [ -f apps/api/Dockerfile ]; then
   "$DOCKER_BIN" build -f apps/api/Dockerfile -t pharmsmartce-api:dev .
 else
-  echo "(build: apps/api/Dockerfile not present yet — skipping API image build)"
+  echo "(build: apps/api/Dockerfile not present yet - skipping API image build)"
 fi
 
 if [ -f apps/web/package.json ]; then
-  pnpm --filter web build
+  if command -v cmd.exe >/dev/null 2>&1; then
+    cmd.exe /c pnpm --filter web build
+  else
+    pnpm --filter web build
+  fi
 else
-  echo "(build: apps/web not present yet — skipping web build)"
+  echo "(build: apps/web not present yet - skipping web build)"
 fi
 
 echo "build: ok"
