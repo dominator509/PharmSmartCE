@@ -12,11 +12,24 @@ EXECPLAN_PATH = Path(__file__).resolve().parents[4] / ".agent" / "execplans" / "
 MILESTONE_PROGRESS_PATTERN = re.compile(r"^- \[(?P<checked>[ x])\] (?P<id>M\d+): (?P<summary>.+)$")
 
 
+def iter_document_lines(text: str) -> list[str]:
+    lines: list[str] = []
+    in_fenced_block = False
+    for raw_line in text.splitlines():
+        line = raw_line.strip()
+        if line.startswith(("```", "~~~")):
+            in_fenced_block = not in_fenced_block
+            continue
+        if in_fenced_block:
+            continue
+        lines.append(line)
+    return lines
+
+
 def extract_open_checkboxes(text: str) -> dict[str, list[str]]:
     sections: dict[str, list[str]] = {}
     current_section = ""
-    for raw_line in text.splitlines():
-        line = raw_line.strip()
+    for line in iter_document_lines(text):
         if line.startswith("## "):
             current_section = line.removeprefix("## ").strip()
             sections.setdefault(current_section, [])
@@ -29,8 +42,7 @@ def extract_open_checkboxes(text: str) -> dict[str, list[str]]:
 def extract_todo_rows(text: str) -> dict[str, list[str]]:
     sections: dict[str, list[str]] = {}
     current_section = ""
-    for raw_line in text.splitlines():
-        line = raw_line.strip()
+    for line in iter_document_lines(text):
         if line.startswith("## "):
             current_section = line.removeprefix("## ").strip()
             sections.setdefault(current_section, [])
@@ -43,8 +55,7 @@ def extract_todo_rows(text: str) -> dict[str, list[str]]:
 def extract_verified_rows(text: str) -> dict[str, list[str]]:
     sections: dict[str, list[str]] = {}
     current_section = ""
-    for raw_line in text.splitlines():
-        line = raw_line.strip()
+    for line in iter_document_lines(text):
         if line.startswith("## "):
             current_section = line.removeprefix("## ").strip()
             sections.setdefault(current_section, [])

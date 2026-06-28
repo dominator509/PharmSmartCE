@@ -23,6 +23,18 @@ def test_extract_open_checkboxes_groups_by_section() -> None:
     assert extract_open_checkboxes(text) == {"One": ["alpha"], "Two": ["beta"]}
 
 
+def test_extract_open_checkboxes_ignores_fenced_code_blocks() -> None:
+    text = """\
+## One
+```md
+- [ ] ignored
+```
+- [ ] alpha
+"""
+
+    assert extract_open_checkboxes(text) == {"One": ["alpha"]}
+
+
 def test_extract_todo_rows_uses_sections() -> None:
     text = """\
 ## A
@@ -48,6 +60,18 @@ This line mentions TODO - but is not a bullet.
     assert extract_todo_rows(text) == {"A": ["Baz: TODO - still counted"]}
 
 
+def test_extract_todo_rows_ignores_fenced_code_blocks() -> None:
+    text = """\
+## A
+```md
+- Foo: TODO - ignored
+```
+- Bar: TODO - counted
+"""
+
+    assert extract_todo_rows(text) == {"A": ["Bar: TODO - counted"]}
+
+
 def test_extract_verified_rows_uses_sections() -> None:
     text = """\
 ## A
@@ -59,6 +83,18 @@ def test_extract_verified_rows_uses_sections() -> None:
     assert extract_verified_rows(text) == {
         "A": ["verified line", "another verified line"],
     }
+
+
+def test_extract_verified_rows_ignores_fenced_code_blocks() -> None:
+    text = """\
+## A
+```md
+- verified line in code block
+```
+- verified line
+"""
+
+    assert extract_verified_rows(text) == {"A": ["verified line"]}
 
 
 def test_extract_execplan_milestones_reads_status_and_commands() -> None:
