@@ -18,6 +18,11 @@ def test_course_create_dto_rejects_blank_title() -> None:
         CourseCreateDTO(title="   ", n_questions=6, pass_pct=70)
 
 
+def test_course_create_dto_rejects_overlong_title() -> None:
+    with pytest.raises(ValidationError):
+        CourseCreateDTO(title="a" * 256, n_questions=6, pass_pct=70)
+
+
 @pytest.mark.parametrize(
     "field_name, value",
     [

@@ -58,6 +58,12 @@ def test_course_routes_and_upload(tmp_path: Path) -> None:
             assert created.status_code == 201
             course_id = created.json()["id"]
 
+            overlong_title = client.post(
+                "/api/courses",
+                json={"title": "a" * 256, "n_questions": 6, "pass_pct": 70},
+            )
+            assert overlong_title.status_code == 422
+
             fetched = client.get(f"/api/courses/{course_id}")
             assert fetched.status_code == 200
             assert fetched.json()["title"] == "Cardiology CE"

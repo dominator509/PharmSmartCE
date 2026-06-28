@@ -52,6 +52,8 @@ class CourseService:
     ) -> CourseModel:
         if not title.strip():
             raise ValidationError("Course title must not be empty.")
+        if len(title) > 255:
+            raise ValidationError("Course title must not exceed 255 characters.")
         course = CourseModel(
             id=uuid4().hex,
             org_id=org_id,

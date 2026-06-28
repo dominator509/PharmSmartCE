@@ -42,7 +42,7 @@ class CourseListDTO(BaseModel):
 
 
 class CourseCreateDTO(BaseModel):
-    title: str = Field(strict=True, min_length=1, pattern=r".*\S.*")
+    title: str = Field(strict=True, min_length=1, max_length=255, pattern=r".*\S.*")
     n_questions: int = Field(default=6, strict=True)
     pass_pct: int = Field(default=70, strict=True, ge=50, le=100)
 
