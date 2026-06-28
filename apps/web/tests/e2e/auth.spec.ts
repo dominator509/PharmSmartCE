@@ -7,7 +7,10 @@ function uniqueEmail(prefix: string): string {
 test("register redirects to courses", async ({ page }) => {
   const email = uniqueEmail("register");
 
-  await page.goto("/register");
+  await page.goto("/register", {
+    waitUntil: "domcontentloaded",
+    timeout: 10_000,
+  });
   await page.getByLabel("Email").fill(email);
   await page.getByLabel("Password").fill("secretsecret12");
   await Promise.all([
@@ -22,7 +25,10 @@ test("register redirects to courses", async ({ page }) => {
 test("login redirects to courses after registration", async ({ page }) => {
   const email = uniqueEmail("login");
 
-  await page.goto("/register");
+  await page.goto("/register", {
+    waitUntil: "domcontentloaded",
+    timeout: 10_000,
+  });
   await page.getByLabel("Email").fill(email);
   await page.getByLabel("Password").fill("secretsecret12");
   await Promise.all([
@@ -30,7 +36,10 @@ test("login redirects to courses after registration", async ({ page }) => {
     page.getByRole("button", { name: "Create account" }).click(),
   ]);
 
-  await page.goto("/login");
+  await page.goto("/login", {
+    waitUntil: "domcontentloaded",
+    timeout: 10_000,
+  });
   await page.getByLabel("Email").fill(email);
   await page.getByLabel("Password").fill("secretsecret12");
   await Promise.all([

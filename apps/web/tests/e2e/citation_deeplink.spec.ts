@@ -78,7 +78,10 @@ test("citation drawer deep link opens from click and direct URL", async ({
   const sessionId = started.id;
   const question = started.questions[0];
 
-  await page.goto("/login");
+  await page.goto("/login", {
+    waitUntil: "domcontentloaded",
+    timeout: 10_000,
+  });
   await page.getByLabel("Email").fill(email);
   await page.getByLabel("Password").fill(password);
   await Promise.all([

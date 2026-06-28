@@ -69,7 +69,10 @@ test("axe-core reports no serious violations on the core pages", async ({
   expect(sessionResponse.ok()).toBeTruthy();
   const { id: sessionId } = (await sessionResponse.json()) as { id: string };
 
-  await page.goto("/login");
+  await page.goto("/login", {
+    waitUntil: "domcontentloaded",
+    timeout: 10_000,
+  });
   await runAxe(page);
   await expectTabReachable(page, page.getByLabel("Email"));
   await expectTabReachable(page, page.getByLabel("Password"));
@@ -83,7 +86,10 @@ test("axe-core reports no serious violations on the core pages", async ({
     },
   ]);
 
-  await page.goto("/courses");
+  await page.goto("/courses", {
+    waitUntil: "domcontentloaded",
+    timeout: 10_000,
+  });
   await runAxe(page);
   await expectTabReachable(page, page.getByRole("link", { name: "A11y CE" }));
 

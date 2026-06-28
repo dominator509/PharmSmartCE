@@ -43,7 +43,10 @@ test("upload source", async ({ page, request }) => {
     id: string;
   };
 
-  await page.goto("/login");
+  await page.goto("/login", {
+    waitUntil: "domcontentloaded",
+    timeout: 10_000,
+  });
   await page.getByLabel("Email").fill(email);
   await page.getByLabel("Password").fill(password);
   await Promise.all([
