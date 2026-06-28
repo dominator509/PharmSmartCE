@@ -76,6 +76,16 @@ class Chunk:
     text: str
     course_id: str = ""
 
+    def __post_init__(self) -> None:
+        if not self.doc_id.strip():
+            raise DomainError("Chunk requires a doc_id.")
+        if self.page <= 0:
+            raise DomainError("Chunk requires a positive page.")
+        if not self.span.strip():
+            raise DomainError("Chunk requires a span.")
+        if not self.text.strip():
+            raise DomainError("Chunk requires text.")
+
 
 @dataclass(frozen=True, slots=True)
 class Question:
