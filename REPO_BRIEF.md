@@ -42,7 +42,7 @@ Use only commands documented in `COMMANDS.md`. Key commands:
 - Build: `scripts/build.sh`
 - Full verification: `scripts/verify.sh`
 - Production readiness: `scripts/production-readiness-check.sh`
-- Evidence report: `scripts/production-evidence-report.sh`
+- Evidence report: `scripts/production-evidence-report.sh [--output PATH]`
 - Windows helpers: `scripts/bin/uv.cmd` and `scripts/bin/uvx.cmd` mirror the shell shims; `C:\Users\domin\.local\bin\serena.cmd` forces UTF-8 for Serena health checks on this workstation.
 
 ## Important Directories

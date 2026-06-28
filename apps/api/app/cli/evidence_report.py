@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import sys
 from collections.abc import Mapping
 from pathlib import Path
@@ -68,13 +69,20 @@ def build_report(
 
 
 def main(argv: list[str] | None = None) -> int:
-    del argv
+    parser = argparse.ArgumentParser(prog="evidence-report")
+    parser.add_argument("--output", type=Path, help="write the report to a file")
+    args = parser.parse_args(argv)
     reconfigure = getattr(sys.stdout, "reconfigure", None)
     if callable(reconfigure):
         reconfigure(encoding="utf-8")
     readiness = extract_open_checkboxes(READINESS_PATH.read_text(encoding="utf-8"))
     evidence = extract_todo_rows(EVIDENCE_PATH.read_text(encoding="utf-8"))
-    print(build_report(readiness, evidence), end="")
+    report = build_report(readiness, evidence)
+    if args.output is None:
+        print(report, end="")
+    else:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(report, encoding="utf-8")
     return 0
 
 

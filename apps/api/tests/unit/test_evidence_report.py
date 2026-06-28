@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from app.cli import evidence_report
 from app.cli.evidence_report import build_report, extract_open_checkboxes, extract_todo_rows
 
 
@@ -41,3 +42,31 @@ def test_build_report_renders_markdown_sections() -> None:
     assert "## Remaining Evidence Rows" in report
     assert "### Data" in report
     assert "- Foo: TODO - bar" in report
+
+
+def test_main_writes_output_file(tmp_path) -> None:
+    readiness = tmp_path / "readiness.md"
+    evidence = tmp_path / "evidence.md"
+    output = tmp_path / "report.md"
+    readiness.write_text("## One\n- [ ] alpha\n", encoding="utf-8")
+    evidence.write_text("## Two\n- Beta: TODO - gamma\n", encoding="utf-8")
+
+    original_readiness = evidence_report.READINESS_PATH
+    original_evidence = evidence_report.EVIDENCE_PATH
+    evidence_report.READINESS_PATH = readiness
+    evidence_report.EVIDENCE_PATH = evidence
+    try:
+        assert evidence_report.main(["--output", str(output)]) == 0
+    finally:
+        evidence_report.READINESS_PATH = original_readiness
+        evidence_report.EVIDENCE_PATH = original_evidence
+
+    assert output.read_text(encoding="utf-8") == (
+        "# EP-010 Evidence Report\n\n"
+        "## Open Readiness Checkboxes\n"
+        "### One\n"
+        "- [ ] alpha\n\n"
+        "## Remaining Evidence Rows\n"
+        "### Two\n"
+        "- Beta: TODO - gamma\n"
+    )

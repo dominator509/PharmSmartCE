@@ -9,4 +9,4 @@ export TEMP="${TEMP:-$PWD/.tools/tmp}"
 export TMPDIR="${TMPDIR:-$PWD/.tools/tmp}"
 mkdir -p "$PWD/.tools" "$UV_CACHE_DIR" "$TMP" "$TMPDIR"
 
-uv run --directory apps/api python -m app.cli.evidence_report
+uv run --directory apps/api python -m app.cli.evidence_report "$@"
