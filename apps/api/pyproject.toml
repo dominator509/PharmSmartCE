@@ -49,6 +49,7 @@ files = ["app"]
 testpaths = ["tests"]
 addopts = "-q --reruns 2"
 pythonpath = ["."]
+cache_dir = ".tools/pytest-cache"
 markers = [
   "flaky: rerun-failures controlled by pytest-rerunfailures",
   "quarantine: excluded from CI until redesigned",

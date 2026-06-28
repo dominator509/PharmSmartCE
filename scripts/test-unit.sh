@@ -7,8 +7,8 @@ export UV_CACHE_DIR="${UV_CACHE_DIR:-$PWD/.tools/uv-cache}"
 export TMP="${TMP:-$PWD/.tools/tmp}"
 export TEMP="${TEMP:-$PWD/.tools/tmp}"
 export TMPDIR="${TMPDIR:-$PWD/.tools/tmp}"
-PYTEST_BASETEMP="$PWD/.tools/pytest"
-mkdir -p "$UV_CACHE_DIR" "$TMP" "$TMPDIR" "$PYTEST_BASETEMP"
+PYTEST_BASETEMP="${PYTEST_BASETEMP:-$(mktemp -d "$PWD/.tools/pytest.XXXXXX")}"
+mkdir -p "$UV_CACHE_DIR" "$TMP" "$TMPDIR"
 
 if [ -d apps/api/tests/unit ]; then
   uv run --directory apps/api pytest --basetemp="$PYTEST_BASETEMP" tests/unit -q
