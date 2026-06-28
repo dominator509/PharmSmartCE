@@ -55,7 +55,8 @@ def test_account_deletion_removes_last_user_and_org(tmp_path: Path) -> None:
             assert deleted.status_code == 204
             assert client.cookies.get("refresh") is None
 
-            stale_refresh = client.post("/auth/refresh", cookies={"refresh": refresh_cookie})
+            client.cookies.set("refresh", refresh_cookie, path="/auth")
+            stale_refresh = client.post("/auth/refresh")
             assert stale_refresh.status_code == 401
 
             protected = client.get("/api/courses", headers=headers)

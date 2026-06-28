@@ -72,7 +72,8 @@ def test_password_change_updates_credentials_and_revokes_refresh_tokens(
             )
             assert new_login.status_code == 200
 
-            stale_refresh = client.post("/auth/refresh", cookies={"refresh": refresh_cookie})
+            client.cookies.set("refresh", refresh_cookie, path="/auth")
+            stale_refresh = client.post("/auth/refresh")
             assert stale_refresh.status_code == 401
 
 

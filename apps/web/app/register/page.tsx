@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import { AuthForm } from "../../components/AuthForm";
 import { ApiError } from "../../lib/api";
-import { registerAction } from "../../lib/auth";
+import { registerAction, storeAccessCookie } from "../../lib/auth";
 
 async function submitRegister(formData: FormData): Promise<void> {
   "use server";
@@ -20,12 +20,8 @@ async function submitRegister(formData: FormData): Promise<void> {
     throw error;
   }
 
-  const params = new URLSearchParams({
-    token: auth.accessToken,
-    expiresIn: String(auth.expiresIn),
-    next: "/courses",
-  });
-  redirect(`/auth/complete?${params.toString()}`);
+  await storeAccessCookie(auth.accessToken, auth.expiresIn);
+  redirect("/courses");
 }
 
 type RegisterPageProps = {

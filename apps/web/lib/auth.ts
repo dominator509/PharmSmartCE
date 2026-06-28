@@ -76,6 +76,25 @@ export async function changePasswordAction(formData: FormData): Promise<void> {
   await performPasswordChange(parsePasswordChange(formData));
 }
 
+export async function storeAccessCookie(
+  accessToken: string,
+  maxAge: number,
+  deps: AuthDeps = {},
+): Promise<void> {
+  try {
+    const cookieStore = await getCookieStore(deps);
+    cookieStore.set("access", accessToken, {
+      httpOnly: true,
+      secure: isSecureCookie(),
+      sameSite: "lax",
+      path: "/",
+      maxAge,
+    });
+  } catch {
+    // Best-effort when the runtime cannot mutate the request cookie jar.
+  }
+}
+
 export function createAuthActions(deps: AuthDeps = {}) {
   return {
     login: async (credentials: AuthCredentials): Promise<AuthResult> =>

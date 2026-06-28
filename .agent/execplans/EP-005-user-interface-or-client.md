@@ -124,6 +124,7 @@ E2E tests are deterministic when the API is started fresh via docker compose. Re
 - [x] M6: axe-core accessibility - 2026-06-27 - `pnpm --filter web test:e2e -- a11y.spec.ts` passed on the core pages.
 
 ## 13. Surprises & Discoveries
+- 2026-06-28 - Login/register now set the access cookie server-side and redirect straight to `/courses`, which fixed the Playwright auth flow that was bouncing on the client-side handoff page.
 - 2026-06-27 - `apps/web/lib/api.ts` now wraps backend fetches with problem+json handling, and `apps/web/lib/auth.ts` provides a testable auth bridge around the refresh cookie.
 - 2026-06-27 - The browser now lands on `/auth/complete` after login/register so it can persist the access token cookie client-side before the Next server renders `/courses` and `/courses/[id]`.
 - 2026-06-27 - The session drawer now fetches citation previews from `/api/sessions/{session_id}/citation`, which reads stored chunk text so deep links can open a real source passage instead of a placeholder.
@@ -144,4 +145,4 @@ E2E tests are deterministic when the API is started fresh via docker compose. Re
 - 2026-06-27 - `apps/web/scripts/run-e2e.mjs` now reserves ephemeral ports for API and web, exports them through `E2E_API_BASE_URL` / `PLAYWRIGHT_BASE_URL`, and passes the runner env into Next so browser-side server actions hit the correct API origin.
 
 ## 15. Outcomes & Retrospective
-The client layer now has a usable Next.js shell for auth, courses, and source upload. The auth-complete handoff keeps the server actions simple while still giving the browser a persistent token for protected pages, which made the courses flow and Playwright happy path land cleanly without a larger client-state rewrite.
+The client layer now has a usable Next.js shell for auth, courses, and source upload. The auth flow now sets the browser access cookie in the server action and redirects straight to `/courses`, which made the courses flow and Playwright happy path land cleanly without needing the client-side handoff page.

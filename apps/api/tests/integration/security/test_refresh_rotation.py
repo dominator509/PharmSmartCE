@@ -49,7 +49,8 @@ def test_refresh_rotation_revokes_the_stale_chain(tmp_path: Path) -> None:
             rotated_refresh = client.cookies.get("refresh")
             assert rotated_refresh and rotated_refresh != original_refresh
 
-            stale_refresh = client.post("/auth/refresh", cookies={"refresh": original_refresh})
+            client.cookies.set("refresh", original_refresh, path="/auth")
+            stale_refresh = client.post("/auth/refresh")
             assert stale_refresh.status_code == 401
 
             revived_refresh = client.post("/auth/refresh")
