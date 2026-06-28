@@ -60,10 +60,13 @@ class IngestService:
 
 
 def _normalize_text(content: bytes, filename: str, sha256_hex: str) -> str:
-    if filename.lower().endswith(".docx") or zipfile.is_zipfile(io.BytesIO(content)):
+    is_docx = filename.lower().endswith(".docx")
+    if is_docx or zipfile.is_zipfile(io.BytesIO(content)):
         extracted = _extract_docx_text(content)
         if extracted:
             return extracted
+        if is_docx:
+            return f"{filename} {sha256_hex}"
     text = content.decode("utf-8", errors="ignore")
     normalized = " ".join(text.split()).strip()
     if normalized:
