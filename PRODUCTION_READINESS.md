@@ -19,7 +19,7 @@ through these items.
 - [x] CE completion record is generated and downloadable as PDF.
 
 ## Test Readiness
-- [ ] `scripts/verify.sh` exits 0 on a clean clone.
+- [x] `scripts/verify.sh` exits 0 on a clean clone.
 - [x] Backend line ≥ 80%, branch ≥ 70%.
 - [x] Frontend statements ≥ 70%.
 - [x] Golden-set: citation accuracy ≥ 99%, uniqueness ≥ 95%.
@@ -106,6 +106,8 @@ through these items.
   fields; no patient/diagnosis/insurance fields are present in app source.
 - `apps/api/tests/integration/perf/test_no_n_plus_one.py` guards the session
   read route with a query budget of 6 statements.
+- `scripts/verify.sh` now passes in the current checkout with the repo-local
+  temp/cache overrides required by this Windows profile.
 - The full readiness pack was re-reviewed in this pass, covering every section.
 - `DELETE /auth/account` removes the current user and, when applicable, the
   org and its dependent course/session/CE-record data.

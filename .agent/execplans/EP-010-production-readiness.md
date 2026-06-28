@@ -131,7 +131,7 @@ Re-running the check is a no-op once green; ticking boxes is git-tracked; no sid
 
 ## 12. Progress
 - [ ] M1: Functional category audit
-- [ ] M2: Test category audit
+- [x] M2: Test category audit â€” 2026-06-27T19:00Z â€” `scripts/verify.sh`, backend coverage >= 80%, and the golden-set harness all pass in the current checkout.
 - [ ] M3: Security category audit
 - [ ] M4: Privacy + data category audit
 - [ ] M5: Performance audit
@@ -150,6 +150,7 @@ Re-running the check is a no-op once green; ticking boxes is git-tracked; no sid
 - Added a dedicated `test_no_n_plus_one.py` perf guard for the session read route and kept the query budget low enough to catch accidental fan-out.
 - Kept the changelog aligned with the launch-readiness hardening pass so the release notes reflect the new operational docs and perf guard.
 - Added `DELETE /auth/account` for self-service account deletion with last-user org cleanup, then documented and tested it as the repo privacy path.
+- Removed the eager `GenerationService` export from `app.services.generation.__init__` to break a circular import exposed by the golden-set harness, then regenerated `apps/api/openapi.json` to match the live app surface.
 
 ## 15. Outcomes & Retrospective
 Production readiness is partially auditable now: local verify, security, dependency audit, coverage, smoke, and container builds are green, and the repo has the doc and route surface needed for the remaining checklist work. The remaining gaps are external or policy-gated rather than mechanical code failures, so the checklist still needs the staging and human launch evidence before it can be fully closed.

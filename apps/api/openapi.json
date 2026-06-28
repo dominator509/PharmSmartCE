@@ -164,6 +164,48 @@
         }
       }
     },
+    "/auth/account": {
+      "delete": {
+        "summary": "Delete Account",
+        "operationId": "delete_account_auth_account_delete",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/auth/password": {
+      "patch": {
+        "summary": "Change Password",
+        "operationId": "change_password_auth_password_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/courses": {
       "get": {
         "summary": "List Courses",
@@ -721,6 +763,26 @@
           "download_url"
         ],
         "title": "CERecordDTO"
+      },
+      "ChangePasswordDTO": {
+        "properties": {
+          "current_password": {
+            "type": "string",
+            "minLength": 12,
+            "title": "Current Password"
+          },
+          "new_password": {
+            "type": "string",
+            "minLength": 12,
+            "title": "New Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "current_password",
+          "new_password"
+        ],
+        "title": "ChangePasswordDTO"
       },
       "CitationDTO": {
         "properties": {
