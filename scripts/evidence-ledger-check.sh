@@ -59,10 +59,43 @@ placeholder_rows = [
 ]
 
 required_patterns = {
+    "Staging / Release": [
+        "Happy path vs staging",
+        "Bluegreen verification",
+        "Release smoke",
+    ],
+    "Rollback": [
+        "Rollback drill",
+        "Rollback verification",
+        "Customer-impact follow-up",
+    ],
+    "Data": [
+        "Local migration proof",
+        "Local integration proof",
+        "Backup test-restore",
+        "R2 retention evidence",
+        "S3 encryption evidence",
+    ],
+    "Security": [
+        "Local security proof",
+    ],
     "Performance": [
         "Local perf proof",
         "Target-host P95 session-start",
         "Target-host 30-page ingest",
+    ],
+    "Observability": [
+        "Local observability proof",
+    ],
+    "Support / Ops": [
+        "Local incident-response doc check",
+        "Local evidence-ledger check",
+        "Incident tabletop",
+        "Sentry staging/prod evidence",
+        "Alerting provider wiring",
+    ],
+    "Launch Gate": [
+        "Human approval comment",
     ],
 }
 
