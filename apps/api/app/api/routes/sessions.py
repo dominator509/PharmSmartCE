@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Annotated, cast
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query, Request, Response, status
 from pydantic import BaseModel, ConfigDict
@@ -294,7 +294,7 @@ def _session_dto(
     answered_questions: int,
     record_id: str | None = None,
 ) -> SessionDTO:
-    return SessionDTO(
+        return SessionDTO(
         id=session_row.id,
         course_id=session_row.course_id,
         user_id=session_row.user_id,
@@ -308,7 +308,7 @@ def _session_dto(
             QuestionDTO(
                 id=question.id,
                 text=question.text,
-                options=list(cast(list[str], question.options.get("choices", []))),
+                options=_question_choices(question.options),
                 citation=CitationDTO(
                     doc_id=question.source_doc_id,
                     page=question.source_page,
@@ -328,6 +328,17 @@ def _session_dto(
 
 def _citation_url(session_id: str, doc_id: str, page: int, span: str) -> str:
     return f"/sessions/{session_id}?cite={doc_id}:{page}:{span}"
+
+
+def _question_choices(options: dict[str, object]) -> list[str]:
+    choices = options.get("choices")
+    if (
+        not isinstance(choices, list)
+        or not choices
+        or not all(isinstance(choice, str) and choice.strip() for choice in choices)
+    ):
+        raise ValueError("Question options must include string choices.")
+    return choices
 
 
 async def _count_answers(session: AsyncSession, session_id: str) -> int:
