@@ -4,7 +4,7 @@ import json
 from dataclasses import dataclass
 
 from app.domain.entities import Chunk, Question
-from app.domain.errors import GroundingError, InsufficientContextError
+from app.domain.errors import DomainError, GroundingError, InsufficientContextError
 from app.services.ports.llm import LLMPort
 
 INSUFFICIENT_CONTEXT_MARKER = "<<<INSUFFICIENT_CONTEXT>>>"
@@ -64,12 +64,15 @@ class GroundedLLM:
         if not isinstance(rationale, str) or not rationale.strip():
             raise GroundingError("LLM returned invalid question payload.")
 
-        return Question(
-            stem=stem,
-            choices=tuple(choices),
-            correct_choice_index=correct_choice_index,
-            rationale=rationale,
-            source_doc_id=chunk.doc_id,
-            source_page=chunk.page,
-            source_span=chunk.span,
-        )
+        try:
+            return Question(
+                stem=stem,
+                choices=tuple(choices),
+                correct_choice_index=correct_choice_index,
+                rationale=rationale,
+                source_doc_id=chunk.doc_id,
+                source_page=chunk.page,
+                source_span=chunk.span,
+            )
+        except DomainError as exc:
+            raise GroundingError("LLM returned invalid question payload.") from exc
