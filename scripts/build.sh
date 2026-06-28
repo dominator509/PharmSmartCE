@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 set -eu
 cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+PATH="$PWD/scripts/bin:$PATH"
 
 export TMP="${TMP:-$PWD/.tools/tmp}"
 export TEMP="${TEMP:-$PWD/.tools/tmp}"
@@ -19,11 +20,7 @@ else
 fi
 
 if [ -f apps/web/package.json ]; then
-  if command -v cmd.exe >/dev/null 2>&1; then
-    cmd.exe /c pnpm --filter web build
-  else
-    pnpm --filter web build
-  fi
+  pnpm --filter web build
 else
   echo "(build: apps/web not present yet - skipping web build)"
 fi

@@ -70,6 +70,15 @@ class FaissStore:
                     + "\n"
                 )
 
+    def reset(self) -> None:
+        self._index = None
+        self._chunk_ids.clear()
+        self._metadata.clear()
+        if self.index_path.exists():
+            self.index_path.unlink()
+        if self.metadata_path.exists():
+            self.metadata_path.unlink()
+
     def search(
         self,
         vector: Sequence[float] | np.ndarray,

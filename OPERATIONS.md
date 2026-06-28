@@ -5,6 +5,7 @@
 - Stop: `docker compose -f infra/docker-compose.yml down`
 - Reset DB: see `ENVIRONMENT.md`.
 - Tail logs: `uv run --directory apps/api python -m app.cli.tail_logs`
+- Rebuild FAISS indices: `uv run --directory apps/api python -m app.cli.rebuild_index --all`
 
 ## Staging Operations
 - SSH: `flyctl ssh console --app pharmsmartce-api-staging`
@@ -41,7 +42,7 @@ must satisfy `AGENTS.md` §13.**
 | Mode | Detection | Remediation |
 |---|---|---|
 | LLM OOM | restart loop; `dmesg` oom-killer | Reduce `LLM_CONTEXT_SIZE` or smaller GGUF; bigger RAM |
-| FAISS index missing | `/readyz` 503; `FileNotFoundError` | `python -m app.cli.reingest <id>` |
+| FAISS index missing | `/readyz` 503; `FileNotFoundError` | `python -m app.cli.rebuild_index --all` |
 | DB pool exhausted | `QueuePool limit overflow` | Find slow queries; raise pool only after fix |
 | OpenAI cap hit | alert; `ExternalServiceError(cap_reached)` | Service auto-falls back. Do not raise cap (S3) |
 | Ingest worker stuck | `background_queue_depth` rising | `flyctl machines restart` worker; inspect `source.last_error` |

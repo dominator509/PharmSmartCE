@@ -62,6 +62,7 @@ Do not use `pip install`, `npm install`, `yarn`.
 | Python security | `uv run --directory apps/api pip-audit` |
 | Node security | `pnpm audit --prod` |
 | Smoke | `uv run --directory apps/api python -m app.cli.smoke` |
+| FAISS rebuild | `uv run --directory apps/api python -m app.cli.rebuild_index --all` |
 
 ## Local Development
 

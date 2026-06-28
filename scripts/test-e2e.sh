@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 set -eu
 cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+PATH="$PWD/scripts/bin:$PATH"
 
 export PLAYWRIGHT_BROWSERS_PATH="${PLAYWRIGHT_BROWSERS_PATH:-$PWD/.tools/ms-playwright}"
 export TMP="${TMP:-$PWD/.tools/tmp}"

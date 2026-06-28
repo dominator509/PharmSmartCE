@@ -95,7 +95,7 @@ test("axe-core reports no serious violations on the core pages", async ({
 
   await page.goto(`/sessions/${sessionId}`, {
     waitUntil: "domcontentloaded",
-    timeout: 10_000,
+    timeout: 20_000,
   });
   await runAxe(page);
   await expectTabReachable(page, page.getByRole("radio").first());

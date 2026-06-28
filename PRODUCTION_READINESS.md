@@ -73,7 +73,7 @@ through these items.
 ## Data Readiness
 - [ ] Daily DB backup verified by test-restore in last 7 days.
 - [ ] R2 retention set (sources: 365 d; backups: 30 d).
-- [ ] FAISS indices rebuildable (`python -m app.cli.rebuild_index --all` in
+- [x] FAISS indices rebuildable (`python -m app.cli.rebuild_index --all` in
       staging).
 
 ## Documentation Readiness

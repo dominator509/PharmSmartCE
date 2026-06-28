@@ -49,6 +49,7 @@ Use only commands documented in `COMMANDS.md`. Key commands:
   smoke test, course/upload routes, domain entities, grounded-generation core,
   SQLAlchemy repositories, Alembic migration, and FAISS storage adapter.
 - `apps/api/app/cli/`: release smoke entrypoint used by `scripts/smoke-test.sh`.
+  It also now includes `rebuild_index.py` for regenerating FAISS artifacts.
 - `apps/web/`: Next.js App Router scaffold with Tailwind, Vitest, Playwright,
   Dockerfile, smoke tests, the `lib/api.ts` / `lib/auth.ts` client bridge, and
   the `lib/courseApi.ts` loader for protected course pages.
