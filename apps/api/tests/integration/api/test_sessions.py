@@ -6,7 +6,6 @@ from pathlib import Path
 from fastapi.testclient import TestClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
-from testcontainers.postgres import PostgresContainer
 
 from app.api.deps import Principal, current_admin, current_user
 from app.config import Settings
@@ -17,6 +16,7 @@ from app.repositories.models.chunks import ChunkModel
 from app.repositories.models.orgs import OrgModel
 from app.repositories.models.questions import QuestionModel
 from app.repositories.models.users import UserModel
+from testcontainers.postgres import PostgresContainer
 
 
 def test_session_routes_answer_and_pdf(tmp_path: Path) -> None:
@@ -85,6 +85,16 @@ def test_session_routes_answer_and_pdf(tmp_path: Path) -> None:
                     questions[0]["citation"]["page"],
                 )
             )
+
+            blank_span = client.get(
+                f"/api/sessions/{session_id}/citation",
+                params={
+                    "doc_id": source_id,
+                    "page": questions[0]["citation"]["page"],
+                    "span": "   ",
+                },
+            )
+            assert blank_span.status_code == 422
 
             question_rows = asyncio.run(_load_questions(postgres.get_connection_url(), session_id))
 

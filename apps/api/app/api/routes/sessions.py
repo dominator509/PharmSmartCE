@@ -128,7 +128,7 @@ async def read_citation_preview(
     user: Annotated[Principal, Depends(current_user)],
     request: Request,
     page: int = Query(ge=1),
-    span: str = Query(min_length=1),
+    span: str = Query(min_length=1, pattern=r".*\S.*"),
 ) -> CitationPreviewDTO:
     session_factory = request.app.state.session_factory
     async with session_factory() as db_session:
