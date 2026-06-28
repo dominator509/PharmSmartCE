@@ -49,8 +49,8 @@ through these items.
 ## Accessibility Readiness
 - [x] axe-core no `serious` violations on `/login`, `/courses`,
       `/sessions/:id`.
-- [ ] Interactive controls keyboard-reachable.
-- [ ] Color contrast ≥ WCAG AA on text.
+- [x] Interactive controls keyboard-reachable.
+- [x] Color contrast ≥ WCAG AA on text.
 
 ## Observability Readiness
 - [x] Structured logs with required fields.
@@ -103,7 +103,10 @@ through these items.
 - Observability tests prove structured logs include request and image context,
   and `/metrics` exposes every metric name in `METRIC_NAMES`.
 - `apps/web/tests/e2e/a11y.spec.ts` covers `/login`, `/courses`, and
-  `/sessions/:id`; `scripts/verify.sh` now passes that axe-core check.
+  `/sessions/:id`; `pnpm --filter web test:e2e -- tests/e2e/a11y.spec.ts`
+  passes that axe-core and keyboard-reachability check.
+- The hardened a11y spec now tab-checks representative controls and rejects
+  color-contrast violations on the same core pages.
 - Alert rows in `OBSERVABILITY.md` now point at the relevant runbook sections.
 - App schemas/routes only collect learner, course, session, and CE-record
   fields; no patient/diagnosis/insurance fields are present in app source.
