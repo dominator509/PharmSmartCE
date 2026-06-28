@@ -56,8 +56,12 @@ async function waitForUrl(url, timeoutMs = 30_000) {
 }
 
 function waitForExit(child) {
+  if (child.exitCode != null || child.signalCode != null) {
+    return Promise.resolve(child.exitCode);
+  }
   return new Promise((resolve) => {
-    child.on("exit", (code) => resolve(code));
+    const subscribe = child.once ?? child.on;
+    subscribe.call(child, "exit", (code) => resolve(code));
   });
 }
 
