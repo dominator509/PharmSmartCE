@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from contextvars import ContextVar, Token
-from typing import Any, cast
+from collections.abc import Awaitable, Callable
+from typing import TypeVar, cast
 
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
@@ -13,6 +14,7 @@ from app.domain.errors import GroundingError as DomainGroundingError
 from app.observability.sentry import capture_exception
 
 request_id_var: ContextVar[str | None] = ContextVar("request_id", default=None)
+TException = TypeVar("TException", bound=Exception)
 
 
 def problem_response(
@@ -141,18 +143,30 @@ async def unready_error_handler(request: Request, exc: UnreadyError) -> JSONResp
     )
 
 
+def _adapt_exception_handler(
+    handler: Callable[[Request, TException], Awaitable[JSONResponse]],
+) -> Callable[[Request, Exception], Awaitable[JSONResponse]]:
+    async def wrapper(request: Request, exc: Exception) -> JSONResponse:
+        return await handler(request, cast(TException, exc))
+
+    return wrapper
+
+
 def install_exception_handlers(app: FastAPI) -> None:
-    app.add_exception_handler(AppException, cast(Any, app_exception_handler))
-    app.add_exception_handler(GroundingError, cast(Any, app_exception_handler))
-    app.add_exception_handler(UnreadyError, cast(Any, unready_error_handler))
-    app.add_exception_handler(DomainError, cast(Any, domain_error_handler))
+    app.add_exception_handler(AppException, _adapt_exception_handler(app_exception_handler))
+    app.add_exception_handler(GroundingError, _adapt_exception_handler(app_exception_handler))
+    app.add_exception_handler(UnreadyError, _adapt_exception_handler(unready_error_handler))
+    app.add_exception_handler(DomainError, _adapt_exception_handler(domain_error_handler))
     app.add_exception_handler(
         RequestValidationError,
-        cast(Any, request_validation_error_handler),
+        _adapt_exception_handler(request_validation_error_handler),
     )
-    app.add_exception_handler(HTTPException, cast(Any, http_exception_handler))
-    app.add_exception_handler(NotImplementedError, cast(Any, not_implemented_error_handler))
-    app.add_exception_handler(Exception, cast(Any, exception_handler))
+    app.add_exception_handler(HTTPException, _adapt_exception_handler(http_exception_handler))
+    app.add_exception_handler(
+        NotImplementedError,
+        _adapt_exception_handler(not_implemented_error_handler),
+    )
+    app.add_exception_handler(Exception, _adapt_exception_handler(exception_handler))
 
 
 def bind_request_id(request_id: str) -> Token[str | None]:
