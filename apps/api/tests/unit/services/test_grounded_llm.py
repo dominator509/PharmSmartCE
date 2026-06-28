@@ -103,6 +103,7 @@ def test_grounded_llm_rejects_non_mapping_payload() -> None:
         ('{"stem": "", "choices": ["A"], ' '"correct_choice_index": 0, "rationale": "ok"}'),
         ('{"stem": "ok", "choices": [], ' '"correct_choice_index": 0, "rationale": "ok"}'),
         ('{"stem": "ok", "choices": ["A"], ' '"correct_choice_index": "0", "rationale": "ok"}'),
+        ('{"stem": "ok", "choices": ["A"], ' '"correct_choice_index": true, "rationale": "ok"}'),
         ('{"stem": "ok", "choices": ["A"], ' '"correct_choice_index": 1, "rationale": "ok"}'),
         ('{"stem": "ok", "choices": ["A"], ' '"correct_choice_index": 0, "rationale": ""}'),
     ],

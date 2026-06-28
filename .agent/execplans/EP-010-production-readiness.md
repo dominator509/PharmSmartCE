@@ -180,6 +180,7 @@ Re-running the check is a no-op once green; ticking boxes is git-tracked; no sid
 - Further tightened `apps/api/app/cli/evidence_report.py` so malformed milestone ids like `Mfoo` are skipped before sorting; added a regression test for non-numeric milestone ids.
 - Hardened `apps/web/app/auth/complete/AuthCompleteClient.tsx` to only honor same-site `next` paths and fall back to `/courses` for malformed or off-origin values; added a unit test for the redirect resolver.
 - Hardened `apps/web/lib/auth.ts` so refresh-cookie extraction no longer splits blindly on commas inside `Expires=` attributes; added a unit test for a cookie header with date commas.
+- Hardened `apps/api/app/services/generation/grounded_llm.py` to reject boolean `correct_choice_index` values instead of treating them as integers; added a regression test for a JSON `true` index.
 
 ## 15. Outcomes & Retrospective
 Production readiness is partially auditable now: local verify, security, dependency audit, coverage, smoke, and container builds are green, and the repo has the doc and route surface needed for the remaining checklist work. The remaining gaps are external or policy-gated rather than mechanical code failures, so the checklist still needs the staging and human launch evidence before it can be fully closed.

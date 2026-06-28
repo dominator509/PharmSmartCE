@@ -59,7 +59,7 @@ class GroundedLLM:
             or not all(isinstance(choice, str) and choice.strip() for choice in choices)
         ):
             raise GroundingError("LLM returned invalid question payload.")
-        if not isinstance(correct_choice_index, int):
+        if not isinstance(correct_choice_index, int) or isinstance(correct_choice_index, bool):
             raise GroundingError("LLM returned invalid question payload.")
         if not isinstance(rationale, str) or not rationale.strip():
             raise GroundingError("LLM returned invalid question payload.")
