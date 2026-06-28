@@ -172,6 +172,7 @@ Re-running the check is a no-op once green; ticking boxes is git-tracked; no sid
 - Consolidated the FastAPI app-state casts in `apps/api/app/api/deps.py` behind a typed `AppState` protocol helper so request dependencies read from a single typed seam instead of repeating `cast(...)` at every access.
 - Added a runtime check and regression test for missing FastAPI app-state services in `apps/api/app/api/deps.py` so request dependency lookups now fail fast if startup wiring is incomplete.
 - Hardened `apps/api/app/adapters/storage/faiss_store.py` to reject malformed on-disk metadata rows instead of assuming every JSON line has the expected `chunk_id` and `metadata` shape; added a malformed-metadata regression test.
+- Changed `apps/api/app/api/routes/health.py` so a missing `llm_ready` flag now counts as not ready instead of silently defaulting to healthy; added an integration check for the missing-flag case.
 
 ## 15. Outcomes & Retrospective
 Production readiness is partially auditable now: local verify, security, dependency audit, coverage, smoke, and container builds are green, and the repo has the doc and route surface needed for the remaining checklist work. The remaining gaps are external or policy-gated rather than mechanical code failures, so the checklist still needs the staging and human launch evidence before it can be fully closed.

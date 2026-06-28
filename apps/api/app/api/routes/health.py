@@ -36,7 +36,7 @@ async def readyz(request: Request) -> Response:
     settings = get_settings(request)
     db_ready = await _check_database(settings.database_url)
     faiss_ready = Path(settings.faiss_index_dir).exists()
-    llm_ready = bool(getattr(request.app.state, "llm_ready", True))
+    llm_ready = bool(getattr(request.app.state, "llm_ready", False))
     payload = {"db": db_ready, "faiss": faiss_ready, "llm": llm_ready}
     status_code = (
         status.HTTP_200_OK if all(payload.values()) else status.HTTP_503_SERVICE_UNAVAILABLE

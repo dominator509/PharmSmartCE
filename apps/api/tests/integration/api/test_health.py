@@ -40,3 +40,8 @@ def test_health_and_readyz_and_metrics(tmp_path: Path) -> None:
             not_ready = client.get("/readyz")
             assert not_ready.status_code == 503
             assert not_ready.json() == {"db": True, "faiss": True, "llm": False}
+
+            delattr(client.app.state, "llm_ready")
+            missing_flag = client.get("/readyz")
+            assert missing_flag.status_code == 503
+            assert missing_flag.json() == {"db": True, "faiss": True, "llm": False}
