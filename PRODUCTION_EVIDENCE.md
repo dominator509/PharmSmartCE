@@ -15,6 +15,7 @@ result note.
 - Customer-impact follow-up:
 
 ## Data
+- FAISS rebuildable: verified in repo with `python -m app.cli.rebuild_index --all`.
 - Backup test-restore:
 - R2 retention evidence:
 - S3 encryption evidence:

@@ -11,7 +11,7 @@ Cross-reference with `PRODUCTION_READINESS.md` — this is the operational ledge
 - [ ] Observability audited (logs, metrics, Sentry, alerts wired, runbooks linked)
 - [ ] Deployment audited (release.yml works, same image staging/prod, bluegreen verified)
 - [ ] Rollback drill completed in last 30 days
-- [x] Data audited (R2 retention set; backup test-restore < 7 days; FAISS rebuildable)
+- [ ] Data audited (R2 retention set; backup test-restore < 7 days; FAISS rebuildable)
 - [x] Documentation reviewed in last quarter
 - [ ] Support audited (incident tabletop < 30 days; on-call rota; customer contact)
 - [ ] `scripts/production-readiness-check.sh` exit 0
