@@ -122,6 +122,18 @@ def test_course_routes_and_upload(tmp_path: Path) -> None:
             )
             assert path_like_upload.status_code == 422
 
+            reserved_name_upload = client.post(
+                f"/api/courses/{course_id}/sources",
+                files={
+                    "file": (
+                        "CON.txt",
+                        b"%PDF-1.4\n1 0 obj\n<<>>\nendobj\ntrailer\n<<>>\n%%EOF",
+                        "application/pdf",
+                    )
+                },
+            )
+            assert reserved_name_upload.status_code == 422
+
             with_source_list = client.get(f"/api/courses/{course_id}")
             assert with_source_list.status_code == 200
             source_items = with_source_list.json()["sources"]

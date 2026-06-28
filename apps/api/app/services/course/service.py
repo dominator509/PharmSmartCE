@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from hashlib import sha256
 from pathlib import Path
@@ -79,6 +80,8 @@ class CourseService:
             raise ValidationError("Source filename must not be empty.")
         if filename != Path(filename).name or filename in {".", ".."}:
             raise ValidationError("Source filename must not include path separators.")
+        if os.name == "nt" and _is_windows_reserved_filename(filename):
+            raise ValidationError("Source filename must not use reserved Windows names.")
         if not content:
             raise ValidationError("Source file must not be empty.")
         if len(content) > max_bytes:
@@ -116,3 +119,15 @@ def _normalize_mime_type(value: str | None) -> str:
     if not value:
         return ""
     return value.split(";", 1)[0].strip().lower()
+
+
+def _is_windows_reserved_filename(filename: str) -> bool:
+    stem = filename.split(".", 1)[0].upper()
+    return stem in {
+        "CON",
+        "PRN",
+        "AUX",
+        "NUL",
+        *(f"COM{i}" for i in range(1, 10)),
+        *(f"LPT{i}" for i in range(1, 10)),
+    }

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 
@@ -36,3 +37,17 @@ def _ensure_plain_filename(filename: str) -> None:
         raise ValueError("Source filename must not be empty.")
     if filename != Path(filename).name or filename in {".", ".."}:
         raise ValueError("Source filename must not include path separators.")
+    if os.name == "nt" and _is_windows_reserved_filename(filename):
+        raise ValueError("Source filename must not use reserved Windows names.")
+
+
+def _is_windows_reserved_filename(filename: str) -> bool:
+    stem = filename.split(".", 1)[0].upper()
+    return stem in {
+        "CON",
+        "PRN",
+        "AUX",
+        "NUL",
+        *(f"COM{i}" for i in range(1, 10)),
+        *(f"LPT{i}" for i in range(1, 10)),
+    }

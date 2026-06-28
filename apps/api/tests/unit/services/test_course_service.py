@@ -75,3 +75,19 @@ def test_upload_source_rejects_path_like_filename(filename: str) -> None:
 
     with pytest.raises(ValidationError):
         asyncio.run(_run())
+
+
+def test_upload_source_rejects_reserved_windows_filename() -> None:
+    service = CourseService(session=object(), storage=object(), ingest_service=object())
+
+    async def _run() -> None:
+        await service.upload_source(
+            course_id="course-1",
+            org_id="org-1",
+            filename="CON.txt",
+            content=b"content",
+            max_bytes=100,
+        )
+
+    with pytest.raises(ValidationError):
+        asyncio.run(_run())
