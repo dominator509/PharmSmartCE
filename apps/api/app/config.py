@@ -78,6 +78,20 @@ class Settings(BaseSettings):
             raise ValueError("OpenAI monthly USD cap must be positive.")
         return value
 
+    @field_validator("upload_max_bytes")
+    @classmethod
+    def _validate_upload_max_bytes(cls, value: int) -> int:
+        if value <= 0:
+            raise ValueError("Upload max bytes must be positive.")
+        return value
+
+    @field_validator("citation_min_overlap_ratio")
+    @classmethod
+    def _validate_citation_min_overlap_ratio(cls, value: float) -> float:
+        if not 0 <= value <= 1:
+            raise ValueError("Citation min overlap ratio must be between 0 and 1.")
+        return value
+
     @field_validator("rate_limit_default")
     @classmethod
     def _validate_rate_limit_default(cls, value: str) -> str:

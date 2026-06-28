@@ -1,4 +1,7 @@
-from app.config import get_settings
+import pytest
+from pydantic import ValidationError
+
+from app.config import Settings, get_settings
 
 
 def test_get_settings_exposes_citation_overlap_threshold() -> None:
@@ -20,3 +23,17 @@ def test_get_settings_exposes_citation_overlap_threshold() -> None:
     assert settings.storage_root == "var/uploads"
     assert settings.upload_max_bytes == 52_428_800
     assert settings.citation_min_overlap_ratio == 0.4
+
+
+@pytest.mark.parametrize(
+    "field_name, value",
+    [
+        ("upload_max_bytes", 0),
+        ("upload_max_bytes", -1),
+        ("citation_min_overlap_ratio", -0.1),
+        ("citation_min_overlap_ratio", 1.1),
+    ],
+)
+def test_settings_reject_invalid_upload_and_overlap_limits(field_name: str, value: object) -> None:
+    with pytest.raises(ValidationError):
+        Settings(**{field_name: value})
