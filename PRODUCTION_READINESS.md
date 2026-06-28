@@ -47,7 +47,7 @@ through these items.
 - [x] No N+1 queries on hot routes (`test_no_n_plus_one.py`).
 
 ## Accessibility Readiness
-- [ ] axe-core no `serious` violations on `/login`, `/courses`,
+- [x] axe-core no `serious` violations on `/login`, `/courses`,
       `/sessions/:id`.
 - [ ] Interactive controls keyboard-reachable.
 - [ ] Color contrast ≥ WCAG AA on text.
@@ -64,7 +64,7 @@ through these items.
       edits.
 - [x] Same image tag in staging and prod.
 - [ ] Bluegreen verified in staging.
-- [ ] `release_command` runs migrations before traffic switch.
+- [x] `release_command` runs migrations before traffic switch.
 
 ## Rollback Readiness
 - [ ] Rollback drill executed in staging in the last 30 days.
@@ -98,9 +98,12 @@ through these items.
   itself is still pending.
 - Repo secret scan and dependency audit are currently clean on this tree.
 - Release workflow pins staging and prod to the same `github.sha` image tag;
-  bluegreen and migration-before-traffic-switch still need external proof.
+  bluegreen still needs external proof, but the API Fly config now explicitly
+  runs `alembic upgrade head` before traffic switch.
 - Observability tests prove structured logs include request and image context,
   and `/metrics` exposes every metric name in `METRIC_NAMES`.
+- `apps/web/tests/e2e/a11y.spec.ts` covers `/login`, `/courses`, and
+  `/sessions/:id`; `scripts/verify.sh` now passes that axe-core check.
 - Alert rows in `OBSERVABILITY.md` now point at the relevant runbook sections.
 - App schemas/routes only collect learner, course, session, and CE-record
   fields; no patient/diagnosis/insurance fields are present in app source.
