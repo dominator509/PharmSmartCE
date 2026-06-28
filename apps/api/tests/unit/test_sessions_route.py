@@ -20,6 +20,11 @@ def test_answer_dto_rejects_blank_question_id() -> None:
         AnswerDTO(question_id="   ", chosen_index=1)
 
 
+def test_answer_dto_rejects_overlong_question_id() -> None:
+    with pytest.raises(ValidationError):
+        AnswerDTO(question_id="q" * 37, chosen_index=1)
+
+
 def test_answer_dto_rejects_negative_choice_index() -> None:
     with pytest.raises(ValidationError):
         AnswerDTO(question_id="question-1", chosen_index=-1)

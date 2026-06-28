@@ -62,7 +62,7 @@ class SessionDTO(BaseModel):
 
 
 class AnswerDTO(BaseModel):
-    question_id: str = Field(strict=True, min_length=1, pattern=r".*\S.*")
+    question_id: str = Field(strict=True, min_length=1, max_length=36, pattern=r".*\S.*")
     chosen_index: int = Field(strict=True, ge=0)
 
 
@@ -126,7 +126,7 @@ async def read_citation_preview(
     session_id: str,
     user: Annotated[Principal, Depends(current_user)],
     request: Request,
-    doc_id: str = Query(min_length=1, pattern=r".*\S.*"),
+    doc_id: str = Query(min_length=1, max_length=36, pattern=r".*\S.*"),
     page: int = Query(ge=1),
     span: str = Query(min_length=1, pattern=r".*\S.*"),
 ) -> CitationPreviewDTO:

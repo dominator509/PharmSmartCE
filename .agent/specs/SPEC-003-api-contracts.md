@@ -46,7 +46,8 @@ can rely on, with consistent error shapes and authorization.
 - `AccessTokenDTO`: `{ access_token: str, token_type: "Bearer", expires_in: int }`
 - `QuestionDTO`: `{ id, text, options[], citation: {doc_id, page, span, url} }`
 - `SourceDTO`: `{ id, course_id, filename (<=255 chars), bytes, sha256, status, created_at }`
-- `AnswerDTO`: `{ question_id: nonblank string, chosen_index: int >= 0 }`
+- `AnswerDTO`: `{ question_id: nonblank string (<=36 chars), chosen_index: int >= 0 }`
+- `CitationPreviewDTO`: `{ doc_id: nonblank string (<=36 chars), page, span, source_filename, passage }`
 - `CourseDetailDTO`: `CourseDTO` plus `sources[]` for the detail page; the
   list endpoint continues to use `CourseListDTO`.
 - `AnswerResultDTO`: `{ correct: bool, correct_index: int, rationale: str,

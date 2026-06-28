@@ -106,6 +106,16 @@ def test_session_routes_answer_and_pdf(tmp_path: Path) -> None:
             )
             assert blank_doc_id.status_code == 422
 
+            overlong_doc_id = client.get(
+                f"/api/sessions/{session_id}/citation",
+                params={
+                    "doc_id": "d" * 37,
+                    "page": questions[0]["citation"]["page"],
+                    "span": questions[0]["citation"]["span"],
+                },
+            )
+            assert overlong_doc_id.status_code == 422
+
             blank_question_id = client.post(
                 f"/api/sessions/{session_id}/answers",
                 json={"question_id": "   ", "chosen_index": 0},
