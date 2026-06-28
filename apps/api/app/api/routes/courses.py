@@ -43,8 +43,8 @@ class CourseListDTO(BaseModel):
 
 class CourseCreateDTO(BaseModel):
     title: str
-    n_questions: int = 6
-    pass_pct: int = 70
+    n_questions: int = Field(default=6, strict=True)
+    pass_pct: int = Field(default=70, strict=True)
 
 
 class SourceDTO(BaseModel):
