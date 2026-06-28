@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from hashlib import sha256
 from uuid import uuid4
 
-import magic  # type: ignore[import-untyped]
+import magic
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.errors import NotFoundError, ValidationError
