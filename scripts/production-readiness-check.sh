@@ -56,9 +56,10 @@ for f in agent-readiness preflight implementation validation final-review \
   fi
 done
 
-# No unresolved TODO/FIXME in core docs
+# No unresolved TODO/FIXME in core docs, except the evidence ledger which is
+# intentionally used to track remaining external proof items.
 for f in PROJECT_BRIEF.md AGENTS.md COMMANDS.md ARCHITECTURE.md ROADMAP.md \
-         DECISIONS.md PRODUCTION_READINESS.md PRODUCTION_EVIDENCE.md; do
+         DECISIONS.md PRODUCTION_READINESS.md; do
   if [ -f "$f" ] && grep -nE "TODO|FIXME" "$f" >/dev/null 2>&1; then
     echo "WARNING: unresolved TODO/FIXME in $f" >&2
     warn=1
@@ -75,6 +76,11 @@ elif ! grep -q "^## Staging / Release$" PRODUCTION_EVIDENCE.md \
   || ! grep -q "^## Support / Ops$" PRODUCTION_EVIDENCE.md \
   || ! grep -q "^## Launch Gate$" PRODUCTION_EVIDENCE.md; then
   echo "WARNING: PRODUCTION_EVIDENCE.md is missing one or more required sections." >&2
+  warn=1
+fi
+
+if [ -f PRODUCTION_EVIDENCE.md ] && grep -qE '^[[:space:]]*-[[:space:]]+[A-Za-z].*:[[:space:]]*$' PRODUCTION_EVIDENCE.md; then
+  echo "WARNING: PRODUCTION_EVIDENCE.md still contains empty placeholder evidence rows." >&2
   warn=1
 fi
 

@@ -5,8 +5,9 @@ PATH="$PWD/scripts/bin:$PATH"
 
 export TMP="${TMP:-$PWD/.tools/tmp}"
 export TEMP="${TEMP:-$PWD/.tools/tmp}"
+export TMPDIR="${TMPDIR:-$PWD/.tools/tmp}"
 export DOCKER_CONFIG="${DOCKER_CONFIG:-$PWD/.tools/docker-config}"
-mkdir -p "$TMP" "$DOCKER_CONFIG"
+mkdir -p "$TMP" "$TMPDIR" "$DOCKER_CONFIG"
 
 DOCKER_BIN="${DOCKER_BIN:-docker}"
 if command -v docker.exe >/dev/null 2>&1; then

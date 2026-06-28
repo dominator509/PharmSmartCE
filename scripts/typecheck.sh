@@ -6,7 +6,8 @@ PATH="$PWD/scripts/bin:$PATH"
 export UV_CACHE_DIR="${UV_CACHE_DIR:-$PWD/.tools/uv-cache}"
 export TMP="${TMP:-$PWD/.tools/tmp}"
 export TEMP="${TEMP:-$PWD/.tools/tmp}"
-mkdir -p "$UV_CACHE_DIR" "$TMP"
+export TMPDIR="${TMPDIR:-$PWD/.tools/tmp}"
+mkdir -p "$UV_CACHE_DIR" "$TMP" "$TMPDIR"
 
 if [ -f apps/api/pyproject.toml ]; then
   uv run --directory apps/api mypy app

@@ -7,7 +7,8 @@ export UV_CACHE_DIR="${UV_CACHE_DIR:-$PWD/.tools/uv-cache}"
 export PLAYWRIGHT_BROWSERS_PATH="${PLAYWRIGHT_BROWSERS_PATH:-$PWD/.tools/ms-playwright}"
 export TMP="${TMP:-$PWD/.tools/tmp}"
 export TEMP="${TEMP:-$PWD/.tools/tmp}"
-mkdir -p "$UV_CACHE_DIR" "$PLAYWRIGHT_BROWSERS_PATH" "$TMP"
+export TMPDIR="${TMPDIR:-$PWD/.tools/tmp}"
+mkdir -p "$UV_CACHE_DIR" "$PLAYWRIGHT_BROWSERS_PATH" "$TMP" "$TMPDIR"
 
 # install: python deps via uv, node deps via pnpm, LLM model if configured
 

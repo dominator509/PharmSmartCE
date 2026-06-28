@@ -5,25 +5,25 @@ Use one dated line per item, with the exact command or link and a short
 result note.
 
 ## Staging / Release
-- Happy path vs staging:
-- Bluegreen verification:
-- Release smoke:
+- Happy path vs staging: TODO - needs Fly auth, staging deploy, and smoke against https://staging.pharmsmartce.com.
+- Bluegreen verification: TODO - needs staging deploy history that proves bluegreen or documented rolling exception.
+- Release smoke: TODO - run `scripts/smoke-test.sh https://staging.pharmsmartce.com` after deploy.
 
 ## Rollback
-- Rollback drill:
-- Rollback verification:
-- Customer-impact follow-up:
+- Rollback drill: TODO - execute in staging and record the previous release/version.
+- Rollback verification: TODO - confirm /healthz, /readyz, and smoke pass after rollback.
+- Customer-impact follow-up: TODO - link any customer issue or postmortem note.
 
 ## Data
 - FAISS rebuildable: verified in repo with `python -m app.cli.rebuild_index --all`.
-- Backup test-restore:
-- R2 retention evidence:
-- S3 encryption evidence:
+- Backup test-restore: TODO - dated restore log within 7 days required.
+- R2 retention evidence: TODO - capture bucket retention settings for sources and backups.
+- S3 encryption evidence: TODO - capture bucket encryption settings for sources and backups.
 
 ## Support / Ops
-- Incident tabletop:
-- Sentry staging/prod evidence:
-- Alerting provider wiring:
+- Incident tabletop: TODO - run the checklist and record outcome within 30 days.
+- Sentry staging/prod evidence: TODO - capture a staging and prod event or dashboard proof.
+- Alerting provider wiring: TODO - record provider/rule IDs and a test-fire result.
 
 ## Launch Gate
-- Human approval comment:
+- Human approval comment: TODO - add the explicit launch comment with the release commit SHA.
