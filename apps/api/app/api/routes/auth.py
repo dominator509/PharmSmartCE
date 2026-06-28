@@ -16,12 +16,12 @@ router = APIRouter(prefix="/auth")
 
 
 class RegisterDTO(BaseModel):
-    email: str = Field(strict=True, pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+    email: str = Field(strict=True, max_length=320, pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
     password: str = Field(strict=True, min_length=12)
 
 
 class LoginDTO(BaseModel):
-    email: str = Field(strict=True, pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+    email: str = Field(strict=True, max_length=320, pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
     password: str = Field(strict=True, min_length=12)
 
 
