@@ -165,6 +165,7 @@ Re-running the check is a no-op once green; ticking boxes is git-tracked; no sid
 - Factored fenced-block aware markdown scanning into `app.cli.doc_scan` so the evidence report and production readiness check share the same TODO/FIXME parser.
 - Tightened JWT claim extraction in `apps/api/app/services/auth/tokens.py` to reject missing or malformed claims with explicit `ValueError` instead of surfacing raw lookup/type errors; added a focused unit test to pin the behavior.
 - Replaced the dynamic Sentry module handle with a runtime-checkable protocol in `apps/api/app/observability/sentry.py` so startup keeps rejecting malformed sentry_sdk substitutes without relying on `Any`; added a small unit test for the missing-method case.
+- Narrowed the redaction processor in `apps/api/app/observability/logging.py` from `Any` to `object` so the remaining event-mapping path stays typed without changing the recursive redaction behavior already covered by tests.
 
 ## 15. Outcomes & Retrospective
 Production readiness is partially auditable now: local verify, security, dependency audit, coverage, smoke, and container builds are green, and the repo has the doc and route surface needed for the remaining checklist work. The remaining gaps are external or policy-gated rather than mechanical code failures, so the checklist still needs the staging and human launch evidence before it can be fully closed.

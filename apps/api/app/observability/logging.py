@@ -4,7 +4,6 @@ import logging
 import sys
 from collections.abc import Mapping, MutableMapping, Sequence
 from dataclasses import dataclass
-from typing import Any
 
 import structlog
 import structlog.contextvars
@@ -35,8 +34,8 @@ class RedactProcessor:
         self,
         _: structlog.typing.WrappedLogger,
         __: str,
-        event_dict: MutableMapping[str, Any],
-    ) -> Mapping[str, Any]:
+        event_dict: MutableMapping[str, object],
+    ) -> Mapping[str, object]:
         for key, value in list(event_dict.items()):
             event_dict[key] = _redact_value(value, self.redacted_keys, str(key).lower())
         return event_dict
