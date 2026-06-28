@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import Any
 
 import faiss
 import numpy as np
@@ -16,7 +15,7 @@ class FaissStore:
         directory: str | Path,
         index: faiss.Index | None = None,
         chunk_ids: Sequence[str] | None = None,
-        metadata: Sequence[Mapping[str, Any]] | None = None,
+        metadata: Sequence[Mapping[str, object]] | None = None,
     ) -> None:
         self.course_id = course_id
         self.directory = Path(directory)
@@ -36,7 +35,7 @@ class FaissStore:
         self,
         chunk_ids: Sequence[str],
         vectors: Sequence[Sequence[float]] | np.ndarray,
-        metadata: Sequence[Mapping[str, Any]],
+        metadata: Sequence[Mapping[str, object]],
     ) -> None:
         if len(chunk_ids) != len(metadata):
             raise ValueError("chunk_ids and metadata must have the same length.")
@@ -83,7 +82,7 @@ class FaissStore:
         self,
         vector: Sequence[float] | np.ndarray,
         k: int,
-    ) -> list[tuple[str, dict[str, Any]]]:
+    ) -> list[tuple[str, dict[str, object]]]:
         if self._index is None:
             raise ValueError("index has not been loaded yet.")
 
@@ -95,7 +94,7 @@ class FaissStore:
 
         distances, indices = self._index.search(query, k)
         _ = distances
-        hits: list[tuple[str, dict[str, Any]]] = []
+        hits: list[tuple[str, dict[str, object]]] = []
         for index in indices[0]:
             if index < 0:
                 continue
@@ -110,7 +109,7 @@ class FaissStore:
 
         index = faiss.read_index(str(index_path))
         chunk_ids: list[str] = []
-        metadata: list[dict[str, Any]] = []
+        metadata: list[dict[str, object]] = []
         if metadata_path.exists():
             with metadata_path.open("r", encoding="utf-8") as handle:
                 for line in handle:
