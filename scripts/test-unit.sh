@@ -7,6 +7,7 @@ export UV_CACHE_DIR="${UV_CACHE_DIR:-$PWD/.tools/uv-cache}"
 export TMP="${TMP:-$PWD/.tools/tmp}"
 export TEMP="${TEMP:-$PWD/.tools/tmp}"
 export TMPDIR="${TMPDIR:-$PWD/.tools/tmp}"
+mkdir -p "$PWD/.tools"
 PYTEST_BASETEMP="${PYTEST_BASETEMP:-$(mktemp -d "$PWD/.tools/pytest.XXXXXX")}"
 mkdir -p "$UV_CACHE_DIR" "$TMP" "$TMPDIR"
 
