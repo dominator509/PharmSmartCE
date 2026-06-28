@@ -3,13 +3,28 @@
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 
+const DEFAULT_NEXT_PATH = "/courses";
+
+export function resolveNextPath(next: string | null): string {
+  if (!next) {
+    return DEFAULT_NEXT_PATH;
+  }
+
+  const normalized = next.trim();
+  if (!normalized.startsWith("/") || normalized.startsWith("//")) {
+    return DEFAULT_NEXT_PATH;
+  }
+
+  return normalized;
+}
+
 export default function AuthCompleteClient() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
     const accessToken = searchParams.get("token");
     const expiresIn = searchParams.get("expiresIn");
-    const next = searchParams.get("next") ?? "/courses";
+    const next = resolveNextPath(searchParams.get("next"));
 
     if (accessToken) {
       const cookieParts = [

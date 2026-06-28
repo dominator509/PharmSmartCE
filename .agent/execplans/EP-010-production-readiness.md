@@ -178,6 +178,7 @@ Re-running the check is a no-op once green; ticking boxes is git-tracked; no sid
 - Hardened `apps/api/app/cli/evidence_report.py` so malformed milestone headings are skipped instead of crashing the report parser; added a regression test for malformed `### M...` lines.
 - Hardened `apps/api/app/services/auth/tokens.py` so malformed JWT headers that decode to non-mappings are rejected with the normal invalid-token path; added a tampered-header regression test.
 - Further tightened `apps/api/app/cli/evidence_report.py` so malformed milestone ids like `Mfoo` are skipped before sorting; added a regression test for non-numeric milestone ids.
+- Hardened `apps/web/app/auth/complete/AuthCompleteClient.tsx` to only honor same-site `next` paths and fall back to `/courses` for malformed or off-origin values; added a unit test for the redirect resolver.
 
 ## 15. Outcomes & Retrospective
 Production readiness is partially auditable now: local verify, security, dependency audit, coverage, smoke, and container builds are green, and the repo has the doc and route surface needed for the remaining checklist work. The remaining gaps are external or policy-gated rather than mechanical code failures, so the checklist still needs the staging and human launch evidence before it can be fully closed.
