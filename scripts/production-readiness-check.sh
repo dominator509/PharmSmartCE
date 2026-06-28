@@ -6,13 +6,15 @@ cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 # 1. Run full verify chain.
 # 2. Verify the local backup/restore path.
 # 3. Verify incident-response support docs.
-# 4. Check pack file presence.
-# 5. Check for unresolved TODO/FIXME in core docs.
-# 6. Optional Alembic head check.
+# 4. Verify the production evidence ledger structure.
+# 5. Check pack file presence.
+# 6. Check for unresolved TODO/FIXME in core docs.
+# 7. Optional Alembic head check.
 
 scripts/verify.sh
 scripts/backup-restore-check.sh
 scripts/incident-response-check.sh
+scripts/evidence-ledger-check.sh
 
 err=0
 warn=0

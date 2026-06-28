@@ -146,6 +146,7 @@ Re-running the check is a no-op once green; ticking boxes is git-tracked; no sid
 - 2026-06-28 - Perf and observability slices are also locally provable here: `tests/integration/perf` plus the observability metrics/redaction/Sentry/alert-smoke tests pass in the current checkout.
 - 2026-06-28 - Backup test-restore is locally demonstrable here as well: `scripts/backup-restore-check.sh` completed successfully against the local Postgres container.
 - 2026-06-28 - Support docs are locally checkable now too: `scripts/incident-response-check.sh` validates the incident-response checklist and support routing references.
+- 2026-06-28 - The evidence ledger itself now has a local consistency check: `scripts/evidence-ledger-check.sh` validates the required sections and row structure.
 - Serena health-check still fails on this Windows profile because the embedded uv/pyright startup cannot create its lock/cache files under the current user context, even after moving Serena's cache path to a repo-local `.tmp` directory.
 
 ## 14. Decision Log

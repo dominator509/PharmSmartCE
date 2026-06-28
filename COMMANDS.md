@@ -33,6 +33,7 @@ Do not use `pip install`, `npm install`, `yarn`.
 | Dependency audit | `scripts/dependency-audit.sh` |
 | Backup / restore check | `scripts/backup-restore-check.sh` |
 | Incident response doc check | `scripts/incident-response-check.sh` |
+| Evidence ledger check | `scripts/evidence-ledger-check.sh` |
 | Smoke test | `scripts/smoke-test.sh` |
 | Full verification | `scripts/verify.sh` |
 | Production readiness check | `scripts/production-readiness-check.sh` |
@@ -69,6 +70,7 @@ Do not use `pip install`, `npm install`, `yarn`.
 | FAISS rebuild | `uv run --directory apps/api python -m app.cli.rebuild_index --all` |
 | Local DB backup / restore verify | `scripts/backup-restore-check.sh` |
 | Incident response doc check | `scripts/incident-response-check.sh` |
+| Evidence ledger check | `scripts/evidence-ledger-check.sh` |
 
 ## Local Development
 

@@ -46,6 +46,7 @@ Use only commands documented in `COMMANDS.md`. Key commands:
 - Evidence report: `scripts/production-evidence-report.sh [--output PATH]`
 - Local DB backup / restore verify: `scripts/backup-restore-check.sh`
 - Incident response doc check: `scripts/incident-response-check.sh`
+- Evidence ledger check: `scripts/evidence-ledger-check.sh`
 - Windows helpers: `scripts/bin/uv.cmd` and `scripts/bin/uvx.cmd` mirror the shell shims; `C:\Users\domin\.local\bin\serena.cmd` forces UTF-8 for Serena health checks on this workstation.
 
 ## Important Directories

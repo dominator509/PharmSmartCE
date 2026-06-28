@@ -36,6 +36,7 @@ need a compact Obsidian-friendly summary of the open launch evidence.
 
 ## Support / Ops
 - Local incident-response doc check: verified 2026-06-28 with `scripts/incident-response-check.sh`.
+- Local evidence-ledger check: verified 2026-06-28 with `scripts/evidence-ledger-check.sh`.
 - Incident tabletop: TODO - run the checklist and record outcome within 30 days.
 - Sentry staging/prod evidence: TODO - capture a staging and prod event or dashboard proof.
 - Alerting provider wiring: TODO - record provider/rule IDs and a test-fire result.
