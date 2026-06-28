@@ -12,7 +12,7 @@ import httpx
 from fastapi.testclient import TestClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
-from testcontainers.postgres import PostgresContainer  # type: ignore[import-untyped]
+from testcontainers.postgres import PostgresContainer
 
 from app.api.deps import Principal, current_admin, current_user, get_ingest_service
 from app.config import Settings
