@@ -1,9 +1,6 @@
-# suggested_commands
-- Repo command authority is `COMMANDS.md`; if a needed command is missing, update `COMMANDS.md` first with evidence before use.
-- Windows/RTK rule from `AGENTS.md`: prefix external shell commands with `rtk`; PowerShell builtins like `Get-Content` and `Get-ChildItem` can be run directly in PowerShell.
-- Fast search/listing: `rtk rg --files`, `rtk rg -n pattern path`; prefer these over broad recursive reads.
-- Main repo scripts: `scripts/preflight.sh`, `scripts/install.sh`, `scripts/lint.sh`, `scripts/format-check.sh`, `scripts/typecheck.sh`, `scripts/test-unit.sh`, `scripts/test-integration.sh`, `scripts/test-e2e.sh`, `scripts/build.sh`, `scripts/security-check.sh`, `scripts/dependency-audit.sh`, `scripts/smoke-test.sh`, `scripts/verify.sh`, `scripts/production-readiness-check.sh`.
-- Backend command forms seen in this repo: `uv run --directory apps/api ruff check .`, `uv run --directory apps/api ruff format --check .`, `uv run --directory apps/api mypy app`, `uv run --directory apps/api pytest tests/unit -q`, `uv run --directory apps/api pytest tests/integration -q`, `uv run --directory apps/api python -m app.cli.smoke`, `uv run --directory apps/api alembic upgrade head`.
-- Frontend command forms: `pnpm --filter web lint`, `pnpm --filter web format:check`, `pnpm --filter web typecheck`, `pnpm --filter web test:unit`, `pnpm --filter web test:e2e`, `pnpm --filter web build`.
-- Local services command: `docker compose -f infra/docker-compose.yml up -d db redis minio`; quick health check: `docker compose -f infra/docker-compose.yml ps`.
-- For Serena health checks on Windows, use the UTF-8 wrapper `C:\Users\domin\.local\bin\serena.cmd` so output encoding stays stable.
+# Suggested commands
+- Repo scripts people actually run: `scripts/preflight.sh`, `scripts/install.sh`, `scripts/lint.sh`, `scripts/format-check.sh`, `scripts/typecheck.sh`, `scripts/test-unit.sh`, `scripts/test-integration.sh`, `scripts/test-e2e.sh`, `scripts/build.sh`, `scripts/security-check.sh`, `scripts/dependency-audit.sh`, `scripts/smoke-test.sh`, `scripts/verify.sh`, `scripts/production-readiness-check.sh`, `scripts/production-evidence-report.sh [--output PATH]`.
+- Local stack: `docker compose -f infra/docker-compose.yml up -d db redis minio` and `docker compose -f infra/docker-compose.yml ps`.
+- Image checks: `docker build -f apps/api/Dockerfile -t pharmsmartce-api:dev .` and `docker build -f apps/web/Dockerfile -t pharmsmartce-web:dev .`.
+- Windows helpers: `scripts/bin/uv.cmd`, `scripts/bin/uvx.cmd`, `C:\Users\domin\.local\bin\serena.cmd`.
+- After onboarding or memory edits, run `serena memories check` from the project root.

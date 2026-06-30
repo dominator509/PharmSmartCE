@@ -1,6 +1,6 @@
-# frontend/core
-- Root is `apps/web`; it is a Next.js App Router app with TypeScript, Tailwind, Vitest, and Playwright.
-- Scripts in `apps/web/package.json`: `dev`, `build`, `start`, `lint`, `format:check`, `typecheck`, `test:unit`, `test:e2e`.
-- `pnpm --filter web test:e2e` runs `apps/web/scripts/run-e2e.mjs`; generated OpenAPI types are planned for `packages/shared`.
-- Session state stays server-owned; the client cache is React Query only, and there is no durable client-side question persistence beyond ephemeral cache.
-- Important UX surfaces still include auth pages, course list/detail with source status badges, admin upload controls, session polling, citation UI, and results/CE record flows.
+# Frontend core
+- Frontend lives in `apps/web` and uses the Next.js App Router with React, TypeScript, Tailwind, Playwright, and Vitest.
+- Main routes: `/`, `/login`, `/register`, `/auth/complete`, `/courses`, `/courses/[id]`, `/sessions/[id]`.
+- Server actions in `apps/web/lib/auth.ts` set the access cookie server-side for `/login` and `/register`, then redirect directly to `/courses`; `/auth/complete` remains the browser handoff path.
+- Protected course/session flows are under `/courses`, `/courses/[id]`, `/sessions/[id]`, with fetch/auth helpers in `apps/web/lib/api.ts` and `apps/web/lib/courseApi.ts`.
+- E2E tests rely on explicit URL waits for auth/navigation transitions; fast assertions alone have been flaky under full verification.
