@@ -4,13 +4,14 @@ cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 PATH="$PWD/scripts/bin:$PATH"
 
 export UV_CACHE_DIR="${UV_CACHE_DIR:-$PWD/.tools/uv-cache}"
+export PIP_AUDIT_CACHE_DIR="${PIP_AUDIT_CACHE_DIR:-$PWD/.tools/pip-audit-cache}"
 export TMP="${TMP:-$PWD/.tools/tmp}"
 export TEMP="${TEMP:-$PWD/.tools/tmp}"
 export TMPDIR="${TMPDIR:-$PWD/.tools/tmp}"
-mkdir -p "$UV_CACHE_DIR" "$TMP" "$TMPDIR"
+mkdir -p "$UV_CACHE_DIR" "$PIP_AUDIT_CACHE_DIR" "$TMP" "$TMPDIR"
 
 if [ -f apps/api/pyproject.toml ]; then
-  uv run --directory apps/api pip-audit || {
+  uv run --directory apps/api pip-audit --cache-dir "$PIP_AUDIT_CACHE_DIR" || {
     echo "ERROR: pip-audit found vulnerabilities. Review per SECURITY.md." >&2
     exit 1
   }

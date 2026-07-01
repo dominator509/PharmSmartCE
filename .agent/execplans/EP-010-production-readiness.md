@@ -35,6 +35,12 @@ All prior phases complete. Final go/no-go ExecPlan.
 ## 6. Files to Change
 - `PRODUCTION_READINESS.md (tick checkboxes)`
 - `CHANGELOG.md (final release notes)`
+- `PRODUCTION_EVIDENCE.md`
+- `.agent/checklists/production-readiness.md`
+- `COMMANDS.md`
+- `scripts/dependency-audit.sh`
+- `apps/api/pyproject.toml`
+- `apps/api/tests/unit/test_launch_gate_comment.py`
 
 ## 7. Interfaces and Contracts
 `scripts/production-readiness-check.sh` exits 0. `PRODUCTION_READINESS.md` fully ticked. Human launch gate recorded as a PR/issue comment with commit SHA per the Final Launch Gate format in `PRODUCTION_READINESS.md`.
@@ -141,6 +147,14 @@ Re-running the check is a no-op once green; ticking boxes is git-tracked; no sid
 - [x] M9: Final production-readiness-check
 
 ## 13. Surprises & Discoveries
+- 2026-06-30 - The launch-gate unit test was still assuming `bash.exe` meant WSL plus a `/mnt/c/...` path; on this workstation WSL has no distro installed, so the test now has to prefer Git Bash and run from `cwd` to keep the release-gate proof portable.
+- 2026-06-30 - `pip-audit` will prefer the user-level pip HTTP cache unless `--cache-dir` is passed explicitly; pinning it to `.tools/pip-audit-cache` made both `scripts/dependency-audit.sh` and `scripts/production-readiness-check.sh` stable again on this managed Windows profile.
+- 2026-06-30 - The exact EP-010 M2 coverage command surfaced a hidden pytest collection bug: `tests/unit/test_sentry.py` and `tests/integration/test_sentry.py` collided under the default import mode, so the backend test config now has to use `--import-mode=importlib` for full-suite coverage runs.
+- 2026-06-30 - The focused Playwright accessibility probe was already passing, but the Windows teardown path kept printing `taskkill` noise after success; silencing the helper process output keeps the proof runs readable without changing the actual cleanup behavior.
+- 2026-06-30 - The secret-scan proof was weaker than the readiness docs implied: when `gitleaks` was missing, `scripts/security-check.sh` only checked one OpenAI-style pattern. The script now falls back to several tracked-file secret patterns so the local security proof is more honest and more useful.
+- 2026-06-30 - The local perf and observability slices are freshly re-verified on the current worktree again: `pytest tests/integration/perf -q` and the four focused observability integration tests both pass in the elevated Docker-backed environment.
+- 2026-06-30 - The launch-gate evidence is also refreshed now: `scripts/launch-gate-comment.sh` currently renders the exact approval comment for commit `adfdbe8`, so the remaining gap there is human approval rather than missing template generation.
+- 2026-06-30 - The local data-proof slice is freshly re-verified too: `scripts/backup-restore-check.sh` restored `12` public tables successfully, and `python -m app.cli.rebuild_index --all` rebuilt the current course indexes while clearing stale zero-chunk artifacts.
 - 2026-06-28 - `scripts/production-readiness-check.sh` now passes end-to-end after the backup/restore script disables MSYS path conversion for container file paths under Git Bash.
 - 2026-06-28 - The local Docker stack is back up and healthy here: `docker compose -f infra/docker-compose.yml up -d db redis minio` succeeds and all three services report healthy in `docker compose ps`.
 - 2026-06-28 - On this Windows profile the repo-local web formatter is easiest to run through `apps/web/node_modules/.bin/prettier.CMD`; the consolidated readiness chain also needs elevated host Docker access to finish the Docker-backed integration and e2e segments cleanly.
@@ -156,6 +170,11 @@ Re-running the check is a no-op once green; ticking boxes is git-tracked; no sid
 - Serena health-check still fails on this Windows profile because the embedded uv/pyright startup cannot create its lock/cache files under the current user context, even after moving Serena's cache path to a repo-local `.tmp` directory.
 
 ## 14. Decision Log
+- 2026-06-30 - Hardened `scripts/dependency-audit.sh` to pass `pip-audit --cache-dir .tools/pip-audit-cache` and updated `COMMANDS.md` accordingly so repo validation no longer depends on a user-level pip cache path this managed Windows profile cannot always read.
+- 2026-06-30 - Hardened the launch-gate comment unit test to prefer Git Bash and execute from the repo root instead of assuming WSL path translation; this keeps the release-gate template test valid on Windows hosts without an installed WSL distro.
+- 2026-06-30 - Switched backend pytest to `--import-mode=importlib` so the exact EP-010 coverage audit can collect both unit and integration files with the same basename without import-file mismatch failures.
+- 2026-06-30 - Silenced the Windows `taskkill` helper in `apps/web/scripts/run-e2e.mjs` so successful focused Playwright proof runs do not end with misleading teardown errors.
+- 2026-06-30 - Hardened `scripts/security-check.sh` so missing `gitleaks` no longer collapses the secret scan to a single OpenAI-key grep; the repo-local fallback now scans tracked files for multiple high-signal secret formats and the readiness docs now cite the script rather than `gitleaks` specifically.
 - Removed Markdown from `.serena/project.yml` language startup on this workstation so Serena stops launching the failing Marksman server; docs navigation still has `REPO_BRIEF.md` and the repo brief links.
 - Disabled MSYS path conversion in `scripts/backup-restore-check.sh` so Git Bash no longer rewrites the container `/tmp` dump path before `docker exec` runs `pg_dump` / `pg_restore`.
 - Added explicit runbook targets to every alert row in `OBSERVABILITY.md` so the readiness pack can link each alert to a concrete response path.

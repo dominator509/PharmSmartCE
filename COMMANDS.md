@@ -65,7 +65,7 @@ Do not use `pip install`, `npm install`, `yarn`.
 | Fly config validate | `flyctl config validate -c infra/fly.api.toml` |
 | Fly releases | `flyctl releases --app pharmsmartce-api-staging` |
 | Web build | `pnpm --filter web build` |
-| Python security | `uv run --directory apps/api pip-audit` |
+| Python security | `uv run --directory apps/api pip-audit --cache-dir .tools/pip-audit-cache` |
 | Node security | `pnpm audit --prod` |
 | Smoke | `uv run --directory apps/api python -m app.cli.smoke` |
 | FAISS rebuild | `uv run --directory apps/api python -m app.cli.rebuild_index --all` |
