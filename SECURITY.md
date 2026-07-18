@@ -51,6 +51,13 @@ whitespace preservation. API JSON only.
 Env vars at runtime from deploy platform secret store. Never in repo.
 `.env.example` schema only.
 
+## Secret Scanning
+`scripts/security-check.sh` runs `gitleaks` when it is installed. On
+workstations where `gitleaks` is unavailable, the script falls back to a
+repo-local tracked-file scan for high-signal secrets such as OpenAI keys,
+GitHub tokens, AWS access keys, Google API keys, Slack tokens, and private
+key blocks.
+
 ## Dependency Security
 `scripts/dependency-audit.sh` runs `pip-audit` + `pnpm audit`. CI fails on
 `high`/`critical` without justification in `apps/api/.audit-allow.txt` /

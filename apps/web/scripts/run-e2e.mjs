@@ -71,11 +71,14 @@ async function terminate(child) {
   }
   if (child.exitCode === null && child.signalCode === null) {
     if (process.platform === "win32" && child.pid !== undefined) {
+      // Taskkill can emit unsupported-operation noise while still clearing the
+      // process tree on Windows, so keep teardown quiet unless the child
+      // itself refuses to exit.
       const killer = spawn(
         "taskkill",
         ["/PID", String(child.pid), "/T", "/F"],
         {
-          stdio: "inherit",
+          stdio: "ignore",
           windowsHide: true,
         },
       );

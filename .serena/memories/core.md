@@ -1,9 +1,6 @@
-# core
-- Repo shape: `apps/api` backend, `apps/web` frontend, plus `infra/`, `.agent/`, `scripts/`, `REPO_BRIEF.md`, `.serena/`, and local-only `.obsidian/`.
-- Authority chain: current user instruction -> `AGENTS.md` -> active `.agent/execplans/*` -> disk code/tests -> `ARCHITECTURE.md` -> `.agent/specs/*` -> `ROADMAP.md`.
-- `ROADMAP.md` is strategy only; implementation work follows the active ExecPlan.
-- Control-plane docs to read first are `AGENTS.md`, `COMMANDS.md`, `.agent/PLANS.md`, the active ExecPlan, and `REPO_BRIEF.md`.
-- Product invariant: pharmacist CE content stays source-grounded; persisted questions keep citation fields; CPU-only local LLM remains the default path and OpenAI stays optional/guarded.
-- For module detail, read `mem:backend/core` for `apps/api` and `mem:frontend/core` for `apps/web`.
-- For workflow detail, read `mem:tech_stack`, `mem:suggested_commands`, `mem:conventions`, and `mem:task_completion`.
-- Serena setup stays headless, LSP-backed, and additive.
+# PharmSmartCE core
+- Monorepo control-plane repo for a planned pharmacist CE SaaS.
+- Top-level authority surface: `AGENTS.md`, `COMMANDS.md`, `.agent/PLANS.md`, active ExecPlan in `.agent/execplans/`, then `ARCHITECTURE.md` and repo code/tests.
+- Local-only state stays local unless explicitly requested: `.obsidian/`, `.serena/`, `.tmp/`, `var/`, model blobs, caches, build output.
+- Product invariants: CE generation must stay grounded in uploaded source material; all persisted questions need citation fields; all outbound LLM calls route through `apps/api/app/services/generation/grounded_llm.py`.
+- Read `mem:backend/core` and `mem:frontend/core` for module-specific notes; use `mem:tech_stack`, `mem:suggested_commands`, `mem:conventions`, and `mem:task_completion` for shared operational context.

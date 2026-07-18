@@ -47,7 +47,7 @@ files = ["app"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-q --reruns 2"
+addopts = "-q --reruns 2 --import-mode=importlib"
 pythonpath = ["."]
 cache_dir = ".tools/pytest-cache"
 markers = [

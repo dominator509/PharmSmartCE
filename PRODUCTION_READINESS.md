@@ -33,7 +33,7 @@ through these items.
 - [x] CSP headers verified.
 - [x] Authz matrix green.
 - [x] Injection detector + citation validator wired and tested.
-- [x] No secrets in repo (`gitleaks` clean).
+- [x] No secrets in repo (`scripts/security-check.sh` clean).
 
 ## Privacy Readiness
 - [x] No PHI fields collected.

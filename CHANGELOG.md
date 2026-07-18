@@ -26,3 +26,10 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Course creation now commits before the upload request boundary, so the smoke and integration paths can see the new course.
 - Serena repo configuration now stays headless and avoids the failing Markdown language server on this workstation.
+- Windows validation no longer lets `pip-audit` fall back to the user-level pip cache, so dependency and production-readiness audits stay green on managed profiles.
+- The launch-gate comment unit test now prefers Git Bash and runs from the repo root instead of assuming a WSL `/mnt/c/...` path.
+- Backend pytest now uses `--import-mode=importlib`, which avoids duplicate test-module basename collisions during the full coverage audit.
+- The web e2e runner now keeps Windows `taskkill` teardown noise out of successful accessibility and smoke runs.
+- The security gate now falls back to a repo-local tracked-file secret scan when `gitleaks` is unavailable on the workstation.
+- The production evidence ledger now records the current launch-comment template output against the active release-candidate SHA.
+- The production evidence ledger now also records fresh local backup/restore and FAISS rebuild proof from the current worktree.
