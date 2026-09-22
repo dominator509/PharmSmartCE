@@ -6,10 +6,10 @@ import pytest
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
-from testcontainers.postgres import PostgresContainer
 
 from app.repositories import models as _models  # noqa: F401
 from app.repositories.db import Base
+from testcontainers.postgres import PostgresContainer
 
 
 async def _assert_citation_not_null(database_url: str) -> None:

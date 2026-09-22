@@ -7,7 +7,6 @@ from pathlib import Path
 
 from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import create_async_engine
-from testcontainers.postgres import PostgresContainer
 
 from app.config import Settings
 from app.main import create_app
@@ -15,6 +14,7 @@ from app.repositories.db import Base
 from app.repositories.models.orgs import OrgModel
 from app.repositories.models.users import UserModel
 from app.services.auth.tokens import hash_password
+from testcontainers.postgres import PostgresContainer
 
 
 def test_login_logs_do_not_include_request_body_secrets(capsys) -> None:

@@ -150,6 +150,9 @@ class AuthService:
             select(func.count(UserModel.id)).where(UserModel.org_id == user.org_id)
         )
 
+        await self.session.execute(
+            delete(RefreshTokenModel).where(RefreshTokenModel.user_id == user_id)
+        )
         await self.session.delete(user)
         await self.session.flush()
 

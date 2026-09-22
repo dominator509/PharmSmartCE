@@ -6,13 +6,13 @@ from pathlib import Path
 from fastapi.testclient import TestClient
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import create_async_engine
-from testcontainers.postgres import PostgresContainer
 
 from app.config import Settings
 from app.main import create_app
 from app.repositories.db import Base
 from app.repositories.models.orgs import OrgModel
 from app.repositories.models.users import UserModel
+from testcontainers.postgres import PostgresContainer
 
 
 def test_account_deletion_removes_last_user_and_org(tmp_path: Path) -> None:

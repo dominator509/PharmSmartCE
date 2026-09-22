@@ -5,11 +5,11 @@ from pathlib import Path
 
 from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import create_async_engine
-from testcontainers.postgres import PostgresContainer
 
 from app.config import Settings
 from app.main import create_app
 from app.repositories.db import Base
+from testcontainers.postgres import PostgresContainer
 
 
 def test_password_change_updates_credentials_and_revokes_refresh_tokens(

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-import os
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 
 
 class LocalSourceStorage:
@@ -37,11 +36,15 @@ def _ensure_plain_filename(filename: str) -> None:
         raise ValueError("Source filename must not be empty.")
     if len(filename) > 255:
         raise ValueError("Source filename must not exceed 255 characters.")
-    if filename != Path(filename).name or filename in {".", ".."}:
+    if (
+        filename != Path(filename).name
+        or filename != PureWindowsPath(filename).name
+        or filename in {".", ".."}
+    ):
         raise ValueError("Source filename must not include path separators.")
     if filename.rstrip(" .") != filename:
         raise ValueError("Source filename must not end with dots or spaces.")
-    if os.name == "nt" and _is_windows_reserved_filename(filename):
+    if _is_windows_reserved_filename(filename):
         raise ValueError("Source filename must not use reserved Windows names.")
 
 

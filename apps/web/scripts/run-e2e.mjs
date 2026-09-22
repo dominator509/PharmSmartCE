@@ -119,10 +119,8 @@ try {
   backendEnv.PLAYWRIGHT_BASE_URL = webUrl;
 
   apiServer = spawnCommand(
-    "python",
+    "uv",
     [
-      "-m",
-      "uv",
       "run",
       "--directory",
       resolve(process.cwd(), "..", "api"),
@@ -137,10 +135,8 @@ try {
   );
 
   migrate = spawnCommand(
-    "python",
+    "uv",
     [
-      "-m",
-      "uv",
       "run",
       "--directory",
       resolve(process.cwd(), "..", "api"),

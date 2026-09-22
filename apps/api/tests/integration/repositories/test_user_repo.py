@@ -4,7 +4,6 @@ import asyncio
 from datetime import UTC, datetime
 
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
-from testcontainers.postgres import PostgresContainer
 
 from app.repositories import models as _models  # noqa: F401
 from app.repositories.course_repo import CourseRepo
@@ -22,6 +21,7 @@ from app.repositories.models.users import UserModel
 from app.repositories.session_repo import SessionRepo
 from app.repositories.source_repo import SourceRepo
 from app.repositories.user_repo import UserRepo
+from testcontainers.postgres import PostgresContainer
 
 
 async def _round_trip(database_url: str) -> None:

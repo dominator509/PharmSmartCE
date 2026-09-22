@@ -268,7 +268,9 @@ async def _load_record_id(database_url: str, session_id: str) -> str:
         result = await session.execute(
             select(CERecordModel).where(CERecordModel.session_id == session_id)
         )
-        record_id = result.scalar_one().id
+        record = result.scalar_one()
+        assert isinstance(record, CERecordModel)
+        record_id = record.id
     await engine.dispose()
     return record_id
 

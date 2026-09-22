@@ -27,7 +27,7 @@ playwright-report/
 test-results/
 
 # Local model and runtime state
-models/
+/models/
 *.gguf
 *.faiss
 var/

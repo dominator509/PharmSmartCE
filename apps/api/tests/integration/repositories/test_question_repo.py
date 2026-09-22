@@ -4,7 +4,6 @@ import asyncio
 from datetime import UTC, datetime, timedelta
 
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
-from testcontainers.postgres import PostgresContainer
 
 from app.repositories import models as _models  # noqa: F401
 from app.repositories.db import Base
@@ -17,6 +16,7 @@ from app.repositories.models.sources import SourceModel
 from app.repositories.models.users import UserModel
 from app.repositories.question_repo import QuestionRepo
 from app.repositories.refresh_token_repo import RefreshTokenRepo
+from testcontainers.postgres import PostgresContainer
 
 
 async def _exercise(database_url: str) -> None:

@@ -7,7 +7,6 @@ from pathlib import Path
 
 from prometheus_client import generate_latest
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
-from testcontainers.postgres import PostgresContainer
 
 from app.adapters.storage.local_storage import LocalSourceStorage
 from app.config import Settings
@@ -21,6 +20,7 @@ from app.repositories.models.users import UserModel
 from app.services.auth.tokens import hash_password
 from app.services.generation.cost_cap import OpenAICostCap
 from app.services.generation.service import GenerationService
+from testcontainers.postgres import PostgresContainer
 
 
 class RecordingLLM:

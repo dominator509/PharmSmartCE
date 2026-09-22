@@ -7,7 +7,6 @@ from pathlib import Path
 from fastapi.testclient import TestClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
-from testcontainers.postgres import PostgresContainer
 
 from app.api.deps import get_ingest_service
 from app.config import Settings
@@ -15,6 +14,7 @@ from app.main import create_app
 from app.repositories.db import Base
 from app.repositories.models.ce_records import CERecordModel
 from app.repositories.models.questions import QuestionModel
+from testcontainers.postgres import PostgresContainer
 
 
 class FakeIngestService:

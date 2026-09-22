@@ -6,7 +6,6 @@ from pathlib import Path
 from fastapi.testclient import TestClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
-from testcontainers.postgres import PostgresContainer
 
 from app.api.deps import Principal, current_admin, current_user
 from app.config import Settings
@@ -15,6 +14,7 @@ from app.repositories.db import Base
 from app.repositories.models.chunks import ChunkModel
 from app.repositories.models.orgs import OrgModel
 from app.repositories.models.sources import SourceModel
+from testcontainers.postgres import PostgresContainer
 
 
 def test_three_reference_fixture_pdfs_ingest_successfully(tmp_path: Path) -> None:
