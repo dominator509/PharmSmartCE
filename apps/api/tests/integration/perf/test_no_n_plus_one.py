@@ -8,7 +8,6 @@ from fastapi.testclient import TestClient
 from sqlalchemy import event
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import create_async_engine
-from testcontainers.postgres import PostgresContainer
 
 from app.api.deps import current_admin, current_user
 from app.config import Settings
@@ -16,6 +15,7 @@ from app.main import create_app
 from app.repositories.db import Base
 from app.repositories.models.orgs import OrgModel
 from app.repositories.models.users import UserModel
+from testcontainers.postgres import PostgresContainer
 
 
 def test_session_read_route_stays_within_query_budget(tmp_path: Path) -> None:

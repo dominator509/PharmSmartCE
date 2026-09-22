@@ -8,7 +8,6 @@ from zipfile import ZIP_DEFLATED, ZipFile
 from fastapi.testclient import TestClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
-from testcontainers.postgres import PostgresContainer
 
 from app.api.deps import Principal, current_admin, current_user
 from app.config import Settings
@@ -17,6 +16,7 @@ from app.repositories.db import Base
 from app.repositories.models.orgs import OrgModel
 from app.repositories.models.sources import SourceModel
 from app.repositories.models.users import UserModel
+from testcontainers.postgres import PostgresContainer
 
 
 def test_injection_detector_quarantines_flagged_source(tmp_path: Path) -> None:

@@ -3,11 +3,11 @@ from __future__ import annotations
 from pathlib import Path
 
 from fastapi.testclient import TestClient
-from testcontainers.postgres import PostgresContainer
 
 from app.config import Settings
 from app.main import create_app
 from app.observability.metrics import METRIC_NAMES
+from testcontainers.postgres import PostgresContainer
 
 
 def test_metrics_shape_exposes_all_named_metrics(tmp_path: Path) -> None:

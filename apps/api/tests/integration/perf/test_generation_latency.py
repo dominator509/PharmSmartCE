@@ -6,13 +6,13 @@ from pathlib import Path
 
 from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import create_async_engine
-from testcontainers.postgres import PostgresContainer
 
 from app.api.deps import get_ingest_service
 from app.config import Settings
 from app.main import create_app
 from app.repositories.db import Base
 from app.repositories.models.orgs import OrgModel
+from testcontainers.postgres import PostgresContainer
 
 
 class FakeIngestService:

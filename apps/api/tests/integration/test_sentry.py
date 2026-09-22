@@ -9,11 +9,11 @@ from types import SimpleNamespace
 
 from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import create_async_engine
-from testcontainers.postgres import PostgresContainer
 
 from app.config import Settings
 from app.main import create_app
 from app.repositories.db import Base
+from testcontainers.postgres import PostgresContainer
 
 
 def test_sentry_initializes_and_captures_exceptions(monkeypatch) -> None:

@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-import os
 from dataclasses import dataclass
 from hashlib import sha256
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from uuid import uuid4
 
 import magic
@@ -82,11 +81,15 @@ class CourseService:
             raise ValidationError("Source filename must not be empty.")
         if len(filename) > 255:
             raise ValidationError("Source filename must not exceed 255 characters.")
-        if filename != Path(filename).name or filename in {".", ".."}:
+        if (
+            filename != Path(filename).name
+            or filename != PureWindowsPath(filename).name
+            or filename in {".", ".."}
+        ):
             raise ValidationError("Source filename must not include path separators.")
         if filename.rstrip(" .") != filename:
             raise ValidationError("Source filename must not end with dots or spaces.")
-        if os.name == "nt" and _is_windows_reserved_filename(filename):
+        if _is_windows_reserved_filename(filename):
             raise ValidationError("Source filename must not use reserved Windows names.")
         if not content:
             raise ValidationError("Source file must not be empty.")

@@ -4,7 +4,9 @@
   "packageManager": "pnpm@9.15.0",
   "pnpm": {
     "overrides": {
-      "postcss": "8.5.15"
+      "postcss": "8.5.28",
+      "browserslist": "4.29.0",
+      "sharp": "0.35.4"
     }
   }
 }
